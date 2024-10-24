@@ -19,19 +19,41 @@ if(CMAKE_HOST_SYSTEM_NAME MATCHES "Windows")
 else()
 	message(FATAL_ERROR ${CMAKE_HOST_SYSTEM_NAME} " 检测到不是Windows平台,该平台目前未支持") 
 endif()
+# 判断编译类型
+if (NOT CMAKE_BUILD_TYPE)
+   set (CMAKE_BUILD_TYPE "RelWithDebInfo")
+   message (STATUS "没有编译类型选择, 默认选择 ${CMAKE_BUILD_TYPE}")
+elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+    message (STATUS "编译类型选择 ${CMAKE_BUILD_TYPE}")
+elseif(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+    message (STATUS "编译类型选择 ${CMAKE_BUILD_TYPE}")
+else()
+    message(FATAL_ERROR "编译类型选择 ${CMAKE_BUILD_TYPE}, 但是该编译类型不支持") 
+endif ()
 
 #--------------------------------------------------------------------------------------#
 #   项目依赖设置
 #--------------------------------------------------------------------------------------#
+# mysql数据库连接
+set(mysql-concpp_DIR "${PROJECT_SOURCE_DIR}/3rd_party/mysql-concpp")
+set(MYSQL_CONCPP_LIBRARIES
+    ${mysql-concpp_DIR}/lib64/vs14/libcrypto.lib
+    ${mysql-concpp_DIR}/lib64/vs14/libssl.lib
+    ${mysql-concpp_DIR}/lib64/vs14/mysqlcppconn.lib
+    ${mysql-concpp_DIR}/lib64/vs14/mysqlcppconnx.lib
+)
+find_package(mysql-concpp REQUIRED)
+
+
 # 设置头文件查找路径
 include_directories(
+    ${mysql-concpp_DIR}/include
     utils
     connect
     logger
     scheduler
     tasks    
 )
-
 #--------------------------------------------------------------------------------------#
 #   项目编译设置
 #--------------------------------------------------------------------------------------#
@@ -71,5 +93,20 @@ add_executable(${PROJECT_NAME}
                 tasks/process_error.hpp
                 tasks/process_error.cpp
 )
+target_link_libraries(${PROJECT_NAME} ${MYSQL_CONCPP_LIBRARIES})
 
-# target_link_libraries(${PROJECT_NAME} PRIVATE pthread ${OpenCV_LIBS} ${HIK_LIBS} ${Boost_LIBRARIES} openvino::runtime)
+
+#--------------------------------------------------------------------------------------#
+#   测试执行测试
+#--------------------------------------------------------------------------------------#
+# mysql链接测试
+add_executable(mysql_connect_test 
+                tests/mysql_connect_test.cpp 
+)
+target_link_libraries(mysql_connect_test ${MYSQL_CONCPP_LIBRARIES})
+add_custom_command(TARGET mysql_connect_test POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${mysql-concpp_DIR}/lib64/libcrypto-3-x64.dll"  "${PROJECT_SOURCE_DIR}/build/Release"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${mysql-concpp_DIR}/lib64/libssl-3-x64.dll"  "${PROJECT_SOURCE_DIR}/build/Release"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${mysql-concpp_DIR}/lib64/mysqlcppconn-10-vs14.dll"  "${PROJECT_SOURCE_DIR}/build/Release"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${mysql-concpp_DIR}/lib64/mysqlcppconnx-2-vs14.dll"  "${PROJECT_SOURCE_DIR}/build/Release"
+)

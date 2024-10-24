@@ -13,3 +13,5 @@ CMakeUserPresets.json
 
 # 以下是个人定义
 build
+.vscode
+3rd_party
