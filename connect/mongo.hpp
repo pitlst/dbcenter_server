@@ -1,0 +1,4 @@
+#ifndef DBS_MONGO_INCLUDE
+#define DBS_MONGO_INCLUDE
+
+#endif

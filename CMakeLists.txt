@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.12)
 set(PROJECT_NAME dbcenter_server)
 # 在这里直接指定项目为c++项目，节约查找tool chain的时间
 project(${PROJECT_NAME} VERSION 1.0.0 LANGUAGES CXX)
-# 设置c++标准等级和编译后输出路径
+# 设置c++标准等级
 set(CMAKE_CXX_STANDARD 20)
 # 导出执行命令到json
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -23,11 +23,9 @@ endif()
 #--------------------------------------------------------------------------------------#
 #   项目依赖设置
 #--------------------------------------------------------------------------------------#
-
-
 # 设置头文件查找路径
 include_directories(
-    general
+    utils
     connect
     logger
     scheduler
@@ -41,13 +39,15 @@ include_directories(
 add_compile_definitions(PROJECT_PATH=\"${PROJECT_SOURCE_DIR}/\")
 add_executable(${PROJECT_NAME} 
                 main.cpp 
-                general/base.hpp
-                general/data.hpp
-                general/data.cpp
-                general/json.hpp
-                general/json.cpp
-                general/watch_dog.hpp
-                general/watch_dog.cpp
+                utils/base.hpp
+                utils/data.hpp
+                utils/data.cpp
+                utils/json.hpp
+                utils/json.cpp
+                utils/big_int.hpp
+                utils/big_int.cpp
+                connect/connect.hpp
+                connect/connect.cpp
                 connect/mongo.hpp
                 connect/mongo.cpp
                 connect/mysql.hpp
@@ -58,12 +58,18 @@ add_executable(${PROJECT_NAME}
                 connect/sqlserver.cpp
                 connect/postgresql.hpp
                 connect/postgresql.cpp
+                watch_dog/watch_dog.hpp
+                watch_dog/watch_dog.cpp
                 logger/logger.hpp
                 logger/logger.cpp
                 scheduler/dag.hpp
                 scheduler/dag.cpp
+                scheduler/node.hpp
+                scheduler/node.cpp
+                scheduler/thread_pool.hpp
+                scheduler/thread_pool.cpp
                 tasks/process_error.hpp
                 tasks/process_error.cpp
-                )
+)
 
 # target_link_libraries(${PROJECT_NAME} PRIVATE pthread ${OpenCV_LIBS} ${HIK_LIBS} ${Boost_LIBRARIES} openvino::runtime)

@@ -1,0 +1,4 @@
+#ifndef DBS_ORACLE_INCLUDE
+#define DBS_ORACLE_INCLUDE
+
+#endif
