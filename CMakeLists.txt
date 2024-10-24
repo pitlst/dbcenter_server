@@ -1,5 +1,3 @@
-#使用 cmake_policy 命令来设置政策 CMP0167
-#make_policy(SET CMP0167 NEW)
 #--------------------------------------------------------------------------------------#
 #   项目总体设置
 #--------------------------------------------------------------------------------------#
@@ -15,8 +13,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # 强制化c++标准，当标准不符合要求时强制终止编译而不是采用更旧的标准
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-# 设置编译优化的等级
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 # 判断项目平台
 if(CMAKE_HOST_SYSTEM_NAME MATCHES "Windows")
     message(STATUS ${CMAKE_HOST_SYSTEM_NAME} " 检测到为windows平台")
