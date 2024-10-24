@@ -29,6 +29,7 @@ endif()
 include_directories(
     general
     connect
+    logger
     scheduler
     tasks    
 )
@@ -40,6 +41,29 @@ include_directories(
 add_compile_definitions(PROJECT_PATH=\"${PROJECT_SOURCE_DIR}/\")
 add_executable(${PROJECT_NAME} 
                 main.cpp 
+                general/base.hpp
+                general/data.hpp
+                general/data.cpp
+                general/json.hpp
+                general/json.cpp
+                general/watch_dog.hpp
+                general/watch_dog.cpp
+                connect/mongo.hpp
+                connect/mongo.cpp
+                connect/mysql.hpp
+                connect/mysql.cpp
+                connect/oracle.hpp
+                connect/oracle.cpp
+                connect/sqlserver.hpp
+                connect/sqlserver.cpp
+                connect/postgresql.hpp
+                connect/postgresql.cpp
+                logger/logger.hpp
+                logger/logger.cpp
+                scheduler/dag.hpp
+                scheduler/dag.cpp
+                tasks/process_error.hpp
+                tasks/process_error.cpp
                 )
 
 # target_link_libraries(${PROJECT_NAME} PRIVATE pthread ${OpenCV_LIBS} ${HIK_LIBS} ${Boost_LIBRARIES} openvino::runtime)
