@@ -16,6 +16,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # 判断项目平台
 if(CMAKE_HOST_SYSTEM_NAME MATCHES "Windows")
     message(STATUS ${CMAKE_HOST_SYSTEM_NAME} " 检测到为windows平台")
+    # 解决msvc默认不为utf8解码源代码文件的问题
+    add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
+    add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 else()
 	message(FATAL_ERROR ${CMAKE_HOST_SYSTEM_NAME} " 检测到不是Windows平台,该平台目前未支持") 
 endif()
@@ -68,6 +71,8 @@ set(MONGO_CONCPP_DLLS
 find_package(bsoncxx REQUIRED)
 find_package(mongocxx REQUIRED)
 
+# sqlserver数据库连接
+find_package(ODBC REQUIRED)
 
 
 # 设置头文件查找路径
@@ -75,6 +80,7 @@ include_directories(
     ${mysql-concpp_DIR}/include
     ${LIBMONGOCXX_INCLUDE_DIR}
     ${LIBBSONCXX_INCLUDE_DIR}
+    ${ODBC_INCLUDE_DIRS}
     utils
     connect
     logger
@@ -154,3 +160,9 @@ foreach(FILE_I ${MONGO_CONCPP_DLLS})
         ARGS -E copy_if_different ${FILE_I} "${PROJECT_SOURCE_DIR}/build/Release"
     )
 endforeach(FILE_I)
+
+# sqlserver链接测试
+add_executable(sqlserver_connect_test 
+                tests/sqlserver_connect_test.cpp 
+)
+target_link_libraries(sqlserver_connect_test ${ODBC_LIBRARIES})
