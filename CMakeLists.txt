@@ -21,13 +21,9 @@ else()
 endif()
 # 判断编译类型
 if (NOT CMAKE_BUILD_TYPE)
-   set (CMAKE_BUILD_TYPE "RelWithDebInfo")
-   message (STATUS "没有编译类型选择, 默认选择 ${CMAKE_BUILD_TYPE}")
+   set (CMAKE_BUILD_TYPE "Release")
+   message (STATUS "没有编译类型选择, 默认选择 ${CMAKE_BUILD_TYPE}, 注意非release会导致动态库加载失败")
 elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
-    message (STATUS "编译类型选择 ${CMAKE_BUILD_TYPE}")
-elseif(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
-    message (STATUS "编译类型选择 ${CMAKE_BUILD_TYPE}")
-else()
     message(FATAL_ERROR "编译类型选择 ${CMAKE_BUILD_TYPE}, 但是该编译类型不支持") 
 endif ()
 
@@ -42,15 +38,47 @@ set(MYSQL_CONCPP_LIBRARIES
     ${mysql-concpp_DIR}/lib64/vs14/mysqlcppconn.lib
     ${mysql-concpp_DIR}/lib64/vs14/mysqlcppconnx.lib
 )
+set(MYSQL_CONCPP_DLLS
+   "${mysql-concpp_DIR}/lib64/libcrypto-3-x64.dll"
+   "${mysql-concpp_DIR}/lib64/libssl-3-x64.dll"
+   "${mysql-concpp_DIR}/lib64/mysqlcppconn-10-vs14.dll"
+   "${mysql-concpp_DIR}/lib64/mysqlcppconnx-2-vs14.dll"
+)
 find_package(mysql-concpp REQUIRED)
+
+# mongo数据库连接
+set(mongo_DIR "${PROJECT_SOURCE_DIR}/3rd_party/mongo-cxx")
+set(bson-1.0_DIR "${mongo_DIR}/lib/cmake/bson-1.0")
+set(bsoncxx_DIR "${mongo_DIR}/lib/cmake/bsoncxx-3.11.0")
+set(mongoc-1.0_DIR "${mongo_DIR}/lib/cmake/mongoc-1.0")
+set(mongocxx_DIR "${mongo_DIR}/lib/cmake/mongocxx-3.11.0")
+set(MONGO_CONCPP_DLLS
+    ${mongo_DIR}/bin/bson-1.0.dll
+    ${mongo_DIR}/bin/bsoncxx-v_noabi-rhs-x64-v143-md.dll
+    ${mongo_DIR}/bin/concrt140.dll
+    ${mongo_DIR}/bin/mongoc-1.0.dll
+    ${mongo_DIR}/bin/mongocxx-v_noabi-rhs-x64-v143-md.dll
+    ${mongo_DIR}/bin/msvcp140.dll
+    ${mongo_DIR}/bin/msvcp140_1.dll
+    ${mongo_DIR}/bin/msvcp140_2.dll
+    ${mongo_DIR}/bin/msvcp140_atomic_wait.dll
+    ${mongo_DIR}/bin/vcruntime140.dll
+    ${mongo_DIR}/bin/vcruntime140_1.dll
+)
+find_package(bsoncxx REQUIRED)
+find_package(mongocxx REQUIRED)
+
 
 
 # 设置头文件查找路径
 include_directories(
     ${mysql-concpp_DIR}/include
+    ${LIBMONGOCXX_INCLUDE_DIR}
+    ${LIBBSONCXX_INCLUDE_DIR}
     utils
     connect
     logger
+    watch_dog
     scheduler
     tasks    
 )
@@ -104,9 +132,25 @@ add_executable(mysql_connect_test
                 tests/mysql_connect_test.cpp 
 )
 target_link_libraries(mysql_connect_test ${MYSQL_CONCPP_LIBRARIES})
-add_custom_command(TARGET mysql_connect_test POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${mysql-concpp_DIR}/lib64/libcrypto-3-x64.dll"  "${PROJECT_SOURCE_DIR}/build/Release"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${mysql-concpp_DIR}/lib64/libssl-3-x64.dll"  "${PROJECT_SOURCE_DIR}/build/Release"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${mysql-concpp_DIR}/lib64/mysqlcppconn-10-vs14.dll"  "${PROJECT_SOURCE_DIR}/build/Release"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${mysql-concpp_DIR}/lib64/mysqlcppconnx-2-vs14.dll"  "${PROJECT_SOURCE_DIR}/build/Release"
+foreach(FILE_I ${MYSQL_CONCPP_DLLS})
+    add_custom_command(
+        TARGET mysql_connect_test 
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} 
+        ARGS -E copy_if_different ${FILE_I} "${PROJECT_SOURCE_DIR}/build/Release"
+    )
+endforeach(FILE_I)
+
+# mongo链接测试
+add_executable(mongo_connect_test 
+                tests/mongo_connect_test.cpp 
 )
+target_link_libraries(mongo_connect_test mongo::mongocxx_shared)
+foreach(FILE_I ${MONGO_CONCPP_DLLS})
+    add_custom_command(
+        TARGET mongo_connect_test 
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} 
+        ARGS -E copy_if_different ${FILE_I} "${PROJECT_SOURCE_DIR}/build/Release"
+    )
+endforeach(FILE_I)

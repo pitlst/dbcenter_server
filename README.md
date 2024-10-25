@@ -1,1 +1,13 @@
-# dbcenter_server_windows
+# dbcenter_server 用于公司windows server的c++ ETL服务
+
+### 简介
+
+本项目致力于使用c++以高效率解决业务中需要的数据贯通和数据处理需求
+
+### 环境准备
+
+### 编译部署
+
+### 项目使用
+
+### 项目模块简述
