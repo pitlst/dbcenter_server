@@ -97,7 +97,7 @@ include_directories(
     utils
     connect
     logger
-    watch_dog
+    process_manage
     scheduler
     tasks
 )
@@ -122,14 +122,14 @@ add_executable(${PROJECT_NAME}
                 connect/mongo.cpp
                 connect/mysql.hpp
                 connect/mysql.cpp
-                watch_dog/watch_dog.hpp
-                watch_dog/watch_dog.cpp
+                process_manage/watch_dog.hpp
+                process_manage/watch_dog.cpp
+                process_manage/host.hpp
+                process_manage/host.cpp
                 logger/logger.hpp
                 logger/logger.cpp
                 scheduler/dag.hpp
                 scheduler/dag.cpp
-                scheduler/node.hpp
-                scheduler/node.cpp
                 scheduler/thread_pool.hpp
                 scheduler/thread_pool.cpp
                 tasks/process_error.hpp
