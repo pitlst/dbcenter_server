@@ -19,7 +19,7 @@ namespace dbs
     class row;
     class column;
     class table;
-    // 基于variant实现的数据库数据运行时多态
+    // 基于variant实现的常用单元数据运行时多态
     class value
     {
     public:

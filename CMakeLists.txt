@@ -16,10 +16,18 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # 判断项目平台
 if(CMAKE_HOST_SYSTEM_NAME MATCHES "Windows")
     message(STATUS ${CMAKE_HOST_SYSTEM_NAME} " 检测到为windows平台")
+    set(PLATFORM_WINDOWS "TRUE")
+    set(PLATFORM_LINUX "FALSE")
     # 解决msvc默认不为utf8解码源代码文件的问题
     add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
     add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
+elseif(CMAKE_HOST_SYSTEM_NAME MATCHES "Linux")
+    message(STATUS ${CMAKE_HOST_SYSTEM_NAME} " 检测到为Linux平台")
+    set(PLATFORM_WINDOWS "FALSE")
+    set(PLATFORM_LINUX "TRUE")
 else()
+    set(PLATFORM_WINDOWS "FALSE")
+    set(PLATFORM_LINUX "FALSE")
 	message(FATAL_ERROR ${CMAKE_HOST_SYSTEM_NAME} " 检测到不是Windows平台,该平台目前未支持") 
 endif()
 # 判断编译类型
@@ -27,52 +35,57 @@ if (NOT CMAKE_BUILD_TYPE)
    set (CMAKE_BUILD_TYPE "Release")
    message (STATUS "没有编译类型选择, 默认选择 ${CMAKE_BUILD_TYPE}, 注意非release会导致动态库加载失败")
 elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
-    message(FATAL_ERROR "编译类型选择 ${CMAKE_BUILD_TYPE}, 但是该编译类型不支持") 
+    message (STATUS "选择 ${CMAKE_BUILD_TYPE}, 注意非release会导致动态库加载失败")
+else()
+    message(FATAL_ERROR "编译类型选择 ${CMAKE_BUILD_TYPE}, 但是该编译类型不支持")
 endif ()
 
 #--------------------------------------------------------------------------------------#
 #   项目依赖设置
 #--------------------------------------------------------------------------------------#
 # mysql数据库连接
-set(mysql-concpp_DIR "${PROJECT_SOURCE_DIR}/3rd_party/mysql-concpp")
-set(MYSQL_CONCPP_LIBRARIES
-    ${mysql-concpp_DIR}/lib64/vs14/libcrypto.lib
-    ${mysql-concpp_DIR}/lib64/vs14/libssl.lib
-    ${mysql-concpp_DIR}/lib64/vs14/mysqlcppconn.lib
-    ${mysql-concpp_DIR}/lib64/vs14/mysqlcppconnx.lib
-)
-set(MYSQL_CONCPP_DLLS
-   "${mysql-concpp_DIR}/lib64/libcrypto-3-x64.dll"
-   "${mysql-concpp_DIR}/lib64/libssl-3-x64.dll"
-   "${mysql-concpp_DIR}/lib64/mysqlcppconn-10-vs14.dll"
-   "${mysql-concpp_DIR}/lib64/mysqlcppconnx-2-vs14.dll"
-)
+if(${PLATFORM_WINDOWS} STREQUAL "TRUE")
+    set(mysql-concpp_DIR "${PROJECT_SOURCE_DIR}/3rd_party/mysql-concpp")
+    set(MYSQL_CONCPP_LIBRARIES
+        ${mysql-concpp_DIR}/lib64/vs14/libcrypto.lib
+        ${mysql-concpp_DIR}/lib64/vs14/libssl.lib
+        ${mysql-concpp_DIR}/lib64/vs14/mysqlcppconn.lib
+        ${mysql-concpp_DIR}/lib64/vs14/mysqlcppconnx.lib
+    )
+    set(MYSQL_CONCPP_DLLS
+    "${mysql-concpp_DIR}/lib64/libcrypto-3-x64.dll"
+    "${mysql-concpp_DIR}/lib64/libssl-3-x64.dll"
+    "${mysql-concpp_DIR}/lib64/mysqlcppconn-10-vs14.dll"
+    "${mysql-concpp_DIR}/lib64/mysqlcppconnx-2-vs14.dll"
+    )
+elseif(${PLATFORM_LINUX} STREQUAL "TRUE")
+endif()
 find_package(mysql-concpp REQUIRED)
 
 # mongo数据库连接
-set(mongo_DIR "${PROJECT_SOURCE_DIR}/3rd_party/mongo-cxx")
-set(bson-1.0_DIR "${mongo_DIR}/lib/cmake/bson-1.0")
-set(bsoncxx_DIR "${mongo_DIR}/lib/cmake/bsoncxx-3.11.0")
-set(mongoc-1.0_DIR "${mongo_DIR}/lib/cmake/mongoc-1.0")
-set(mongocxx_DIR "${mongo_DIR}/lib/cmake/mongocxx-3.11.0")
-set(MONGO_CONCPP_DLLS
-    ${mongo_DIR}/bin/bson-1.0.dll
-    ${mongo_DIR}/bin/bsoncxx-v_noabi-rhs-x64-v143-md.dll
-    ${mongo_DIR}/bin/concrt140.dll
-    ${mongo_DIR}/bin/mongoc-1.0.dll
-    ${mongo_DIR}/bin/mongocxx-v_noabi-rhs-x64-v143-md.dll
-    ${mongo_DIR}/bin/msvcp140.dll
-    ${mongo_DIR}/bin/msvcp140_1.dll
-    ${mongo_DIR}/bin/msvcp140_2.dll
-    ${mongo_DIR}/bin/msvcp140_atomic_wait.dll
-    ${mongo_DIR}/bin/vcruntime140.dll
-    ${mongo_DIR}/bin/vcruntime140_1.dll
-)
+if(${PLATFORM_WINDOWS} STREQUAL "TRUE")
+    set(mongo_DIR "${PROJECT_SOURCE_DIR}/3rd_party/mongo-cxx")
+    set(bson-1.0_DIR "${mongo_DIR}/lib/cmake/bson-1.0")
+    set(bsoncxx_DIR "${mongo_DIR}/lib/cmake/bsoncxx-3.11.0")
+    set(mongoc-1.0_DIR "${mongo_DIR}/lib/cmake/mongoc-1.0")
+    set(mongocxx_DIR "${mongo_DIR}/lib/cmake/mongocxx-3.11.0")
+    set(MONGO_CONCPP_DLLS
+        ${mongo_DIR}/bin/bson-1.0.dll
+        ${mongo_DIR}/bin/bsoncxx-v_noabi-rhs-x64-v143-md.dll
+        ${mongo_DIR}/bin/concrt140.dll
+        ${mongo_DIR}/bin/mongoc-1.0.dll
+        ${mongo_DIR}/bin/mongocxx-v_noabi-rhs-x64-v143-md.dll
+        ${mongo_DIR}/bin/msvcp140.dll
+        ${mongo_DIR}/bin/msvcp140_1.dll
+        ${mongo_DIR}/bin/msvcp140_2.dll
+        ${mongo_DIR}/bin/msvcp140_atomic_wait.dll
+        ${mongo_DIR}/bin/vcruntime140.dll
+        ${mongo_DIR}/bin/vcruntime140_1.dll
+    )
+elseif(${PLATFORM_LINUX} STREQUAL "TRUE")
+endif()
 find_package(bsoncxx REQUIRED)
 find_package(mongocxx REQUIRED)
-
-# sqlserver数据库连接
-find_package(ODBC REQUIRED)
 
 
 # 设置头文件查找路径
@@ -134,13 +147,13 @@ target_link_libraries(${PROJECT_NAME} ${MYSQL_CONCPP_LIBRARIES})
 #   测试执行测试
 #--------------------------------------------------------------------------------------#
 # mysql链接测试
-add_executable(mysql_connect_test 
-                tests/mysql_connect_test.cpp 
+add_executable(test_mysql_connect 
+                tests/test_mysql_connect.cpp 
 )
-target_link_libraries(mysql_connect_test ${MYSQL_CONCPP_LIBRARIES})
+target_link_libraries(test_mysql_connect ${MYSQL_CONCPP_LIBRARIES})
 foreach(FILE_I ${MYSQL_CONCPP_DLLS})
     add_custom_command(
-        TARGET mysql_connect_test 
+        TARGET test_mysql_connect 
         POST_BUILD
         COMMAND ${CMAKE_COMMAND} 
         ARGS -E copy_if_different ${FILE_I} "${PROJECT_SOURCE_DIR}/build/Release"
@@ -148,21 +161,15 @@ foreach(FILE_I ${MYSQL_CONCPP_DLLS})
 endforeach(FILE_I)
 
 # mongo链接测试
-add_executable(mongo_connect_test 
-                tests/mongo_connect_test.cpp 
+add_executable(test_mongo_connect 
+                tests/test_mongo_connect.cpp 
 )
-target_link_libraries(mongo_connect_test mongo::mongocxx_shared)
+target_link_libraries(test_mongo_connect mongo::mongocxx_shared)
 foreach(FILE_I ${MONGO_CONCPP_DLLS})
     add_custom_command(
-        TARGET mongo_connect_test 
+        TARGET test_mongo_connect 
         POST_BUILD
         COMMAND ${CMAKE_COMMAND} 
         ARGS -E copy_if_different ${FILE_I} "${PROJECT_SOURCE_DIR}/build/Release"
     )
 endforeach(FILE_I)
-
-# sqlserver链接测试
-add_executable(sqlserver_connect_test 
-                tests/sqlserver_connect_test.cpp 
-)
-target_link_libraries(sqlserver_connect_test ${ODBC_LIBRARIES})

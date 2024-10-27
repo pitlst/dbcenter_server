@@ -14,4 +14,7 @@ CMakeUserPresets.json
 # 以下是个人定义
 build
 .vscode
-3rd_party
+3rd_party/*
+!3rd_party/占位文件，存放第三方文件
+source/table/*
+!3rd_party/占位文件，该文件存放excel
