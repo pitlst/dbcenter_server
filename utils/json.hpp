@@ -11,7 +11,8 @@
 
 namespace dbs
 {
-    class json
+    // json抽象，用于json数据的处理
+    struct json
     {
     public:
         json();
@@ -26,11 +27,6 @@ namespace dbs
         json(const std::map<std::string, json> &input_value);
         ~json() = default;
 
-        /*
-        对于任何默认的或者为隐式的拷贝方式均为浅拷贝
-        所有针对json中的值的修改均会同步到所有指向对应变量的json类
-        对于深拷贝需要重新声明一个新的json变量或者使用下面定义的copy函数手动复制
-        */
         json &operator=(bool input_value);
         json &operator=(int input_value);
         json &operator=(double input_value);
@@ -65,8 +61,6 @@ namespace dbs
         bool has(const std::string &key) const;
         bool empty() const;
         std::size_t size() const;
-        json copy() const;
-        void copy(const json &input_value);
         void append(const json &input_value);
         void append(const std::string & input_name, const json &input_value);
         void remove(std::size_t index);
@@ -90,7 +84,7 @@ namespace dbs
     std::string format_json(const std::string json);
 
     // json的工厂类
-    class json_parse
+    struct json_parse
     {
     public:
         json_parse() = default;

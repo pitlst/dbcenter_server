@@ -109,8 +109,6 @@ add_compile_definitions(PROJECT_PATH=\"${PROJECT_SOURCE_DIR}/\")
 add_executable(${PROJECT_NAME} 
                 main.cpp 
                 utils/base.hpp
-                utils/data.hpp
-                utils/data.cpp
                 utils/big_int.hpp
                 utils/big_int.cpp
                 utils/high_float.hpp
@@ -174,8 +172,8 @@ endforeach(FILE_I)
 # 数据多态测试
 add_executable(test_data 
                 tests/test_data.cpp 
-                utils/data.hpp
-                utils/data.cpp
+                utils/table.hpp
+                utils/table.cpp
 )
 
 # json测试

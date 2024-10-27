@@ -13,8 +13,8 @@
 
 namespace dbs
 {
-    template <typename T>
     // 线程安全的队列
+    template <typename T>
     struct queue
     {
     public:

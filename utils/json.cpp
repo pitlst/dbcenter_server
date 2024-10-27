@@ -626,60 +626,6 @@ std::size_t json::size() const
     }
 }
 
-json json::copy() const
-{
-    json temp;
-    if (std::holds_alternative<std::monostate>(m_value))
-    {
-    }
-    else if (std::holds_alternative<bool>(m_value))
-    {
-        temp = std::get<bool>(m_value);
-    }
-    else if (std::holds_alternative<int>(m_value))
-    {
-        temp = std::get<int>(m_value);
-    }
-    else if (std::holds_alternative<double>(m_value))
-    {
-        temp = std::get<double>(m_value);
-    }
-    else if (std::holds_alternative<std::string>(m_value))
-    {
-        temp = std::get<std::string>(m_value);
-    }
-    else if (std::holds_alternative<std::vector<json>>(m_value))
-    {
-        std::vector<json> new_value;
-        auto temp_value = std::get<std::vector<json>>(m_value);
-        for (const auto &ch : temp_value)
-        {
-            new_value.emplace_back(ch.copy());
-        }
-        temp.m_value = new_value;
-    }
-    else if (std::holds_alternative<std::map<std::string, json>>(m_value))
-    {
-        std::map<std::string, json> new_value;
-        auto temp_value = std::get<std::map<std::string, json>>(m_value);
-        for (const auto &it : temp_value)
-        {
-            new_value.at(it.first) = it.second.copy();
-        }
-        temp.m_value = new_value;
-    }
-    else
-    {
-        throw std::logic_error("copy函数中:获取json内部类型时发生了未知错误");
-    }
-    return temp;
-}
-
-void json::copy(const json &input_value)
-{
-    m_value = input_value.copy().m_value;
-}
-
 void json::append(const json &input_value)
 {
     if (std::holds_alternative<std::monostate>(m_value) ||
