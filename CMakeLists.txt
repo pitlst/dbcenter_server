@@ -87,9 +87,9 @@ endif()
 find_package(bsoncxx REQUIRED)
 find_package(mongocxx REQUIRED)
 
-
 # 设置头文件查找路径
 include_directories(
+    ${PROJECT_SOURCE_DIR}
     ${mysql-concpp_DIR}/include
     ${LIBMONGOCXX_INCLUDE_DIR}
     ${LIBBSONCXX_INCLUDE_DIR}
@@ -99,7 +99,7 @@ include_directories(
     logger
     watch_dog
     scheduler
-    tasks    
+    tasks
 )
 #--------------------------------------------------------------------------------------#
 #   项目编译设置
@@ -111,22 +111,19 @@ add_executable(${PROJECT_NAME}
                 utils/base.hpp
                 utils/data.hpp
                 utils/data.cpp
-                utils/json.hpp
-                utils/json.cpp
                 utils/big_int.hpp
                 utils/big_int.cpp
+                utils/high_float.hpp
+                utils/high_float.cpp
+                utils/queue.hpp
+                utils/table.hpp
+                utils/table.cpp
                 connect/connect.hpp
                 connect/connect.cpp
                 connect/mongo.hpp
                 connect/mongo.cpp
                 connect/mysql.hpp
                 connect/mysql.cpp
-                connect/oracle.hpp
-                connect/oracle.cpp
-                connect/sqlserver.hpp
-                connect/sqlserver.cpp
-                connect/postgresql.hpp
-                connect/postgresql.cpp
                 watch_dog/watch_dog.hpp
                 watch_dog/watch_dog.cpp
                 logger/logger.hpp
@@ -173,3 +170,17 @@ foreach(FILE_I ${MONGO_CONCPP_DLLS})
         ARGS -E copy_if_different ${FILE_I} "${PROJECT_SOURCE_DIR}/build/Release"
     )
 endforeach(FILE_I)
+
+# 数据多态测试
+add_executable(test_data 
+                tests/test_data.cpp 
+                utils/data.hpp
+                utils/data.cpp
+)
+
+# json测试
+add_executable(test_json 
+                tests/test_json.cpp 
+                utils/json.hpp
+                utils/json.cpp
+)   

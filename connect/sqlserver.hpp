@@ -1,4 +1,0 @@
-#ifndef DBS_SQLSERVER_INCLUDE
-#define DBS_SQLSERVER_INCLUDE
-
-#endif
