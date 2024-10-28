@@ -84,7 +84,7 @@ json &json::operator=(const std::map<std::string, json> &input_value)
     return *this;
 }
 
-json &json::operator[](std::size_t index)
+json &json::operator[](size_t index)
 {
     if (!std::holds_alternative<std::vector<json>>(m_value))
     {
@@ -309,7 +309,7 @@ json::operator std::string() const
     return temp_value;
 }
 
-std::optional<bool> json::to_bool() const
+std::optional<bool> json::to_bool() const noexcept
 {
     if (std::holds_alternative<std::monostate>(m_value))
     {
@@ -341,7 +341,7 @@ std::optional<bool> json::to_bool() const
     }
     return std::nullopt;
 }
-std::optional<int> json::to_int() const
+std::optional<int> json::to_int() const noexcept
 {
     if (std::holds_alternative<std::monostate>(m_value))
     {
@@ -361,7 +361,7 @@ std::optional<int> json::to_int() const
     }
     return std::nullopt;
 }
-std::optional<double> json::to_double() const
+std::optional<double> json::to_double() const noexcept
 {
     if (std::holds_alternative<std::monostate>(m_value))
     {
@@ -381,7 +381,7 @@ std::optional<double> json::to_double() const
     }
     return std::nullopt;
 }
-std::optional<std::string> json::to_str() const
+std::optional<std::string> json::to_str() const noexcept
 {
     std::string temp_value;
     if (std::holds_alternative<std::monostate>(m_value))
@@ -599,7 +599,7 @@ bool json::empty() const
     }
 }
 
-std::size_t json::size() const
+size_t json::size() const
 {
     if (std::holds_alternative<std::monostate>(m_value) ||
         std::holds_alternative<bool>(m_value) ||
@@ -668,7 +668,7 @@ void json::append(const std::string &input_name, const json &input_value)
     }
 }
 
-void json::remove(std::size_t index)
+void json::remove(size_t index)
 {
     if (std::holds_alternative<std::monostate>(m_value) ||
         std::holds_alternative<bool>(m_value) ||

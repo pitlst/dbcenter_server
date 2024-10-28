@@ -106,6 +106,8 @@ include_directories(
 #--------------------------------------------------------------------------------------#
 # 把项目目录定义成宏传递给程序
 add_compile_definitions(PROJECT_PATH=\"${PROJECT_SOURCE_DIR}/\")
+# 解决msvc的C4996警告
+add_compile_definitions(_CRT_SECURE_NO_WARNINGS=1)
 add_executable(${PROJECT_NAME} 
                 main.cpp 
                 utils/base.hpp

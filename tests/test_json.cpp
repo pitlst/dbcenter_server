@@ -26,7 +26,6 @@ int main()
     // std::cout << temp2.to_int() << std::endl;
     dbs::json tmep3;
     std::cout << tmep3.to_str().value() << std::endl;
-    temp2.copy();
 
     std::string test_json;
     std::stringstream ss;

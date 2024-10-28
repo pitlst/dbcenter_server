@@ -37,7 +37,7 @@ namespace dbs
         json &operator=(const std::vector<json> &input_value);
         json &operator=(const std::map<std::string, json> &input_value);
 
-        json &operator[](std::size_t index);
+        json &operator[](size_t index);
         json &operator[](const std::string &key);
 
         operator bool() const;
@@ -49,10 +49,10 @@ namespace dbs
         static json array(const std::initializer_list<json> &input_value);
         static json object(const std::map<std::string, json> &input_value);
 
-        std::optional<bool> to_bool() const;
-        std::optional<int> to_int() const;
-        std::optional<double> to_double() const;
-        std::optional<std::string> to_str() const;
+        std::optional<bool> to_bool() const noexcept;
+        std::optional<int> to_int() const noexcept;
+        std::optional<double> to_double() const noexcept;
+        std::optional<std::string> to_str() const noexcept;
 
         bool is_type(std::string_view input_type_name) const;
         std::string_view get_type_name() const;
@@ -60,10 +60,10 @@ namespace dbs
         bool has(size_t index) const;
         bool has(const std::string &key) const;
         bool empty() const;
-        std::size_t size() const;
+        size_t size() const;
         void append(const json &input_value);
         void append(const std::string & input_name, const json &input_value);
-        void remove(std::size_t index);
+        void remove(size_t index);
         void remove(const std::string &key);
 
     private:
