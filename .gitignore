@@ -15,6 +15,7 @@ process/CMakeUserPresets.json
 process/build
 .vscode
 process/3rd_party/*
-process/!3rd_party/占位文件，存放第三方文件
-process/source/table/*
-process/!3rd_party/占位文件，该文件存放excel
+!process/3rd_party/占位文件，存放第三方文件
+source/
+!source/sql
+!source/table/占位文件，该文件存放excel
