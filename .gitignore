@@ -1,20 +1,20 @@
-CMakeLists.txt.user
-CMakeCache.txt
-CMakeFiles
-CMakeScripts
-Testing
-Makefile
-cmake_install.cmake
-install_manifest.txt
-compile_commands.json
-CTestTestfile.cmake
-_deps
-CMakeUserPresets.json
+process/CMakeLists.txt.user
+process/CMakeCache.txt
+process/CMakeFiles
+process/CMakeScripts
+process/Testing
+process/Makefile
+process/cmake_install.cmake
+process/install_manifest.txt
+process/compile_commands.json
+process/CTestTestfile.cmake
+process/_deps
+process/CMakeUserPresets.json
 
 # 以下是个人定义
-build
+process/build
 .vscode
-3rd_party/*
-!3rd_party/占位文件，存放第三方文件
-source/table/*
-!3rd_party/占位文件，该文件存放excel
+process/3rd_party/*
+process/!3rd_party/占位文件，存放第三方文件
+process/source/table/*
+process/!3rd_party/占位文件，该文件存放excel

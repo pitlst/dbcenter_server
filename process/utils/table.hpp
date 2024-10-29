@@ -9,7 +9,7 @@
 #include <variant>
 #include <chrono>
 
-#include "utils/base.hpp"
+#include "utils/general.hpp"
 
 namespace dbs
 {

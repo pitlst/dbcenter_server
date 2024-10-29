@@ -118,6 +118,8 @@ add_executable(${PROJECT_NAME}
                 utils/queue.hpp
                 utils/table.hpp
                 utils/table.cpp
+                utils/general.hpp
+                utils/general.cpp
                 connect/connect.hpp
                 connect/connect.cpp
                 connect/mongo.hpp
