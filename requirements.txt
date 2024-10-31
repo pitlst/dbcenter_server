@@ -1,0 +1,8 @@
+streamlit 
+pandas
+pymssql
+mysql
+cx_oracle
+pymongo
+xlrd
+openpyxl
