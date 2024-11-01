@@ -4,5 +4,6 @@ pymssql
 mysql
 cx_oracle
 pymongo
+redis
 xlrd
 openpyxl
