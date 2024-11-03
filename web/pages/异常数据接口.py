@@ -1,15 +1,12 @@
+import os
+import pandas as pd
+from io import BytesIO
 import streamlit as st
-from general.commont import get_file
+from general import mysql_client
 
 @st.cache_data
 def get_data() -> list:
     data = []
-    path = r"C:\\Users\\Administrator\\Documents\\dbcenter_dag_process\\dag\\file\\file\\dm_abnormal.xlsx"
-    data.append(get_file(path).getvalue())
-    path = r"C:\\Users\\Administrator\\Documents\\dbcenter_dag_process\\dag\\file\\file\\dm_abnormal_zl_department.xlsx"
-    data.append(get_file(path).getvalue())
-    path = r"C:\\Users\\Administrator\\Documents\\dbcenter_dag_process\\dag\\file\\file\\dm_abnormal_zl_project.xlsx"
-    data.append(get_file(path).getvalue())
     return data
 
 st.title("异常数据下载")
