@@ -1,6 +1,7 @@
 import abc
 import time
 from general.connect import db_engine
+from general.logger import node_logger
 
 
 class dag_node_base(abc.ABC):

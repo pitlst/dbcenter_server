@@ -10,8 +10,6 @@ process/compile_commands.json
 process/CTestTestfile.cmake
 process/_deps
 process/CMakeUserPresets.json
-
-# 以下是个人定义
 process/build
 .vscode
 process/3rd_party/*
@@ -22,3 +20,4 @@ source/cache/*
 !source/sql/占位文件，该文件夹存放sql
 !source/table/占位文件，该文件存放excel
 !source/cache/占位文件，该文件夹存放缓存文件
+**/__pycache__
