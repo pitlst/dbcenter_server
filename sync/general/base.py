@@ -19,10 +19,13 @@ class dag_node_base(abc.ABC):
         self.name = name
         self.next_name = next_name
         self.type = type_name
+        # 调度的标志位
+        self.is_run = False
         
     @abc.abstractmethod
     def run(self) -> None:
-        ...
+        self.is_run = True
+        return self.name
 
 class db_process_base(dag_node_base):
     '''
@@ -34,8 +37,6 @@ class db_process_base(dag_node_base):
         super().__init__(name, next_name)
         self.temp_db = db_engine
         self.type = type_name
-        
-    def logger_init(self) -> None:
         self.LOG = node_logger(self.name)
 
     def run(self) -> str:
@@ -53,7 +54,7 @@ class db_process_base(dag_node_base):
         self.release()
         self.LOG.info("已释放资源")
         self.LOG.info("------------" + self.name + "计算结束------------")
-        return self.name
+        return super().run()
 
     @abc.abstractmethod
     def connect(self) -> None:

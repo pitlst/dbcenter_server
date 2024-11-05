@@ -3,6 +3,30 @@ from general.base import db_process_base  # 用于类型标注
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
+class scheduler:
+    def __init__(self, node_list: list[db_process_base]):
+        self.node_list = node_list
+        self.node_map = self.process_name(self.node_list)
+        
+    def append(self):
+        ...
+    
+    def run(self):
+        ...
+    
+    @staticmethod
+    def process_name(node_list: list[db_process_base]) -> dict[str, dict[str, int | list[str]]]:
+        '''获取所有节点的名称和依赖'''
+        node_map = {}
+        for i, ch in enumerate(node_list):
+            node_map[ch.name]["index"] = i
+            node_map[ch.name]["next"] = ch.next_name
+        return node_map
+    
+    def get_node():
+        ...
+    
+
 def node_run(node_list: list[db_process_base]) -> None:
     '''启动线程池开始执行dag图'''
     node_map = process_name(node_list)
