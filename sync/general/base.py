@@ -1,51 +1,34 @@
 import abc
 import time
-from general.connect import db_engine
+from general.connect import database_connect  # 用于类型标注
 from general.logger import node_logger
 
 
-class dag_node_base(abc.ABC):
+class node_base(abc.ABC):
     '''
-    dag调度的基类
-    '''
-    __all_node = set()
-    def __init__(self, name:str, next_name:list[str], type_name:str = "node") -> None:
-        # 因为需要注册相关数据的原因，需要在子类构造完成后再进行父类构造
-        super().__init__()
-        if name in dag_node_base.__all_node:
-            raise Exception("节点名称重复，重复的名称为：" + name)
-        else:
-            dag_node_base.__all_node.add(name)
-        self.name = name
-        self.next_name = next_name
-        self.type = type_name
-        # 调度的标志位
-        self.is_run = False
-        
-    @abc.abstractmethod
-    def run(self) -> None:
-        self.is_run = True
-        return self.name
-
-class db_process_base(dag_node_base):
-    '''
-    数据库数据处理的基类
+    节点的基类
     对于该类处理，其输入输出均需要在数据库中备份
     所以这类节点的输入输出都应当是数据库和文件这类io,不提供变量模式的传递
     '''
-    def __init__(self, name:str, next_name:list[str], type_name:str = "process") -> None:
-        super().__init__(name, next_name)
-        self.temp_db = db_engine
+    def __init__(self, name:str, temp_db: database_connect, type_name:str) -> None:
+        self.name = name
         self.type = type_name
+        # 数据库连接
+        self.temp_db = temp_db
+        # 日志
         self.LOG = node_logger(self.name)
+        # -------这些是计算调度需要的标志位--------
+        # 是否需要运行的标志位
+        self.need_run = True
+        # 数据大小，用于计算同步间隔时间
+        self.data_size = 0
 
     def run(self) -> str:
-        self.LOG.info("------------开始" + self.name + "计算------------")
+        self.LOG.info("开始计算")
         t = time.perf_counter()
         try:
             self.connect()
-            self.read()
-            self.process()
+            self.data_size = self.read()
             self.write()
         except Exception as me:
             self.LOG.error(me)
@@ -54,28 +37,22 @@ class db_process_base(dag_node_base):
         self.release()
         self.LOG.info("已释放资源")
         self.LOG.info("------------" + self.name + "计算结束------------")
-        return super().run()
+        self.need_run = False
+        return self.name
 
     @abc.abstractmethod
-    def connect(self) -> None:
+    def connect(self):
         ...
     
     @abc.abstractmethod
-    def read(self) -> None:
+    def read(self):
         ...
 
     @abc.abstractmethod
-    def write(self) -> None:
+    def write(self):
         ...
         
     @abc.abstractmethod
-    def process(self) -> None:
+    def release(self):
         ...
         
-    @abc.abstractmethod
-    def release(self) -> None:
-        ...
-        
-
-
-    

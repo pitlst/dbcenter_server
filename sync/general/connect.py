@@ -4,10 +4,10 @@ from urllib.parse import quote_plus as urlquote
 
 # 继承Exception自定义异常，用于在处理异常时筛选
 class connect_error(Exception):
-     def __init__(self, msg):
+     def __init__(self, msg) -> None:
         self.msg = msg
     
-     def __str__(self):
+     def __str__(self) -> str:
         return self.msg
 
 # 连接存储配置信息的本地mongo数据库的url
@@ -31,6 +31,9 @@ class database_connect:
                 self.engine_dict[ch["name"]] = sqlalchemy.create_engine(connect_str)
             elif ch["type"] == "mysql":
                 connect_str = "mysql+mysqldb://" + ch["user"] + ":" + urlquote(ch["password"]) + "@" + ch["ip"] + ":" + str(ch["port"]) + "/" + ch["mode"]
+                self.engine_dict[ch["name"]] = sqlalchemy.create_engine(connect_str)
+            elif ch["type"] == "pgsql":
+                connect_str = "postgresql://" + ch["user"] + ":" + urlquote(ch["password"]) + "@" + ch["ip"] + ":" + str(ch["port"]) + "/" + ch["mode"]
                 self.engine_dict[ch["name"]] = sqlalchemy.create_engine(connect_str)
             else:
                 raise connect_error("不支持的数据库类型：" + ch["type"])

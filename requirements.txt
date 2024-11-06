@@ -8,3 +8,4 @@ pymongo
 redis
 xlrd
 openpyxl
+psycopg2

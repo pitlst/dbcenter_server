@@ -7,12 +7,12 @@ class momgo_handler(logging.Handler):
     """
     mongo日志handler
     """
-    def __init__(self, name: str):
+    def __init__(self, name: str) -> None:
         logging.Handler.__init__(self)
-        temp_db = db_engine.get("数据仓库缓存_mongo")
+        temp_db = db_engine.get_mongo()
         self.collection = temp_db["logger"][name]
  
-    def emit(self, record):
+    def emit(self, record) -> None:
         """
         发出记录(Emit a record)
         """

@@ -1,8 +1,10 @@
 import json
 import pandas as pd
-from general.base import db_process_base
+from general.base import node_base
+from general.connect import db_engine
 
-class table_read(db_process_base):
+
+class table_read(node_base):
     '''
     读取表格类似文件类到数据库
     '''
@@ -33,7 +35,7 @@ class table_read(db_process_base):
         self.data = None
         self.target.close()
         
-class table_write(db_process_base):
+class table_write(node_base):
     '''
     将数据库表输出成文件
     '''
@@ -69,7 +71,7 @@ class table_write(db_process_base):
         self.data = None
         self.source.close()
 
-class json_read(db_process_base):
+class json_read(node_base):
     '''
     读取json文件到数据库
     '''
@@ -103,7 +105,7 @@ class json_read(db_process_base):
         self.data = None
         self.target.close()
         
-class json_write(db_process_base):
+class json_write(node_base):
     '''
     将json输出成文件
     '''
