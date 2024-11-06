@@ -4,7 +4,7 @@ from general.base import node_base
 from general.connect import db_engine
 
 
-class table_read(node_base):
+class table_read_node(node_base):
     '''
     读取表格类似文件类到数据库
     '''
@@ -35,7 +35,7 @@ class table_read(node_base):
         self.data = None
         self.target.close()
         
-class table_write(node_base):
+class table_write_node(node_base):
     '''
     将数据库表输出成文件
     '''
@@ -71,17 +71,12 @@ class table_write(node_base):
         self.data = None
         self.source.close()
 
-class json_read(node_base):
+class json_read_node(node_base):
     '''
     读取json文件到数据库
     '''
     def __init__(self, node_define: dict) -> None:
         super().__init__(node_define["name"], node_define["next_name"], type_name="file")
-        self.target_db_name = target_db_name
-        self.target_table_name = target_table_name
-        
-        self.source_file_path = source_file_path
-        self.source_sheet = source_sheet
 
         self.data = None
         
@@ -105,7 +100,7 @@ class json_read(node_base):
         self.data = None
         self.target.close()
         
-class json_write(node_base):
+class json_write_node(node_base):
     '''
     将json输出成文件
     '''

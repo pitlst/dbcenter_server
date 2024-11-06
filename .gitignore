@@ -14,10 +14,6 @@ process/build
 .vscode
 process/3rd_party/*
 !process/3rd_party/占位文件，存放第三方文件
-source/sql/*
-source/table/*
 source/cache/*
-!source/sql/占位文件，该文件夹存放sql
-!source/table/占位文件，该文件存放excel
 !source/cache/占位文件，该文件夹存放缓存文件
 **/__pycache__

@@ -1,8 +1,13 @@
 import abc
 import time
+import datetime
 from general.connect import database_connect  # 用于类型标注
 from general.logger import node_logger
 
+# 系统数据库同步速率上限定义，单位Mb/s
+MAX_NODE_FLOW_CAP = 100
+# 当前服务的所有节点数的计数
+__total_node_num__ = 0
 
 class node_base(abc.ABC):
     '''
@@ -11,24 +16,26 @@ class node_base(abc.ABC):
     所以这类节点的输入输出都应当是数据库和文件这类io,不提供变量模式的传递
     '''
     def __init__(self, name:str, temp_db: database_connect, type_name:str) -> None:
+        global __total_node_num__
+        # 每调用一次就加一
+        __total_node_num__ += 1
+        
         self.name = name
         self.type = type_name
         # 数据库连接
         self.temp_db = temp_db
         # 日志
         self.LOG = node_logger(self.name)
-        # -------这些是计算调度需要的标志位--------
-        # 是否需要运行的标志位
-        self.need_run = True
-        # 数据大小，用于计算同步间隔时间
-        self.data_size = 0
+        # 下一次运行的时间
+        self.last_time = datetime.datetime.now()
 
     def run(self) -> str:
         self.LOG.info("开始计算")
         t = time.perf_counter()
+        data_size = 0
         try:
             self.connect()
-            self.data_size = self.read()
+            data_size = self.read()
             self.write()
         except Exception as me:
             self.LOG.error(me)
@@ -36,8 +43,9 @@ class node_base(abc.ABC):
         self.LOG.info("计算耗时为" + str(t) + "s")
         self.release()
         self.LOG.info("已释放资源")
+        self.update(data_size)
+        self.LOG.info("已更新状态")
         self.LOG.info("------------" + self.name + "计算结束------------")
-        self.need_run = False
         return self.name
 
     @abc.abstractmethod
@@ -55,4 +63,10 @@ class node_base(abc.ABC):
     @abc.abstractmethod
     def release(self):
         ...
+    
+    def update(self, size: int) -> None:
+        '''节点更新自己的状态'''
+        s = size / (MAX_NODE_FLOW_CAP / __total_node_num__)
+        self.last_time = datetime.datetime.now() + datetime.timedelta(seconds=s)
+        
         
