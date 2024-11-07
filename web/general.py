@@ -1,7 +1,7 @@
 import pymongo
+import psycopg2
 import datetime
 import logging
-import sqlalchemy
 import pandas as pd
 from io import BytesIO
 from urllib.parse import quote_plus as urlquote
@@ -9,9 +9,8 @@ from urllib.parse import quote_plus as urlquote
 # mongo
 uri = "mongodb://%s:%s@%s" % (urlquote("cheakf"), urlquote("Swq8855830."), "localhost:27017")
 mongo_client = pymongo.MongoClient(uri)
-# mysql
-connect_str = "mysql+mysqldb://" + "root" + ":" + urlquote("123456") + "@" + "localhost" + ":" + "3306" + "/" + "dataframe_web"
-mysql_client = sqlalchemy.create_engine(connect_str)
+# pgsql
+pgsql_client = psycopg2.connect(database="web_data", user="", password="Swq8855830.", host="127.0.0.1", port="5432")
 
 
 class momgo_handler(logging.Handler):

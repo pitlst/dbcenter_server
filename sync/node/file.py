@@ -1,6 +1,6 @@
 import json
 import pandas as pd
-from general.base import node_base
+from sync.node.base import node_base
 from general.connect import db_engine
 
 
@@ -9,15 +9,14 @@ class table_read_node(node_base):
     读取表格类似文件类到数据库
     '''
     def __init__(self, node_define: dict) -> None:
-        super().__init__(node_define["name"], node_define["next_name"], type_name="file")
+        super().__init__(node_define["name"], db_engine, node_define["type"])
         self.source: dict = node_define["source"]
         self.target: dict = node_define["target"]
-        self.type = node_define["type"]
         self.data = None
         
     def connect(self) -> None:
         self.LOG.info("开始连接")
-        self.target = self.temp_db.get(self.LOG, self.target_db_name)
+        self.target_connect = self.temp_db.get(self.target["connect"])
         
     def read(self) -> None:
         self.LOG.info("正在获取:" + self.source_file_path + "的" + self.source_sheet)

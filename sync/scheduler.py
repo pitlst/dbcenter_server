@@ -1,7 +1,7 @@
 import socket
 import time
 import datetime
-from general.base import node_base  # 用于类型标注
+from sync.node.base import node_base  # 用于类型标注
 from general.logger import node_logger
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -15,6 +15,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 实际计算同步时间的方法是在节点的定义里，可以重写
 '''
 
+SOCKET_DEBUG = False
 SOCKET_IP = "localhost"
 SOCKET_PORT = 10089
 
@@ -26,12 +27,13 @@ class scheduler:
         self.socket_server = socket.socket()
         self.socket_server.bind((SOCKET_IP, SOCKET_PORT))
         self.LOG = node_logger("scheduler")
-        self.LOG.info("服务端已开始监听，正在等待客户端连接...")
-        try:
-            self.conn, address = self.socket_server.accept()
-        except Exception as me:
-            self.LOG.error(me)
-        self.LOG.info(f"接收到了客户端的连接，客户端的信息：{address}")
+        if not SOCKET_DEBUG:
+            self.LOG.info("服务端已开始监听，正在等待客户端连接...")
+            try:
+                self.conn, address = self.socket_server.accept()
+            except Exception as me:
+                self.LOG.error(me)
+            self.LOG.info(f"接收到了客户端的连接，客户端的信息：{address}")
     
     def __del__(self):
         self.conn.close()
@@ -69,6 +71,7 @@ class scheduler:
         在节点运行完成之后
         使用socket通知处理程序
         '''
-        msg = "节点：" + name + "已经执行完成。"
-        self.LOG.info(msg)
-        self.conn.send(msg.encode("UTF-8"))
+        if not SOCKET_DEBUG:
+            msg = "节点：" + name + "已经执行完成。"
+            self.LOG.info(msg)
+            self.conn.send(msg.encode("UTF-8"))

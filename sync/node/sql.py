@@ -1,6 +1,6 @@
 import pandas as pd
 import sqlalchemy as sqla
-from general.base import node_base  # 用于类型标注
+from sync.node.base import node_base  # 用于类型标注
 from general.connect import db_engine
 
 class sql_node(node_base):

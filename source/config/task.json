@@ -1,0 +1,28 @@
+[
+    {
+        "name": "差旅数据-差旅交通与住宿指标",
+        "next_name": [ ],
+        "type": "table_read",
+        "source": {
+            "path": "C:\\Users\\Administrator\\Documents\\dbcenter_dag_process\\dag\\file\\file\\常用差旅数据.xlsx",
+            "sheet": "差旅交通与住宿指标"
+        },
+        "target": {
+            "connect": "数据仓库缓存_新",
+            "table": "ods_travel_common_index"
+        }
+    },
+    {
+        "name": "差旅数据-差旅交通与住宿指标",
+        "next_name": [ ],
+        "type": "table_read",
+        "source": {
+            "path": "C:\\Users\\Administrator\\Documents\\dbcenter_dag_process\\dag\\file\\file\\常用差旅数据.xlsx",
+            "sheet": "差旅交通与住宿指标"
+        },
+        "target": {
+            "connect": "数据仓库缓存_新",
+            "table": "ods_travel_common_index"
+        }
+    }
+]
