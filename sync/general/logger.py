@@ -9,7 +9,7 @@ class momgo_handler(logging.Handler):
     """
     def __init__(self, name: str) -> None:
         logging.Handler.__init__(self)
-        temp_db = db_engine.get_mongo()
+        temp_db = db_engine.get_nosql("数据处理服务文档存储")
         self.collection = temp_db["logger"][name]
  
     def emit(self, record) -> None:

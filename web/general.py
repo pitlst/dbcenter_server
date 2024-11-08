@@ -1,3 +1,5 @@
+import os
+import toml
 import pymongo
 import psycopg2
 import datetime
@@ -6,11 +8,13 @@ import pandas as pd
 from io import BytesIO
 from urllib.parse import quote_plus as urlquote
 
+
+config = toml.load(os.path.join(os.path.abspath(__file__), "..", "source", "config", "connect.toml"))
 # mongo
-uri = "mongodb://%s:%s@%s" % (urlquote("cheakf"), urlquote("Swq8855830."), "localhost:27017")
+uri = "mongodb://%s:%s@%s" % (urlquote(config["数据处理服务文档存储"]["user"]), urlquote(config["数据处理服务文档存储"]["password"]), config["数据处理服务文档存储"]["ip"] + ":" + str(config["数据处理服务文档存储"]["port"]))
 mongo_client = pymongo.MongoClient(uri)
 # pgsql
-pgsql_client = psycopg2.connect(database="web_data", user="", password="Swq8855830.", host="127.0.0.1", port="5432")
+pgsql_client = psycopg2.connect(database=str(config["数据处理服务关系表存储"]["mode"]), user=config["数据处理服务关系表存储"]["user"], password=config["数据处理服务关系表存储"]["password"], host=config["数据处理服务关系表存储"]["ip"], port=str(config["数据处理服务关系表存储"]["port"]))
 
 
 class momgo_handler(logging.Handler):

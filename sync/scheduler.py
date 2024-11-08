@@ -1,7 +1,9 @@
+import toml
 import socket
 import time
 import datetime
 from sync.node.base import node_base  # 用于类型标注
+from general.config import SYNC_CONFIG
 from general.logger import node_logger
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -15,9 +17,9 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 实际计算同步时间的方法是在节点的定义里，可以重写
 '''
 
-SOCKET_DEBUG = False
-SOCKET_IP = "localhost"
-SOCKET_PORT = 10089
+SOCKET_DEBUG = SYNC_CONFIG["socket_debug"]
+SOCKET_IP = SYNC_CONFIG["socket_ip"]
+SOCKET_PORT = SYNC_CONFIG["socket_port"]
 
 
 class scheduler:
@@ -27,7 +29,7 @@ class scheduler:
         self.socket_server = socket.socket()
         self.socket_server.bind((SOCKET_IP, SOCKET_PORT))
         self.LOG = node_logger("scheduler")
-        if not SOCKET_DEBUG:
+        if SOCKET_DEBUG:
             self.LOG.info("服务端已开始监听，正在等待客户端连接...")
             try:
                 self.conn, address = self.socket_server.accept()
@@ -71,7 +73,7 @@ class scheduler:
         在节点运行完成之后
         使用socket通知处理程序
         '''
-        if not SOCKET_DEBUG:
+        if SOCKET_DEBUG:
             msg = "节点：" + name + "已经执行完成。"
             self.LOG.info(msg)
             self.conn.send(msg.encode("UTF-8"))

@@ -16,7 +16,7 @@ class table_read_node(node_base):
         
     def connect(self) -> None:
         self.LOG.info("开始连接")
-        self.target_connect = self.temp_db.get(self.target["connect"])
+        self.target_connect = self.temp_db.get_sql(self.target["connect"])
         
     def read(self) -> None:
         self.LOG.info("正在获取:" + self.source_file_path + "的" + self.source_sheet)

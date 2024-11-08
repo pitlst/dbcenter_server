@@ -1,11 +1,13 @@
+import os
 import abc
+import toml
 import time
 import datetime
-from general.connect import database_connect  # 用于类型标注
+from general.config import SYNC_CONFIG
+from general.connect import database_connect
 from general.logger import node_logger
 
-# 系统数据库同步速率上限定义，单位Mb/s
-MAX_NODE_FLOW_CAP = 100
+
 # 当前服务的所有节点数的计数
 __total_node_num__ = 0
 
@@ -28,6 +30,8 @@ class node_base(abc.ABC):
         self.LOG = node_logger(self.name)
         # 下一次运行的时间
         self.last_time = datetime.datetime.now()
+        # 获取配置
+        self.MAX_NODE_FLOW_CAP = SYNC_CONFIG["max_node_flow_cap"]
 
     def run(self) -> str:
         self.LOG.info("开始计算")
@@ -66,7 +70,7 @@ class node_base(abc.ABC):
     
     def update(self, size: int) -> None:
         '''节点更新自己的状态'''
-        s = size / (MAX_NODE_FLOW_CAP / __total_node_num__)
+        s = size / (self.MAX_NODE_FLOW_CAP / __total_node_num__)
         self.last_time = datetime.datetime.now() + datetime.timedelta(seconds=s)
         
         

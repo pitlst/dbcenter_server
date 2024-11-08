@@ -1,6 +1,6 @@
 import pandas as pd
 import sqlalchemy as sqla
-from sync.node.base import node_base  # 用于类型标注
+from sync.node.base import node_base
 from general.connect import db_engine
 
 class sql_node(node_base):
@@ -15,8 +15,8 @@ class sql_node(node_base):
         
     def connect(self) -> None:
         self.LOG.info("开始连接")
-        self.source_connect = self.temp_db.get(self.source["connect"])
-        self.target_connect = self.temp_db.get(self.target["connect"])
+        self.source_connect = self.temp_db.get_sql(self.source["connect"])
+        self.target_connect = self.temp_db.get_sql(self.target["connect"])
         if self.type == "sql_sync":
             with open(self.source["sql"], 'r', encoding='utf8') as file:
                 # 确保输入没有参数匹配全是字符串
