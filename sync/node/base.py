@@ -1,6 +1,4 @@
-import os
 import abc
-import toml
 import time
 import datetime
 from general.config import SYNC_CONFIG
@@ -21,9 +19,12 @@ class node_base(abc.ABC):
         global __total_node_num__
         # 每调用一次就加一
         __total_node_num__ += 1
-        
+
         self.name = name
         self.type = type_name
+        # 检查解析的节点类型是否正确
+        temp_allow = getattr(self, "allow_type", [])
+        assert self.type not in temp_allow, "节点的类型不正确"
         # 数据库连接
         self.temp_db = temp_db
         # 日志
@@ -40,6 +41,7 @@ class node_base(abc.ABC):
         try:
             self.connect()
             data_size = self.read()
+            self.process()
             self.write()
         except Exception as me:
             self.LOG.error(me)
@@ -66,6 +68,9 @@ class node_base(abc.ABC):
         
     @abc.abstractmethod
     def release(self):
+        ...
+
+    def process(self) -> None:
         ...
     
     def update(self, size: int) -> None:
