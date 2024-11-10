@@ -36,7 +36,7 @@ class sql_node(node_base):
             self.LOG.info("正在执行表同步，表名为:" + self.source_name)
             self.data = pd.read_sql_table(self.source_name, self.source_connect)
         self.LOG.info("数据形状为: " + str(self.data.shape[0]) + "," + str(self.data.shape[1]))
-        return self.get_data_size(self.data)
+        return self.get_data_size()
 
     def write(self) -> None:
         self.LOG.info("正在写入表:" + self.target_name)
@@ -55,7 +55,6 @@ class sql_node(node_base):
         self.source_connect = None
         self.target_connect = None
 
-    @staticmethod
-    def get_data_size(input_df: pd.DataFrame) -> int:
+    def get_data_size(self) -> int:
         '''获取dataframe的内存占用,用于计算同步时间间隔'''
-        return int(input_df.values.nbytes / 1024**2)
+        return int(self.data.values.nbytes / 1024**2)

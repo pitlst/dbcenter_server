@@ -59,7 +59,7 @@ class database_connect:
     def get_nosql(self, name: str) -> pymongo.MongoClient:
         temp_connect = self.nosql_dict[name]
         if not temp_connect is None:
-            return temp_connect.connect()
+            return temp_connect
         else:
             raise connect_error("获取了未知的连接:" + name)
         
