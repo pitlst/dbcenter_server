@@ -4,7 +4,7 @@ from sys import getsizeof
 from sync.node.base import node_base  # 用于类型标注
 from general.connect import db_engine
 
-class api_node(node_base):
+class heyform_node(node_base):
     '''使用api获取数据存放到数据库'''
     def __init__(self, node_define: dict) -> None:
         super().__init__(node_define["name"], db_engine, node_define["type"])
@@ -23,6 +23,7 @@ class api_node(node_base):
         
     def read(self) -> None:
         self.LOG.info("正在获取:" + self.source["url"])
+        
         return self.get_data_size()
 
     def write(self) -> None:

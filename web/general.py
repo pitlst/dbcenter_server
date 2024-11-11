@@ -9,7 +9,7 @@ from io import BytesIO
 from urllib.parse import quote_plus as urlquote
 
 
-config = toml.load(os.path.join(os.path.abspath(__file__), "..", "source", "config", "connect.toml"))
+config = toml.load(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "source", "config", "connect.toml"))
 # mongo
 uri = "mongodb://%s:%s@%s" % (urlquote(config["数据处理服务文档存储"]["user"]), urlquote(config["数据处理服务文档存储"]["password"]), config["数据处理服务文档存储"]["ip"] + ":" + str(config["数据处理服务文档存储"]["port"]))
 mongo_client = pymongo.MongoClient(uri)

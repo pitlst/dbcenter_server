@@ -9,3 +9,4 @@ redis
 xlrd
 openpyxl
 psycopg2
+selenium
