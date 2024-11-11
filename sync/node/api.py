@@ -16,7 +16,6 @@ headers = {
     'Cookie': requests_head["Cookie"],
     'DNT': requests_head["DNT"],
     'Host': requests_head["Host"],
-    'If-None-Match': requests_head["If-None-Match"],
     'Sec-Fetch-Dest': requests_head["Sec-Fetch-Dest"],
     'Sec-Fetch-Mode': requests_head["Sec-Fetch-Mode"],
     'Sec-Fetch-Site': requests_head["Sec-Fetch-Site"],
@@ -45,8 +44,10 @@ class heyform_node(node_base):
         
     def read(self) -> None:
         self.LOG.info("正在获取:" + self.source["url"])
-        temp_csv = requests.get(self.source["url"], headers=headers).text
-        self.data = pd.read_csv(StringIO(temp_csv))
+        responce = requests.get(self.source["url"], headers=headers)
+        self.LOG.info("响应结果为: " + str(responce))
+        self.data = pd.read_csv(StringIO(responce.text))
+        self.LOG.info("数据形状为: " + str(self.data.shape[0]) + "," + str(self.data.shape[1]))
         return self.get_data_size()
 
     def write(self) -> None:

@@ -34,7 +34,6 @@ class database_connect:
         # 连接关系型数据库并保存引擎
         for ch in CONNECT_CONFIG:
             temp = CONNECT_CONFIG[ch]
-            print(temp)
             if temp["type"] == "oracle":
                 connect_str = "oracle+cx_oracle://" + temp["user"] + ":" + urlquote(temp["password"]) + "@" + temp["ip"] + ":" + str(temp["port"]) + "/?service_name=" + temp["mode"]
                 self.engine_dict[ch] = sqlalchemy.create_engine(connect_str)

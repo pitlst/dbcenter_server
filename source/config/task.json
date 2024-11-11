@@ -2,12 +2,12 @@
     {
         "name": "访客系统_测试表单填报",
         "next_name": [ ],
-        "type": "table_read",
+        "type": "api_table",
         "source": {
             "url": "http://18.0.163.64:10087/export/submissions?formId=Qgu8qFOV"
         },
         "target": {
-            "connect": "数据处理服务关系表存储",
+            "connect": "数据处理服务关系表存储-同步用",
             "table": "ods_api_test"
         }
     }

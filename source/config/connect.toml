@@ -5,10 +5,10 @@
 type = "mongo"
 ip = "localhost"
 port = 27017
-user = "cheakf"
-password = "Swq8855830."
-# user = ""
-# password = ""
+# user = "cheakf"
+# password = "Swq8855830."
+user = ""
+password = ""
 mode = "logger"
 
 ["数据处理服务关系表存储-同步用"]

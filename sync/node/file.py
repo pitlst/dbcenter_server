@@ -47,8 +47,8 @@ class json_read_node(node_base):
     '''
     读取json到数据库
     '''
+    allow_type = ["write_json"]
     def __init__(self, node_define: dict) -> None:
-        self.allow_type = ["write_json"]
         super().__init__(node_define["name"], db_engine, node_define["type"])
         self.source: dict = node_define["source"]
         self.target: dict = node_define["target"]
