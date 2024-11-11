@@ -1,28 +1,14 @@
 [
     {
-        "name": "差旅数据-差旅交通与住宿指标",
+        "name": "访客系统_测试表单填报",
         "next_name": [ ],
         "type": "table_read",
         "source": {
-            "path": "C:\\Users\\Administrator\\Documents\\dbcenter_dag_process\\dag\\file\\file\\常用差旅数据.xlsx",
-            "sheet": "差旅交通与住宿指标"
+            "url": "http://18.0.163.64:10087/export/submissions?formId=Qgu8qFOV"
         },
         "target": {
-            "connect": "数据仓库缓存_新",
-            "table": "ods_travel_common_index"
-        }
-    },
-    {
-        "name": "差旅数据-差旅交通与住宿指标",
-        "next_name": [ ],
-        "type": "table_read",
-        "source": {
-            "path": "C:\\Users\\Administrator\\Documents\\dbcenter_dag_process\\dag\\file\\file\\常用差旅数据.xlsx",
-            "sheet": "差旅交通与住宿指标"
-        },
-        "target": {
-            "connect": "数据仓库缓存_新",
-            "table": "ods_travel_common_index"
+            "connect": "数据处理服务关系表存储",
+            "table": "ods_api_test"
         }
     }
 ]

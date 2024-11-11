@@ -7,13 +7,12 @@ class sql_node(node_base):
     '''
     数据库sql同步
     '''
+    allow_type = ["sql_sync", "tabel_sync"]
     def __init__(self, node_define: dict) -> None:
-        self.allow_type = ["sql_sync", "tabel_sync"]
         super().__init__(node_define["name"], db_engine, node_define["type"])
         self.source: dict = node_define["source"]
         self.target: dict = node_define["target"]
         self.data: pd.DataFrame|None = None
-        
         
     def connect(self) -> None:
         self.LOG.info("开始连接")

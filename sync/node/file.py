@@ -9,8 +9,8 @@ class table_read_node(node_base):
     '''
     读取表格类似文件类到数据库
     '''
+    allow_type = ["read_excel", "read_csv"]
     def __init__(self, node_define: dict) -> None:
-        self.allow_type = ["read_excel", "read_csv"]
         super().__init__(node_define["name"], db_engine, node_define["type"])
         self.source: dict = node_define["source"]
         self.target: dict = node_define["target"]

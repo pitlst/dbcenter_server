@@ -29,8 +29,8 @@ headers = {
 
 class heyform_node(node_base):
     '''使用api获取数据存放到数据库'''
+    allow_type = ["api_table", "api_json"]
     def __init__(self, node_define: dict) -> None:
-        self.allow_type = ["api_table", "api_json"]
         super().__init__(node_define["name"], db_engine, node_define["type"])
         self.source: dict = node_define["source"]
         self.target: dict = node_define["target"]
