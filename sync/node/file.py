@@ -1,8 +1,7 @@
 import json
 import pandas as pd
-from bson import json_util
 from sys import getsizeof
-from sync.node.base import node_base
+from node.base import node_base
 from general.connect import db_engine
 
 
@@ -11,11 +10,12 @@ class table_read_node(node_base):
     读取表格类似文件类到数据库
     '''
     def __init__(self, node_define: dict) -> None:
+        self.allow_type = ["read_excel", "read_csv"]
+        super().__init__(node_define["name"], db_engine, node_define["type"])
         self.source: dict = node_define["source"]
         self.target: dict = node_define["target"]
-        self.allow_type = ["read_excel", "read_csv"]
         self.data: pd.DataFrame|None = None
-        super().__init__(node_define["name"], db_engine, node_define["type"])
+
         
     def connect(self) -> None:
         self.LOG.info("开始连接")
@@ -48,11 +48,11 @@ class json_read_node(node_base):
     读取json到数据库
     '''
     def __init__(self, node_define: dict) -> None:
+        self.allow_type = ["write_json"]
+        super().__init__(node_define["name"], db_engine, node_define["type"])
         self.source: dict = node_define["source"]
         self.target: dict = node_define["target"]
-        self.allow_type = ["write_json"]
         self.data = None
-        super().__init__(node_define["name"], db_engine, node_define["type"])
         
     def connect(self) -> None:
         self.LOG.info("开始连接")

@@ -1,3 +1,3 @@
 conda activate nuitka_make
 cd ../web
-streamlit run home.py
+python -m streamlit run home.py

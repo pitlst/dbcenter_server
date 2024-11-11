@@ -1,6 +1,6 @@
 import pandas as pd
 import sqlalchemy as sqla
-from sync.node.base import node_base
+from node.base import node_base
 from general.connect import db_engine
 
 class sql_node(node_base):
@@ -8,11 +8,11 @@ class sql_node(node_base):
     数据库sql同步
     '''
     def __init__(self, node_define: dict) -> None:
+        self.allow_type = ["sql_sync", "tabel_sync"]
+        super().__init__(node_define["name"], db_engine, node_define["type"])
         self.source: dict = node_define["source"]
         self.target: dict = node_define["target"]
-        self.allow_type = ["sql_sync", "tabel_sync"]
         self.data: pd.DataFrame|None = None
-        super().__init__(node_define["name"], db_engine, node_define["type"])
         
         
     def connect(self) -> None:

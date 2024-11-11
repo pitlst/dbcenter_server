@@ -24,7 +24,7 @@ class node_base(abc.ABC):
         self.type = type_name
         # 检查解析的节点类型是否正确
         temp_allow = getattr(self, "allow_type", [])
-        assert self.type not in temp_allow, "节点的类型不正确"
+        assert self.type in temp_allow, "节点的类型不正确"
         # 数据库连接
         self.temp_db = temp_db
         # 日志
@@ -44,14 +44,14 @@ class node_base(abc.ABC):
             self.process()
             self.write()
         except Exception as me:
-            self.LOG.error(me)
+            self.LOG.error(str(me))
         t = time.perf_counter() - t
         self.LOG.info("计算耗时为" + str(t) + "s")
         self.release()
         self.LOG.info("已释放资源")
         self.update(data_size)
         self.LOG.info("已更新状态")
-        self.LOG.info("------------" + self.name + "计算结束------------")
+        self.LOG.info("计算结束")
         return self.name
 
     @abc.abstractmethod

@@ -1,8 +1,7 @@
-import toml
 import socket
 import time
 import datetime
-from sync.node.base import node_base  # 用于类型标注
+from node.base import node_base  # 用于类型标注
 from general.config import SYNC_CONFIG
 from general.logger import node_logger
 from concurrent.futures import ThreadPoolExecutor, as_completed

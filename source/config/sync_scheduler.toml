@@ -6,3 +6,21 @@ socket_ip = "localhost"
 socket_port = 10089
 # 系统数据库同步速率上限定义，单位Mb/s
 max_node_flow_cap = 100
+# 系统默认请求头，系统默认为1年，如若出现更新失败请更新请求头
+[request_head]
+Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+Accept-Encoding = "gzip, deflate, br, zstd"
+Accept-Language = "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6"
+Connection = "keep-alive"
+Cookie = "bid=e74c1ae2-d290-46a8-bccf-c06c8d558dbb; Hm_lvt_0febd9e3cacb3f627ddac64d52caac39=1729498071; HEYFORM_BROWSER_ID=Ew9m7YsOXP5G; _streamlit_xsrf=2|ebc744d1|bb8d1869caf64c6477fd00d517a7debf|1731309113; ajs_anonymous_id=17eb67e2-e969-450e-93c8-e607e5759797; locale=zh-cn; HEYFORM_SESSION=Mzxeys18qXbVRhpNf1Z3VyW57LYWSIiNXUhv%2BRv4JJE.Di5HifrapTjET05GolMBxX9BEBNMCeh8ZDdTWl1YNRnUlVWl54zMd9H5hWXRXRqdLesxBAFv6el0GVoSdJ8S; HEYFORM_LOGGED_IN=true"
+DNT = "1"
+Host = "localhost:10087"
+If-None-Match = """W/"1fc-sYvWt5lSMMG17wxnsbITFiHWWyQ"""
+Sec-Fetch-Dest = "document"
+Sec-Fetch-Mode = "navigate"
+Sec-Fetch-Site = "none"
+Sec-Fetch-User = "?1"
+Upgrade-Insecure-Requests = "1"
+User-Agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0"
+sec-ch-ua-mobile = "?0"
+sec-ch-ua-platform = "Windows"

@@ -18,30 +18,16 @@ class momgo_handler(logging.Handler):
         """
         try:
             msg = self.format(record)
+            temp_msg = msg.split(":")
+            level = temp_msg[0]
+            msg = ":".join(temp_msg[1:])
             self.collection.insert_one({ 
                 "时间": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                "等级": self.trans_level_to_name(self.level),
+                "等级": level,
                 "消息": msg
                 })
         except Exception:
             self.handleError(record)
-    
-    @staticmethod
-    def trans_level_to_name(self_lavel: int) -> str:
-        if self_lavel == 0:
-            return "notset"
-        elif self_lavel == 10:
-            return "debug"
-        elif self_lavel == 20:
-            return "info"
-        elif self_lavel == 30:
-            return "warning"
-        elif self_lavel == 40:
-            return "error"
-        elif self_lavel == 50:
-            return "critical"
-        else:
-            return ""
 
 def node_logger(name: str, level:int = logging.DEBUG) -> logging.Logger:
     '''获取日志记录器'''
@@ -57,5 +43,7 @@ def node_logger(name: str, level:int = logging.DEBUG) -> logging.Logger:
     # 设置log的mongo日志输出
     mongoio = momgo_handler(name)
     mongoio.setLevel(level)
+    formatter = logging.Formatter('%(levelname)s:%(message)s')
+    mongoio.setFormatter(formatter)
     LOG.addHandler(mongoio)
     return LOG

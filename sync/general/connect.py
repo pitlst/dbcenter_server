@@ -4,7 +4,6 @@ from general.config import CONNECT_CONFIG
 from urllib.parse import quote_plus as urlquote
 
 
-
 # 继承Exception自定义异常，用于在处理异常时筛选
 class connect_error(Exception):
      def __init__(self, msg) -> None:
@@ -25,13 +24,17 @@ class database_connect:
             if temp["type"] in ["oracle", "sqlserver", "mysql", "pgsql"]:
                 pass
             elif temp["type"] == "mongo":
-                uri = "mongodb://%s:%s@%s" % (temp["user"]), urlquote(temp["password"]), temp["ip"] + ":" + str(temp["port"])
-                self.nosql_dict[ch] = pymongo.MongoClient(uri)
+                if temp["user"] != "" and temp["password"] != "":
+                    url = "mongodb://" + temp["user"] + ":" + urlquote(temp["password"]) + "@" + temp["ip"] + ":" + str(temp["port"])
+                else:
+                    url = "mongodb://" + temp["ip"] + ":" + str(temp["port"])
+                self.nosql_dict[ch] = pymongo.MongoClient(url)
             else:
                 raise connect_error("不支持的数据库类型：" + temp["type"])
         # 连接关系型数据库并保存引擎
         for ch in CONNECT_CONFIG:
             temp = CONNECT_CONFIG[ch]
+            print(temp)
             if temp["type"] == "oracle":
                 connect_str = "oracle+cx_oracle://" + temp["user"] + ":" + urlquote(temp["password"]) + "@" + temp["ip"] + ":" + str(temp["port"]) + "/?service_name=" + temp["mode"]
                 self.engine_dict[ch] = sqlalchemy.create_engine(connect_str)
