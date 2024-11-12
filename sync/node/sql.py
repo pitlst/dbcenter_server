@@ -1,7 +1,10 @@
+import os
 import pandas as pd
 import sqlalchemy as sqla
 from node.base import node_base
 from general.connect import db_engine
+
+SQL_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "source", "sql")
 
 class sql_node(node_base):
     '''
@@ -19,7 +22,7 @@ class sql_node(node_base):
         self.source_connect = self.temp_db.get_sql(self.source["connect"])
         self.target_connect = self.temp_db.get_sql(self.target["connect"])
         if self.type == "sql_sync":
-            with open(self.source["sql"], 'r', encoding='utf8') as file:
+            with open(os.path.join(SQL_PATH, self.source["sql"]), 'r', encoding='utf8') as file:
                 # 确保输入没有参数匹配全是字符串
                 self.source_sql = sqla.text(file.read())
             self.target_name = self.target["table"]

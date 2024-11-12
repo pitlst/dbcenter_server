@@ -1,17 +1,5 @@
 [
     {
-        "name": "访客系统_测试表单填报",
-        "next_name": [],
-        "type": "api_table",
-        "source": {
-            "url": "http://18.0.163.64:10087/export/submissions?formId=Qgu8qFOV"
-        },
-        "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_api_test"
-        }
-    },
-    {
         "name": "shr人员信息同步",
         "next_name": [],
         "type": "sql_sync",
@@ -385,7 +373,7 @@
         },
         "target": {
             "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_shop_exeecution_material_preparation_technology_unit_process"
+            "table": "ods_shop_exeecution_material_preparation_technology_up"
         }
     },
     {
@@ -398,7 +386,7 @@
         },
         "target": {
             "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_shop_exeecution_material_preparation_technology_unit_class"
+            "table": "ods_shop_exeecution_material_preparation_technology_uc"
         }
     },
     {
@@ -658,7 +646,7 @@
         },
         "target": {
             "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_design_change_execution_material_preparation_technology_unit"
+            "table": "ods_design_change_execution_material_preparation_technology_u"
         }
     },
     {

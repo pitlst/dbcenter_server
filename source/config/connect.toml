@@ -35,7 +35,7 @@ user = "cheakf"
 password = "Swq8855830."
 mode = "dataframe_flow_v2"
 
-["EAS"]
+[EAS]
 type = "oracle"
 ip = "172.18.1.121"
 port = 1521
