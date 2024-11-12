@@ -780,11 +780,11 @@
     },
     {
         "name": "邓芳用-CT_BCP_PROSTDTIME",
-        "type": "sql_sync",
+        "type": "tabel_sync",
         "next_name": [],
         "source": {
             "connect": "EAS",
-            "sql": "dengfang/CT_BCP_PROSTDTIME.sql"
+            "table": "CT_BCP_PROSTDTIME"
         },
         "target": {
             "connect": "数据处理服务关系表存储-同步用",
@@ -793,11 +793,11 @@
     },
     {
         "name": "邓芳用-CT_BCP_PROSTDTIMEENTRY",
-        "type": "sql_sync",
+        "type": "tabel_sync",
         "next_name": [],
         "source": {
             "connect": "EAS",
-            "sql": "dengfang/CT_BCP_PROSTDTIMEENTRY.sql"
+            "table": "CT_BCP_PROSTDTIMEENTRY"
         },
         "target": {
             "connect": "数据处理服务关系表存储-同步用",
@@ -806,11 +806,11 @@
     },
     {
         "name": "邓芳用-CT_BCP_PROSTDTIMEOPENTRYS",
-        "type": "sql_sync",
+        "type": "tabel_sync",
         "next_name": [],
         "source": {
             "connect": "EAS",
-            "sql": "dengfang/CT_BCP_PROSTDTIMEOPENTRYS.sql"
+            "table": "CT_BCP_PROSTDTIMEOPENTRYS"
         },
         "target": {
             "connect": "数据处理服务关系表存储-同步用",
@@ -845,11 +845,11 @@
     },
     {
         "name": "邓芳用-T_MM_Operation",
-        "type": "sql_sync",
+        "type": "tabel_sync",
         "next_name": [],
         "source": {
             "connect": "EAS",
-            "sql": "dengfang/T_MM_Operation.sql"
+            "table": "T_MM_Operation"
         },
         "target": {
             "connect": "数据处理服务关系表存储-同步用",
@@ -858,11 +858,11 @@
     },
     {
         "name": "邓芳用-T_MM_WorkCenter",
-        "type": "sql_sync",
+        "type": "tabel_sync",
         "next_name": [],
         "source": {
             "connect": "EAS",
-            "sql": "dengfang/T_MM_WorkCenter.sql"
+            "table": "T_MM_WorkCenter"
         },
         "target": {
             "connect": "数据处理服务关系表存储-同步用",
@@ -871,11 +871,11 @@
     },
     {
         "name": "邓芳用-T_ORG_CostCenter",
-        "type": "sql_sync",
+        "type": "tabel_sync",
         "next_name": [],
         "source": {
             "connect": "EAS",
-            "sql": "dengfang/T_ORG_CostCenter.sql"
+            "table": "T_ORG_CostCenter"
         },
         "target": {
             "connect": "数据处理服务关系表存储-同步用",
@@ -884,11 +884,11 @@
     },
     {
         "name": "邓芳用-T_PRO_ProjectJCH",
-        "type": "sql_sync",
+        "type": "tabel_sync",
         "next_name": [],
         "source": {
             "connect": "EAS",
-            "sql": "dengfang/T_PRO_ProjectJCH.sql"
+            "table": "T_PRO_ProjectJCH"
         },
         "target": {
             "connect": "数据处理服务关系表存储-同步用",
@@ -897,11 +897,11 @@
     },
     {
         "name": "邓芳用-T_MM_project",
-        "type": "sql_sync",
+        "type": "tabel_sync",
         "next_name": [],
         "source": {
             "connect": "EAS",
-            "sql": "dengfang/T_MM_project.sql"
+            "table": "T_MM_project"
         },
         "target": {
             "connect": "数据处理服务关系表存储-同步用",
@@ -910,11 +910,11 @@
     },
     {
         "name": "邓芳用-tk_crrc_metro_zbdy",
-        "type": "sql_sync",
+        "type": "tabel_sync",
         "next_name": [],
         "source": {
             "connect": "金蝶云苍穹-正式库",
-            "sql": "dengfang/tk_crrc_metro_zbdy.sql"
+            "table": "tk_crrc_metro_zbdy"
         },
         "target": {
             "connect": "数据处理服务关系表存储-同步用",
@@ -923,11 +923,11 @@
     },
     {
         "name": "邓芳用-tk_crrc_org_structure",
-        "type": "sql_sync",
+        "type": "tabel_sync",
         "next_name": [],
         "source": {
             "connect": "金蝶云苍穹-正式库",
-            "sql": "dengfang/tk_crrc_org_structure.sql"
+            "table": "tk_crrc_org_structure"
         },
         "target": {
             "connect": "数据处理服务关系表存储-同步用",
@@ -936,11 +936,11 @@
     },
     {
         "name": "邓芳用-T_ORG_Storage",
-        "type": "sql_sync",
+        "type": "tabel_sync",
         "next_name": [],
         "source": {
             "connect": "EAS",
-            "sql": "dengfang/T_ORG_Storage.sql"
+            "table": "T_ORG_Storage"
         },
         "target": {
             "connect": "数据处理服务关系表存储-同步用",
@@ -949,11 +949,11 @@
     },
     {
         "name": "邓芳用-T_MM_TrackNumber",
-        "type": "sql_sync",
+        "type": "tabel_sync",
         "next_name": [],
         "source": {
             "connect": "EAS",
-            "sql": "dengfang/T_MM_TrackNumber.sql"
+            "table": "T_MM_TrackNumber"
         },
         "target": {
             "connect": "数据处理服务关系表存储-同步用",
@@ -975,11 +975,11 @@
     },
     {
         "name": "邓芳用-tk_crrc_gxrwxf",
-        "type": "sql_sync",
+        "type": "tabel_sync",
         "next_name": [],
         "source": {
             "connect": "金蝶云苍穹-正式库",
-            "sql": "dengfang/tk_crrc_gxrwxf.sql"
+            "table": "tk_crrc_gxrwxf"
         },
         "target": {
             "connect": "数据处理服务关系表存储-同步用",
@@ -988,11 +988,11 @@
     },
     {
         "name": "邓芳用-tk_crrc_dispatch",
-        "type": "sql_sync",
+        "type": "tabel_sync",
         "next_name": [],
         "source": {
             "connect": "金蝶云苍穹-正式库",
-            "sql": "dengfang/tk_crrc_dispatch.sql"
+            "table": "tk_crrc_dispatch"
         },
         "target": {
             "connect": "数据处理服务关系表存储-同步用",
@@ -1001,11 +1001,11 @@
     },
     {
         "name": "邓芳用-tk_crrc_entry_dispatch",
-        "type": "sql_sync",
+        "type": "tabel_sync",
         "next_name": [],
         "source": {
             "connect": "金蝶云苍穹-正式库",
-            "sql": "dengfang/tk_crrc_entry_dispatch.sql"
+            "table": "tk_crrc_entry_dispatch"
         },
         "target": {
             "connect": "数据处理服务关系表存储-同步用",
@@ -1014,11 +1014,11 @@
     },
     {
         "name": "邓芳用-tk_crrc_exc_user",
-        "type": "sql_sync",
+        "type": "tabel_sync",
         "next_name": [],
         "source": {
             "connect": "金蝶云苍穹-正式库",
-            "sql": "dengfang/tk_crrc_exc_user.sql"
+            "table": "tk_crrc_exc_user"
         },
         "target": {
             "connect": "数据处理服务关系表存储-同步用",
@@ -1027,11 +1027,11 @@
     },
     {
         "name": "邓芳用-tk_crrc_metro_bzrydy_fl",
-        "type": "sql_sync",
+        "type": "tabel_sync",
         "next_name": [],
         "source": {
             "connect": "金蝶云苍穹-正式库",
-            "sql": "dengfang/tk_crrc_metro_bzrydy_fl.sql"
+            "table": "tk_crrc_metro_bzrydy_fl"
         },
         "target": {
             "connect": "数据处理服务关系表存储-同步用",
@@ -1040,11 +1040,11 @@
     },
     {
         "name": "邓芳用-tk_crrc_metro_groupclass",
-        "type": "sql_sync",
+        "type": "tabel_sync",
         "next_name": [],
         "source": {
             "connect": "金蝶云苍穹-正式库",
-            "sql": "dengfang/tk_crrc_metro_groupclass.sql"
+            "table": "tk_crrc_metro_groupclass"
         },
         "target": {
             "connect": "数据处理服务关系表存储-同步用",
