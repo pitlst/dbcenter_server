@@ -1,7 +1,7 @@
 import os
 import toml
 import pymongo
-import psycopg2
+from sqlalchemy import create_engine
 import datetime
 import logging
 import pandas as pd
@@ -11,10 +11,14 @@ from urllib.parse import quote_plus as urlquote
 
 config = toml.load(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "source", "config", "connect.toml"))
 # mongo
-uri = "mongodb://%s:%s@%s" % (urlquote(config["数据处理服务文档存储"]["user"]), urlquote(config["数据处理服务文档存储"]["password"]), config["数据处理服务文档存储"]["ip"] + ":" + str(config["数据处理服务文档存储"]["port"]))
-mongo_client = pymongo.MongoClient(uri)
+if config["数据处理服务文档存储"]["user"] != "" and config["数据处理服务文档存储"]["password"] != "":
+    url = "mongodb://" + config["数据处理服务文档存储"]["user"] + ":" + urlquote(config["数据处理服务文档存储"]["password"]) + "@" + config["数据处理服务文档存储"]["ip"] + ":" + str(config["数据处理服务文档存储"]["port"])
+else:
+    url = "mongodb://" + config["数据处理服务文档存储"]["ip"] + ":" + str(config["数据处理服务文档存储"]["port"])
+mongo_client = pymongo.MongoClient(url)
 # pgsql
-pgsql_client = psycopg2.connect(database=str(config["数据处理服务关系表存储"]["mode"]), user=config["数据处理服务关系表存储"]["user"], password=config["数据处理服务关系表存储"]["password"], host=config["数据处理服务关系表存储"]["ip"], port=str(config["数据处理服务关系表存储"]["port"]))
+connect_str = "postgresql://" + config["数据处理服务关系表存储-web用"]["user"] + ":" + urlquote(config["数据处理服务关系表存储-web用"]["password"]) + "@" + config["数据处理服务关系表存储-web用"]["ip"] + ":" + str(config["数据处理服务关系表存储-web用"]["port"]) + "/" + config["数据处理服务关系表存储-web用"]["mode"]
+pgsql_client = create_engine(connect_str)
 
 
 class momgo_handler(logging.Handler):
@@ -77,15 +81,22 @@ def node_logger(name: str, level: int = logging.DEBUG) -> logging.Logger:
     return LOG
 
 
+def get_table(table_name: str):
+    """获取并处理数据库中的表"""
+    df = pd.read_sql_table(table_name, pgsql_client, chunksize=10000)
+    output = BytesIO()
+    writer = pd.ExcelWriter(output, engine='openpyxl')
+    df.to_excel(writer, sheet_name="sheet1")
+    return output
+
 def get_file(path: str) -> BytesIO:
-    # 将文件转换为字节流
-    df = pd.read_excel(path, sheet_name=None, header=0, index_col=0)
+    """将文件转换为字节流"""
+    df = pd.read_excel(path,sheet_name=None,header=0,index_col=0)
     excel_keys = list(df.keys())
     output = BytesIO()
     writer = pd.ExcelWriter(output, engine='openpyxl')
     for k in range(len(excel_keys)):
-        df = pd.read_excel(
-            path, sheet_name=excel_keys[k], header=0, index_col=0)
+        df = pd.read_excel(path,sheet_name=excel_keys[k],header=0,index_col=0)
         df.to_excel(writer, sheet_name=excel_keys[k])
     writer.close()
     return output

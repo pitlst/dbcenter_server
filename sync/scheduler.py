@@ -25,9 +25,17 @@ class scheduler:
     '''调度器，用于调度sql节点的执行'''
     def __init__(self, node_list: list[node_base]):
         self.node_list = node_list
+        self.LOG = node_logger("scheduler")
+        # 检查节点名称是否重复
+        temp = set()
+        for ch in self.node_list:
+            if ch.name not in temp:
+                temp.add(ch.name)
+            else:
+                self.LOG.error("服务端已开始监听，正在等待客户端连接...")
+                raise ValueError("节点名称重复")
         self.socket_server = socket.socket()
         self.socket_server.bind((SOCKET_IP, SOCKET_PORT))
-        self.LOG = node_logger("scheduler")
         if SOCKET_DEBUG:
             self.LOG.info("服务端已开始监听，正在等待客户端连接...")
             try:

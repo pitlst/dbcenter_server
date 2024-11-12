@@ -1,7 +1,7 @@
 [
     {
         "name": "访客系统_测试表单填报",
-        "next_name": [ ],
+        "next_name": [],
         "type": "api_table",
         "source": {
             "url": "http://18.0.163.64:10087/export/submissions?formId=Qgu8qFOV"
@@ -9,6 +9,1046 @@
         "target": {
             "connect": "数据处理服务关系表存储-同步用",
             "table": "ods_api_test"
+        }
+    },
+    {
+        "name": "shr人员信息同步",
+        "next_name": [],
+        "type": "sql_sync",
+        "source": {
+            "connect": "SHR",
+            "sql": "shr_staff.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_shr_staff"
+        }
+    },
+    {
+        "name": "考勤人员信息同步",
+        "next_name": [],
+        "type": "sql_sync",
+        "source": {
+            "connect": "考勤系统",
+            "sql": "kq_staff.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_kq_staff"
+        }
+    },
+    {
+        "name": "城轨通讯录同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "生产辅助系统",
+            "sql": "phonebook_staff.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_phonebook_staff"
+        }
+    },
+    {
+        "name": "mes在岗情况同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "MES",
+            "sql": "mes_staff.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_mes_staff"
+        }
+    },
+    {
+        "name": "项目基础数据信息同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "project_basic.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_project_basic"
+        }
+    },
+    {
+        "name": "全员型改善同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "ameliorate.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_ameliorate"
+        }
+    },
+    {
+        "name": "售后服务段业联未关闭统计同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "Industry_association_closure_statistics.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_tk_crrc_mesjob"
+        }
+    },
+    {
+        "name": "业联执行关闭同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "Industry_association.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_industry_association"
+        }
+    },
+    {
+        "name": "派工单同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "MES",
+            "sql": "dispatch_list.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_dispatch_list"
+        }
+    },
+    {
+        "name": "调试任务同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "MES",
+            "sql": "debug_tasks.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_debug_tasks"
+        }
+    },
+    {
+        "name": "交车轨道负责人同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "delivery_train.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_delivery_train"
+        }
+    },
+    {
+        "name": "异常同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "MES",
+            "sql": "abnormal.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_abnormal"
+        }
+    },
+    {
+        "name": "异常类型同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "MES",
+            "sql": "abnormal_type.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_abnormal_type"
+        }
+    },
+    {
+        "name": "考勤节假日同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "考勤系统",
+            "sql": "kq_scheduling_holiday.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_kq_scheduling_holiday"
+        }
+    },
+    {
+        "name": "考勤类型同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "考勤系统",
+            "sql": "kq_type.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_kq_type"
+        }
+    },
+    {
+        "name": "考勤时间计算后同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "考勤系统",
+            "sql": "kq_time.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_kq_time"
+        }
+    },
+    {
+        "name": "工时同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "EAS",
+            "sql": "worktime.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_work_time"
+        }
+    },
+    {
+        "name": "工时人员筛选同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "worktime_fillter.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_work_time_fillter"
+        }
+    },
+    {
+        "name": "定额外工时同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "生产辅助系统",
+            "sql": "worktime_temporary.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_work_time_temp"
+        }
+    },
+    {
+        "name": "线下工时同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "worktime_offline.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_work_time_offline"
+        }
+    },
+    {
+        "name": "差旅信息同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "EAS",
+            "sql": "travel.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_travel"
+        }
+    },
+    {
+        "name": "差旅筛选单据同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "travel_fillter.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_travel_fillter"
+        }
+    },
+    {
+        "name": "标杆产品用工量同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "product_labor.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_product_labor"
+        }
+    },
+    {
+        "name": "业联-基础资料-班组同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/class_group.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_class_group"
+        }
+    },
+    {
+        "name": "业联-工艺流程同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/technological_process.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_technological_process"
+        }
+    },
+    {
+        "name": "业联-工艺流程-工艺变更分录同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/technological_process_change.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_technological_process_change"
+        }
+    },
+    {
+        "name": "业联-工艺流程-任务流程分录同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/technological_process_flow.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_technological_process_flow"
+        }
+    },
+    {
+        "name": "业联-设计变更同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/design_change.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_design_change"
+        }
+    },
+    {
+        "name": "业联-车间执行单备料工艺工序同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/shop_exeecution_material_preparation_technology_unit_process.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_shop_exeecution_material_preparation_technology_unit_process"
+        }
+    },
+    {
+        "name": "业联-车间执行单备料工艺班组同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/shop_exeecution_material_preparation_technology_unit_class.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_shop_exeecution_material_preparation_technology_unit_class"
+        }
+    },
+    {
+        "name": "业联-车间执行单备料工艺同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/shop_exeecution_material_preparation_technology.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_shop_exeecution_material_preparation_technology"
+        }
+    },
+    {
+        "name": "业联-车间执行单任务项点分录同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/shop_execution_task_item_point_unit.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_shop_execution_task_item_point_unit"
+        }
+    },
+    {
+        "name": "业联-车间执行单任务项点同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/shop_execution_task_item_point.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_shop_execution_task_item_point"
+        }
+    },
+    {
+        "name": "业联-车间执行单返工物料分录同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/shop_execution_reworked_material_unit.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_shop_execution_reworked_material_unit"
+        }
+    },
+    {
+        "name": "业联-车间执行单返工物料同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/shop_execution_reworked_material.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_shop_execution_reworked_material"
+        }
+    },
+    {
+        "name": "业联-车间执行单抄送单位同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/shop_execution_copy_delivery_unit.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_shop_execution_copy_delivery_unit"
+        }
+    },
+    {
+        "name": "业联-车间执行单主送单位同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/shop_execution_main_delivery_unit.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_shop_execution_main_delivery_unit"
+        }
+    },
+    {
+        "name": "业联-车间执行单经办同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/shop_execution_handle.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_shop_execution_handle"
+        }
+    },
+    {
+        "name": "业联-车间执行单审核同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/shop_execution_audit.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_shop_execution_audit"
+        }
+    },
+    {
+        "name": "业联-车间执行单同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/shop_execution.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_shop_execution"
+        }
+    },
+    {
+        "name": "业联-业务联系书抄送单位同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/business_connection_copy_delivery_unit.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_business_connection_copy_delivery_unit"
+        }
+    },
+    {
+        "name": "业联-业务联系书主送单位同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/business_connection_main_delivery_unit.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_business_connection_main_delivery_unit"
+        }
+    },
+    {
+        "name": "业联-业务联系书同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/business_connection.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_business_connection"
+        }
+    },
+    {
+        "name": "业联-班组分录同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/class_group_entry.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_class_group_entry"
+        }
+    },
+    {
+        "name": "业联-设计变更分录同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/design_change_entry.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_design_change_entry"
+        }
+    },
+    {
+        "name": "业联-设计变更执行同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/design_change_execution.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_design_change_execution"
+        }
+    },
+    {
+        "name": "业联-设计变更执行返工工艺同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/design_change_execution_reworked_material.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_design_change_execution_reworked_material"
+        }
+    },
+    {
+        "name": "业联-设计变更执行返工工艺分录同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/design_change_execution_reworked_material_unit.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_design_change_execution_reworked_material_unit"
+        }
+    },
+    {
+        "name": "业联-设计变更执行备料工艺同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/design_change_execution_material_preparation_technology.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_design_change_execution_material_preparation_technology"
+        }
+    },
+    {
+        "name": "业联-设计变更执行备料工艺分录同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/design_change_execution_material_preparation_technology_unit.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_design_change_execution_material_preparation_technology_unit"
+        }
+    },
+    {
+        "name": "业联-设计变更执行物料变更同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/design_change_execution_material_change.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_design_change_execution_material_change"
+        }
+    },
+    {
+        "name": "业联-设计变更执行主送单位同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/design_change_execution_main_delivery_unit.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_design_change_execution_main_delivery_unit"
+        }
+    },
+    {
+        "name": "业联-设计变更执行抄送单位同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/design_change_execution_copy_delivery_unit.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_design_change_execution_copy_delivery_unit"
+        }
+    },
+    {
+        "name": "业联-设计变更执行经办同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/design_change_execution_handle.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_design_change_execution_handle"
+        }
+    },
+    {
+        "name": "业联-设计变更执行审核同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/design_change_execution_audit.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_design_change_execution_audit"
+        }
+    },
+    {
+        "name": "业联-设计变更执行文档变更同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/design_change_execution_document_change.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_design_change_execution_document_change"
+        }
+    },
+    {
+        "name": "业联-设计变更执行文档变更分录同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/design_change_execution_document_change_unit.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_design_change_execution_document_change_unit"
+        }
+    },
+    {
+        "name": "业联-设计变更执行文档变更内容同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/design_change_execution_change_content.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_design_change_execution_change_content"
+        }
+    },
+    {
+        "name": "自主型改善同步",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "autonomous_ameliorate.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_autonomous_ameliorate"
+        }
+    },
+    {
+        "name": "邓芳用-CT_BCP_PROSTDTIME",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "EAS",
+            "sql": "dengfang/CT_BCP_PROSTDTIME.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_ct_bcp_prostdtime"
+        }
+    },
+    {
+        "name": "邓芳用-CT_BCP_PROSTDTIMEENTRY",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "EAS",
+            "sql": "dengfang/CT_BCP_PROSTDTIMEENTRY.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_ct_bcp_prostdtimeentry"
+        }
+    },
+    {
+        "name": "邓芳用-CT_BCP_PROSTDTIMEOPENTRYS",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "EAS",
+            "sql": "dengfang/CT_BCP_PROSTDTIMEOPENTRYS.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_ct_bcp_prostdtimeopentrys"
+        }
+    },
+    {
+        "name": "唐渝用-alignment_file",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "MES",
+            "sql": "tangyu/alignment_file.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_alignment_file"
+        }
+    },
+    {
+        "name": "唐渝用-同步alignment_file至机车",
+        "type": "sql_sync",
+        "next_name": [ "唐渝用-alignment_file" ],
+        "source": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "sql": "tangyu/ods_alignment_file.sql"
+        },
+        "target": {
+            "connect": "机车数据库",
+            "table": "ods_alignment_file"
+        }
+    },
+    {
+        "name": "邓芳用-T_MM_Operation",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "EAS",
+            "sql": "dengfang/T_MM_Operation.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_t_mm_operation"
+        }
+    },
+    {
+        "name": "邓芳用-T_MM_WorkCenter",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "EAS",
+            "sql": "dengfang/T_MM_WorkCenter.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_t_mm_workcenter"
+        }
+    },
+    {
+        "name": "邓芳用-T_ORG_CostCenter",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "EAS",
+            "sql": "dengfang/T_ORG_CostCenter.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_t_org_costcenter"
+        }
+    },
+    {
+        "name": "邓芳用-T_PRO_ProjectJCH",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "EAS",
+            "sql": "dengfang/T_PRO_ProjectJCH.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_t_pro_projectjch"
+        }
+    },
+    {
+        "name": "邓芳用-T_MM_project",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "EAS",
+            "sql": "dengfang/T_MM_project.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_t_mm_project"
+        }
+    },
+    {
+        "name": "邓芳用-tk_crrc_metro_zbdy",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "dengfang/tk_crrc_metro_zbdy.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_tk_crrc_metro_zbdy"
+        }
+    },
+    {
+        "name": "邓芳用-tk_crrc_org_structure",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "dengfang/tk_crrc_org_structure.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_tk_crrc_org_structure"
+        }
+    },
+    {
+        "name": "邓芳用-T_ORG_Storage",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "EAS",
+            "sql": "dengfang/T_ORG_Storage.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_t_org_storage"
+        }
+    },
+    {
+        "name": "邓芳用-T_MM_TrackNumber",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "EAS",
+            "sql": "dengfang/T_MM_TrackNumber.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_t_mm_tracknumber"
+        }
+    },
+    {
+        "name": "邓芳用-dwd_df_work_time",
+        "type": "sql_sync",
+        "next_name": [ "邓芳用-ct_bcp_prostdtime", "邓芳用-t_mm_project", "邓芳用-t_pro_projectjch", "邓芳用-ct_bcp_prostdtimeentry", "邓芳用-ct_bcp_prostdtimeopentrys", "邓芳用-t_mm_workcenter", "邓芳用-t_mm_operation", "邓芳用-t_mm_tracknumber" ],
+        "source": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "sql": "dengfang/dwd_df_work_time.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "dwd_df_work_time"
+        }
+    },
+    {
+        "name": "邓芳用-tk_crrc_gxrwxf",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "dengfang/tk_crrc_gxrwxf.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_tk_crrc_gxrwxf"
+        }
+    },
+    {
+        "name": "邓芳用-tk_crrc_dispatch",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "dengfang/tk_crrc_dispatch.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_tk_crrc_dispatch"
+        }
+    },
+    {
+        "name": "邓芳用-tk_crrc_entry_dispatch",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "dengfang/tk_crrc_entry_dispatch.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_tk_crrc_entry_dispatch"
+        }
+    },
+    {
+        "name": "邓芳用-tk_crrc_exc_user",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "dengfang/tk_crrc_exc_user.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_tk_crrc_exc_user"
+        }
+    },
+    {
+        "name": "邓芳用-tk_crrc_metro_bzrydy_fl",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "dengfang/tk_crrc_metro_bzrydy_fl.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_tk_crrc_metro_bzrydy_fl"
+        }
+    },
+    {
+        "name": "邓芳用-tk_crrc_metro_groupclass",
+        "type": "sql_sync",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "dengfang/tk_crrc_metro_groupclass.sql"
+        },
+        "target": {
+            "connect": "数据处理服务关系表存储-同步用",
+            "table": "ods_tk_crrc_metro_groupclass"
         }
     }
 ]

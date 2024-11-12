@@ -1,0 +1,1 @@
+select * from crrc_sys.t_SEC_User

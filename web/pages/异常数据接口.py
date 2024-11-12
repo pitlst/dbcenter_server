@@ -1,13 +1,12 @@
-import os
-import pandas as pd
-from io import BytesIO
 import streamlit as st
-from general import mysql_client
+from general import get_table
 
-
-@st.cache_data
+@st.cache_data(ttl=86400)
 def get_data() -> list:
     data = []
+    data.append(get_table("dm_abnormal"))
+    data.append(get_table("dm_abnormal_zl_department"))
+    data.append(get_table("dm_abnormal_zl_project"))
     return data
 
 

@@ -86,8 +86,7 @@ if st.button("开始检查"):
             df2 = pd.read_excel(uploaded_file, sheet_name=0, dtype=str)
             temp_dataframe = process(df1, df2)
             now_str = datetime.datetime.now().strftime("%Y-%d-%m--%H-%M-%S")
-            path = os.path.join(os.path.dirname(__file__),
-                                "../../", "source", "cache", now_str+".xlsx")
+            path = os.path.join(os.path.dirname(__file__),"../../", "source", "cache", now_str+".xlsx")
             temp_dataframe.to_excel(path, sheet_name="sheet1", index=False)
             data = get_file(path).getvalue()
             st.download_button('下载检查出来的文件原因', data=data, file_name=now_str+".xlsx", mime="application/vnd.ms-excel")

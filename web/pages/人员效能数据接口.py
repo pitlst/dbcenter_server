@@ -1,9 +1,15 @@
 import streamlit as st
-from general import mysql_client
+from general import get_table
 
-@st.cache_data
+@st.cache_data(ttl=86400)
 def get_data() -> list:
     data = []
+    data.append(get_table("dm_kq_time"))
+    data.append(get_table("dm_work_time_group"))
+    data.append(get_table("dm_work_time_department"))
+    data.append(get_table("dm_product_labor_month"))
+    data.append(get_table("dm_product_labor_quarter"))
+    data.append(get_table("dm_product_labor_year"))
     return data
 
 st.title("人员效能数据下载")
