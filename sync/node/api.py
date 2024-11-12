@@ -53,7 +53,8 @@ class heyform_node(node_base):
     def write(self) -> None:
         if self.type == "api_table":
             self.LOG.info("正在写入:" + self.target["connect"] + "的" + self.target["table"])
-            self.data.to_sql(name=self.target["table"], con=self.target_connect,index=False, if_exists='replace', chunksize=1000)
+            schema = self.target["schema"] if "schema" in self.target.keys() else None
+            self.data.to_sql(name=self.target["table"], con=self.target_connect, schema=schema, index=False, if_exists='replace', chunksize=1000)
         elif self.type == "api_json":
             self.LOG.info("正在写入:" + self.target["database"] + "的" + self.target["collection"])
             self.target_connect[self.target["collection"]].insert_many(self.data)

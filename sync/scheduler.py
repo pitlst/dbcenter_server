@@ -19,6 +19,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 SOCKET_DEBUG = SYNC_CONFIG["socket_debug"]
 SOCKET_IP = SYNC_CONFIG["socket_ip"]
 SOCKET_PORT = SYNC_CONFIG["socket_port"]
+MIN_SYNC_INTERVAL = SYNC_CONFIG["min_sync_interval"]
 
 
 class scheduler:
@@ -43,17 +44,13 @@ class scheduler:
             except Exception as me:
                 self.LOG.error(me)
             self.LOG.info(f"接收到了客户端的连接，客户端的信息：{address}")
-    
-    def __del__(self):
-        self.conn.close()
-        self.socket_server.close()
 
     def run_node(self) -> None:
         '''真正执行节点的地方'''
         with ThreadPoolExecutor() as tpool:
             # 死循环，不退出
+            total_tasks = []
             while True:
-                total_tasks = []
                 run_node = self.get_node_run()
                 if len(run_node) == 0:
                     # 没任务运行就等10秒，不要让cpu一直卡在检查
@@ -63,8 +60,11 @@ class scheduler:
                     # 只有在本次获取的任务都执行完成后下一次执行才会开始
                     for ch in run_node:
                         total_tasks.append(tpool.submit(ch.run))
-                    for future in as_completed(total_tasks):
-                        self.notify(future.result())
+                    # 对于运行任务等待结果，未运行完就更新需要添加的任务
+                    for future in as_completed(total_tasks, timeout=MIN_SYNC_INTERVAL):
+                        name = future.result()
+                        self.notify(name)
+                        total_tasks.remove(future)
                 
     def get_node_run(self) -> list[node_base]:
         '''获取当前需要执行的节点'''

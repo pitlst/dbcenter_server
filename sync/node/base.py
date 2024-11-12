@@ -36,17 +36,17 @@ class node_base(abc.ABC):
 
     def run(self) -> str:
         self.LOG.info("开始计算")
-        t = time.perf_counter()
-        data_size = 0
         try:
+            t = time.perf_counter()
+            data_size = 0
             self.connect()
             data_size = self.read()
             self.process()
             self.write()
+            t = time.perf_counter() - t
+            self.LOG.info("计算耗时为" + str(t) + "s")
         except Exception as me:
             self.LOG.error(str(me))
-        t = time.perf_counter() - t
-        self.LOG.info("计算耗时为" + str(t) + "s")
         self.release()
         self.LOG.info("已释放资源")
         self.update(data_size)

@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-import sqlalchemy as sqla
+from sqlalchemy import text
 from node.base import node_base
 from general.connect import db_engine
 
@@ -24,36 +24,26 @@ class sql_node(node_base):
         if self.type == "sql_sync":
             with open(os.path.join(SQL_PATH, self.source["sql"]), 'r', encoding='utf8') as file:
                 # 确保输入没有参数匹配全是字符串
-                self.source_sql = sqla.text(file.read())
-            self.target_name = self.target["table"]
+                self.source_sql = text(file.read())
         elif self.type == "tabel_sync":
-            self.source_name = self.source["table"]
-            self.target_name = self.target["table"]
+            self.source_sql = text("select * from " + self.source["schema"] + "." + self.source["table"])
 
     def read(self) -> list[int]:
         if self.type == "sql_sync":
-            self.LOG.info("正在执行sql:" + self.source["sql"])
-            self.data = pd.read_sql_query(self.source_sql, self.source_connect)
+            self.LOG.info("正在执行sql:" + str(os.path.join(SQL_PATH, self.source["sql"])))
         elif self.type == "tabel_sync":
-            self.LOG.info("正在执行表同步，表名为:" + self.source_name)
-            self.data = pd.read_sql_table(self.source_name, self.source_connect)
+            self.LOG.info("正在执行sql:" + str(self.source_sql))
+        self.data = pd.read_sql_query(self.source_sql, self.source_connect)
         self.LOG.info("数据形状为: " + str(self.data.shape[0]) + "," + str(self.data.shape[1]))
         return self.get_data_size()
 
     def write(self) -> None:
-        self.LOG.info("正在写入表:" + self.target_name)
-        self.data.to_sql(name=self.target_name, con=self.target_connect,index=False, if_exists='replace', chunksize=1000)
+        self.LOG.info("正在写入表:" + self.target["table"])
+        schema = self.target["schema"] if "schema" in self.target.keys() else None
+        self.data.to_sql(name=self.target["table"], con=self.target_connect, schema=schema, index=False, if_exists='replace', chunksize=1000)
         
     def release(self) -> None:
         self.data = None
-        if self.type == "sql_sync":
-            self.source_sql = None
-            self.target_name = None
-        elif self.type == "tabel_sync":
-            self.source_name = None
-            self.target_name = None
-        self.source_connect.close()
-        self.target_connect.close()
         self.source_connect = None
         self.target_connect = None
 

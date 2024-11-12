@@ -1,8 +1,12 @@
 import pymongo
 import sqlalchemy
+from sqlalchemy import text
 from general.config import CONNECT_CONFIG
 from urllib.parse import quote_plus as urlquote
 
+'''
+注意，整表同步功能在EAS种有问题
+'''
 
 # 继承Exception自定义异常，用于在处理异常时筛选
 class connect_error(Exception):
@@ -36,25 +40,25 @@ class database_connect:
             temp = CONNECT_CONFIG[ch]
             if temp["type"] == "oracle":
                 connect_str = "oracle+cx_oracle://" + temp["user"] + ":" + urlquote(temp["password"]) + "@" + temp["ip"] + ":" + str(temp["port"]) + "/?service_name=" + temp["mode"]
-                self.engine_dict[ch] = sqlalchemy.create_engine(connect_str)
+                self.engine_dict[ch] = sqlalchemy.create_engine(connect_str, pool_size=20)
             elif temp["type"] == "sqlserver":
-                connect_str = "mssql+pymssql://" + temp["user"] + ":" + urlquote(temp["password"]) + "@" + temp["ip"] + ":" + str(temp["port"]) + "/" + temp["mode"]
-                self.engine_dict[ch] = sqlalchemy.create_engine(connect_str)
+                connect_str = "mssql+pyodbc://" + temp["user"] + ":" + urlquote(temp["password"]) + "@" + temp["ip"] + ":" + str(temp["port"]) + "/" + temp["mode"] + "?driver=ODBC+Driver+17+for+SQL+Server"
+                self.engine_dict[ch] = sqlalchemy.create_engine(connect_str, pool_size=20)
             elif temp["type"] == "mysql":
                 connect_str = "mysql+mysqldb://" + temp["user"] + ":" + urlquote(temp["password"]) + "@" + temp["ip"] + ":" + str(temp["port"]) + "/" + temp["mode"]
-                self.engine_dict[ch] = sqlalchemy.create_engine(connect_str)
+                self.engine_dict[ch] = sqlalchemy.create_engine(connect_str, pool_size=20)
             elif temp["type"] == "pgsql":
                 connect_str = "postgresql://" + temp["user"] + ":" + urlquote(temp["password"]) + "@" + temp["ip"] + ":" + str(temp["port"]) + "/" + temp["mode"]
-                self.engine_dict[ch] = sqlalchemy.create_engine(connect_str)
+                self.engine_dict[ch] = sqlalchemy.create_engine(connect_str, pool_size=20)
             elif temp["type"] == "mongo":
                 pass
             else:
                 raise connect_error("不支持的数据库类型：" + temp["type"])
         
     def get_sql(self, name: str) -> sqlalchemy.Connection:
-        temp_connect = self.engine_dict[name]
-        if not temp_connect is None:
-            return temp_connect.connect()
+        temp_engine = self.engine_dict[name]
+        if not temp_engine is None:
+            return temp_engine.connect()
         else:
             raise connect_error("获取了未知的连接:" + name)
     
@@ -64,6 +68,8 @@ class database_connect:
             return temp_connect
         else:
             raise connect_error("获取了未知的连接:" + name)
+        
+
         
 
 # 全局单例

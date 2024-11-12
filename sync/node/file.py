@@ -16,7 +16,6 @@ class table_read_node(node_base):
         self.target: dict = node_define["target"]
         self.data: pd.DataFrame|None = None
 
-        
     def connect(self) -> None:
         self.LOG.info("开始连接")
         self.target_connect = self.temp_db.get_sql(self.target["connect"])
@@ -32,11 +31,12 @@ class table_read_node(node_base):
 
     def write(self) -> None:
         self.LOG.info("正在写入:" + self.target["table"])
-        self.data.to_sql(name=self.target["table"], con=self.target_connect, index=False, if_exists='replace', chunksize=1000)
+        schema = self.target["schema"] if "schema" in self.target.keys() else None
+        self.data.to_sql(name=self.target["table"], con=self.target_connect, schema=schema, index=False, if_exists='replace', chunksize=1000)
         
     def release(self) -> None:
         self.data = None
-        self.target_connect.close()
+        self.target_connect = None
         
     def get_data_size(self) -> int:
         '''获取dataframe的内存占用,用于计算同步时间间隔'''

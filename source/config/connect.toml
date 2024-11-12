@@ -9,23 +9,41 @@ user = ""
 password = ""
 mode = "logger"
 
-["数据处理服务关系表存储-同步用"]
+["数据处理服务关系表存储-同步ods"]
 type = "pgsql"
 ip = "localhost"
 port = 5432
 user = "postgres"
-# password = "123456"
 password = "Swq8855830."
 mode = "sync_data"
+schema = "ods"
 
-["数据处理服务关系表存储-web用"]
+["数据处理服务关系表存储-同步dw"]
 type = "pgsql"
 ip = "localhost"
 port = 5432
 user = "postgres"
-# password = "123456"
+password = "Swq8855830."
+mode = "sync_data"
+schema = "dw"
+
+["数据处理服务关系表存储-同步dm"]
+type = "pgsql"
+ip = "localhost"
+port = 5432
+user = "postgres"
+password = "Swq8855830."
+mode = "sync_data"
+schema = "dm"
+
+["数据处理服务关系表存储-web"]
+type = "pgsql"
+ip = "localhost"
+port = 5432
+user = "postgres"
 password = "Swq8855830."
 mode = "web_data"
+schema = "public"
 
 ["数据仓库中转数据库"]
 type = "mysql"

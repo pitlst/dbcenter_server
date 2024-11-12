@@ -8,8 +8,8 @@
             "sql": "shr_staff.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_shr_staff"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "shr_staff"
         }
     },
     {
@@ -21,8 +21,8 @@
             "sql": "kq_staff.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_kq_staff"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "kq_staff"
         }
     },
     {
@@ -34,8 +34,8 @@
             "sql": "phonebook_staff.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_phonebook_staff"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "phonebook_staff"
         }
     },
     {
@@ -47,8 +47,8 @@
             "sql": "mes_staff.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_mes_staff"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "mes_staff"
         }
     },
     {
@@ -60,8 +60,8 @@
             "sql": "project_basic.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_project_basic"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "project_basic"
         }
     },
     {
@@ -73,8 +73,8 @@
             "sql": "ameliorate.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_ameliorate"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "ameliorate"
         }
     },
     {
@@ -86,8 +86,8 @@
             "sql": "Industry_association_closure_statistics.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_tk_crrc_mesjob"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "tk_crrc_mesjob"
         }
     },
     {
@@ -99,8 +99,8 @@
             "sql": "Industry_association.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_industry_association"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "industry_association"
         }
     },
     {
@@ -112,8 +112,8 @@
             "sql": "dispatch_list.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_dispatch_list"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "dispatch_list"
         }
     },
     {
@@ -125,8 +125,8 @@
             "sql": "debug_tasks.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_debug_tasks"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "debug_tasks"
         }
     },
     {
@@ -138,8 +138,8 @@
             "sql": "delivery_train.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_delivery_train"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "delivery_train"
         }
     },
     {
@@ -151,8 +151,8 @@
             "sql": "abnormal.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_abnormal"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "abnormal"
         }
     },
     {
@@ -164,8 +164,8 @@
             "sql": "abnormal_type.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_abnormal_type"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "abnormal_type"
         }
     },
     {
@@ -177,8 +177,8 @@
             "sql": "kq_scheduling_holiday.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_kq_scheduling_holiday"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "kq_scheduling_holiday"
         }
     },
     {
@@ -190,8 +190,8 @@
             "sql": "kq_type.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_kq_type"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "kq_type"
         }
     },
     {
@@ -203,8 +203,8 @@
             "sql": "kq_time.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_kq_time"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "kq_time"
         }
     },
     {
@@ -216,8 +216,8 @@
             "sql": "worktime.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_work_time"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "work_time"
         }
     },
     {
@@ -229,8 +229,8 @@
             "sql": "worktime_fillter.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_work_time_fillter"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "work_time_fillter"
         }
     },
     {
@@ -242,8 +242,8 @@
             "sql": "worktime_temporary.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_work_time_temp"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "work_time_temp"
         }
     },
     {
@@ -255,8 +255,8 @@
             "sql": "worktime_offline.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_work_time_offline"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "work_time_offline"
         }
     },
     {
@@ -268,8 +268,8 @@
             "sql": "travel.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_travel"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "travel"
         }
     },
     {
@@ -281,8 +281,8 @@
             "sql": "travel_fillter.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_travel_fillter"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "travel_fillter"
         }
     },
     {
@@ -294,8 +294,8 @@
             "sql": "product_labor.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_product_labor"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "product_labor"
         }
     },
     {
@@ -307,8 +307,8 @@
             "sql": "business_connection/class_group.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_class_group"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "class_group"
         }
     },
     {
@@ -320,8 +320,8 @@
             "sql": "business_connection/technological_process.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_technological_process"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "technological_process"
         }
     },
     {
@@ -333,8 +333,8 @@
             "sql": "business_connection/technological_process_change.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_technological_process_change"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "technological_process_change"
         }
     },
     {
@@ -346,8 +346,8 @@
             "sql": "business_connection/technological_process_flow.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_technological_process_flow"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "technological_process_flow"
         }
     },
     {
@@ -359,8 +359,8 @@
             "sql": "business_connection/design_change.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_design_change"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "design_change"
         }
     },
     {
@@ -372,8 +372,8 @@
             "sql": "business_connection/shop_exeecution_material_preparation_technology_unit_process.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_shop_exeecution_material_preparation_technology_up"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "shop_exeecution_material_preparation_technology_up"
         }
     },
     {
@@ -385,8 +385,8 @@
             "sql": "business_connection/shop_exeecution_material_preparation_technology_unit_class.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_shop_exeecution_material_preparation_technology_uc"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "shop_exeecution_material_preparation_technology_uc"
         }
     },
     {
@@ -398,8 +398,8 @@
             "sql": "business_connection/shop_exeecution_material_preparation_technology.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_shop_exeecution_material_preparation_technology"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "shop_exeecution_material_preparation_technology"
         }
     },
     {
@@ -411,8 +411,8 @@
             "sql": "business_connection/shop_execution_task_item_point_unit.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_shop_execution_task_item_point_unit"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "shop_execution_task_item_point_unit"
         }
     },
     {
@@ -424,8 +424,8 @@
             "sql": "business_connection/shop_execution_task_item_point.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_shop_execution_task_item_point"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "shop_execution_task_item_point"
         }
     },
     {
@@ -437,8 +437,8 @@
             "sql": "business_connection/shop_execution_reworked_material_unit.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_shop_execution_reworked_material_unit"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "shop_execution_reworked_material_unit"
         }
     },
     {
@@ -450,8 +450,8 @@
             "sql": "business_connection/shop_execution_reworked_material.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_shop_execution_reworked_material"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "shop_execution_reworked_material"
         }
     },
     {
@@ -463,8 +463,8 @@
             "sql": "business_connection/shop_execution_copy_delivery_unit.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_shop_execution_copy_delivery_unit"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "shop_execution_copy_delivery_unit"
         }
     },
     {
@@ -476,8 +476,8 @@
             "sql": "business_connection/shop_execution_main_delivery_unit.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_shop_execution_main_delivery_unit"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "shop_execution_main_delivery_unit"
         }
     },
     {
@@ -489,8 +489,8 @@
             "sql": "business_connection/shop_execution_handle.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_shop_execution_handle"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "shop_execution_handle"
         }
     },
     {
@@ -502,8 +502,8 @@
             "sql": "business_connection/shop_execution_audit.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_shop_execution_audit"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "shop_execution_audit"
         }
     },
     {
@@ -515,8 +515,8 @@
             "sql": "business_connection/shop_execution.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_shop_execution"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "shop_execution"
         }
     },
     {
@@ -528,8 +528,8 @@
             "sql": "business_connection/business_connection_copy_delivery_unit.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_business_connection_copy_delivery_unit"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "business_connection_copy_delivery_unit"
         }
     },
     {
@@ -541,8 +541,8 @@
             "sql": "business_connection/business_connection_main_delivery_unit.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_business_connection_main_delivery_unit"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "business_connection_main_delivery_unit"
         }
     },
     {
@@ -554,8 +554,8 @@
             "sql": "business_connection/business_connection.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_business_connection"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "business_connection"
         }
     },
     {
@@ -567,8 +567,8 @@
             "sql": "business_connection/class_group_entry.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_class_group_entry"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "class_group_entry"
         }
     },
     {
@@ -580,8 +580,8 @@
             "sql": "business_connection/design_change_entry.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_design_change_entry"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "design_change_entry"
         }
     },
     {
@@ -593,8 +593,8 @@
             "sql": "business_connection/design_change_execution.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_design_change_execution"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "design_change_execution"
         }
     },
     {
@@ -606,8 +606,8 @@
             "sql": "business_connection/design_change_execution_reworked_material.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_design_change_execution_reworked_material"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "design_change_execution_reworked_material"
         }
     },
     {
@@ -619,8 +619,8 @@
             "sql": "business_connection/design_change_execution_reworked_material_unit.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_design_change_execution_reworked_material_unit"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "design_change_execution_reworked_material_unit"
         }
     },
     {
@@ -632,8 +632,8 @@
             "sql": "business_connection/design_change_execution_material_preparation_technology.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_design_change_execution_material_preparation_technology"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "design_change_execution_material_preparation_technology"
         }
     },
     {
@@ -645,8 +645,8 @@
             "sql": "business_connection/design_change_execution_material_preparation_technology_unit.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_design_change_execution_material_preparation_technology_u"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "design_change_execution_material_preparation_technology_u"
         }
     },
     {
@@ -658,8 +658,8 @@
             "sql": "business_connection/design_change_execution_material_change.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_design_change_execution_material_change"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "design_change_execution_material_change"
         }
     },
     {
@@ -671,8 +671,8 @@
             "sql": "business_connection/design_change_execution_main_delivery_unit.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_design_change_execution_main_delivery_unit"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "design_change_execution_main_delivery_unit"
         }
     },
     {
@@ -684,8 +684,8 @@
             "sql": "business_connection/design_change_execution_copy_delivery_unit.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_design_change_execution_copy_delivery_unit"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "design_change_execution_copy_delivery_unit"
         }
     },
     {
@@ -697,8 +697,8 @@
             "sql": "business_connection/design_change_execution_handle.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_design_change_execution_handle"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "design_change_execution_handle"
         }
     },
     {
@@ -710,8 +710,8 @@
             "sql": "business_connection/design_change_execution_audit.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_design_change_execution_audit"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "design_change_execution_audit"
         }
     },
     {
@@ -723,8 +723,8 @@
             "sql": "business_connection/design_change_execution_document_change.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_design_change_execution_document_change"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "design_change_execution_document_change"
         }
     },
     {
@@ -736,8 +736,8 @@
             "sql": "business_connection/design_change_execution_document_change_unit.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_design_change_execution_document_change_unit"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "design_change_execution_document_change_unit"
         }
     },
     {
@@ -749,8 +749,8 @@
             "sql": "business_connection/design_change_execution_change_content.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_design_change_execution_change_content"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "design_change_execution_change_content"
         }
     },
     {
@@ -762,8 +762,8 @@
             "sql": "autonomous_ameliorate.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_autonomous_ameliorate"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "autonomous_ameliorate"
         }
     },
     {
@@ -772,11 +772,12 @@
         "next_name": [],
         "source": {
             "connect": "EAS",
+            "schema": "ZJEAS7",
             "table": "CT_BCP_PROSTDTIME"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_ct_bcp_prostdtime"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "ct_bcp_prostdtime"
         }
     },
     {
@@ -785,11 +786,12 @@
         "next_name": [],
         "source": {
             "connect": "EAS",
+            "schema": "ZJEAS7",
             "table": "CT_BCP_PROSTDTIMEENTRY"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_ct_bcp_prostdtimeentry"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "ct_bcp_prostdtimeentry"
         }
     },
     {
@@ -798,11 +800,12 @@
         "next_name": [],
         "source": {
             "connect": "EAS",
+            "schema": "ZJEAS7",
             "table": "CT_BCP_PROSTDTIMEOPENTRYS"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_ct_bcp_prostdtimeopentrys"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "ct_bcp_prostdtimeopentrys"
         }
     },
     {
@@ -814,21 +817,23 @@
             "sql": "tangyu/alignment_file.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_alignment_file"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "alignment_file"
         }
     },
     {
         "name": "唐渝用-同步alignment_file至机车",
         "type": "sql_sync",
-        "next_name": [ "唐渝用-alignment_file" ],
+        "next_name": [
+            "唐渝用-alignment_file"
+        ],
         "source": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "sql": "tangyu/ods_alignment_file.sql"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "sql": "tangyu/alignment_file.sql"
         },
         "target": {
             "connect": "机车数据库",
-            "table": "ods_alignment_file"
+            "table": "alignment_file"
         }
     },
     {
@@ -837,11 +842,12 @@
         "next_name": [],
         "source": {
             "connect": "EAS",
+            "schema": "ZJEAS7",
             "table": "T_MM_Operation"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_t_mm_operation"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "t_mm_operation"
         }
     },
     {
@@ -850,11 +856,12 @@
         "next_name": [],
         "source": {
             "connect": "EAS",
+            "schema": "ZJEAS7",
             "table": "T_MM_WorkCenter"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_t_mm_workcenter"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "t_mm_workcenter"
         }
     },
     {
@@ -863,11 +870,12 @@
         "next_name": [],
         "source": {
             "connect": "EAS",
+            "schema": "ZJEAS7",
             "table": "T_ORG_CostCenter"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_t_org_costcenter"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "t_org_costcenter"
         }
     },
     {
@@ -876,11 +884,12 @@
         "next_name": [],
         "source": {
             "connect": "EAS",
+            "schema": "ZJEAS7",
             "table": "T_PRO_ProjectJCH"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_t_pro_projectjch"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "t_pro_projectjch"
         }
     },
     {
@@ -889,11 +898,12 @@
         "next_name": [],
         "source": {
             "connect": "EAS",
+            "schema": "ZJEAS7",
             "table": "T_MM_project"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_t_mm_project"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "t_mm_project"
         }
     },
     {
@@ -905,8 +915,8 @@
             "table": "tk_crrc_metro_zbdy"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_tk_crrc_metro_zbdy"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "tk_crrc_metro_zbdy"
         }
     },
     {
@@ -918,8 +928,8 @@
             "table": "tk_crrc_org_structure"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_tk_crrc_org_structure"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "tk_crrc_org_structure"
         }
     },
     {
@@ -928,11 +938,12 @@
         "next_name": [],
         "source": {
             "connect": "EAS",
+            "schema": "ZJEAS7",
             "table": "T_ORG_Storage"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_t_org_storage"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "t_org_storage"
         }
     },
     {
@@ -941,23 +952,33 @@
         "next_name": [],
         "source": {
             "connect": "EAS",
+            "schema": "ZJEAS7",
             "table": "T_MM_TrackNumber"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_t_mm_tracknumber"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "t_mm_tracknumber"
         }
     },
     {
         "name": "邓芳用-dwd_df_work_time",
         "type": "sql_sync",
-        "next_name": [ "邓芳用-ct_bcp_prostdtime", "邓芳用-t_mm_project", "邓芳用-t_pro_projectjch", "邓芳用-ct_bcp_prostdtimeentry", "邓芳用-ct_bcp_prostdtimeopentrys", "邓芳用-t_mm_workcenter", "邓芳用-t_mm_operation", "邓芳用-t_mm_tracknumber" ],
+        "next_name": [
+            "邓芳用-ct_bcp_prostdtime",
+            "邓芳用-t_mm_project",
+            "邓芳用-t_pro_projectjch",
+            "邓芳用-ct_bcp_prostdtimeentry",
+            "邓芳用-ct_bcp_prostdtimeopentrys",
+            "邓芳用-t_mm_workcenter",
+            "邓芳用-t_mm_operation",
+            "邓芳用-t_mm_tracknumber"
+        ],
         "source": {
-            "connect": "数据处理服务关系表存储-同步用",
+            "connect": "数据处理服务关系表存储-同步ods",
             "sql": "dengfang/dwd_df_work_time.sql"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
+            "connect": "数据处理服务关系表存储-同步ods",
             "table": "dwd_df_work_time"
         }
     },
@@ -970,8 +991,8 @@
             "table": "tk_crrc_gxrwxf"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_tk_crrc_gxrwxf"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "tk_crrc_gxrwxf"
         }
     },
     {
@@ -983,8 +1004,8 @@
             "table": "tk_crrc_dispatch"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_tk_crrc_dispatch"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "tk_crrc_dispatch"
         }
     },
     {
@@ -996,8 +1017,8 @@
             "table": "tk_crrc_entry_dispatch"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_tk_crrc_entry_dispatch"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "tk_crrc_entry_dispatch"
         }
     },
     {
@@ -1009,8 +1030,8 @@
             "table": "tk_crrc_exc_user"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_tk_crrc_exc_user"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "tk_crrc_exc_user"
         }
     },
     {
@@ -1022,8 +1043,8 @@
             "table": "tk_crrc_metro_bzrydy_fl"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_tk_crrc_metro_bzrydy_fl"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "tk_crrc_metro_bzrydy_fl"
         }
     },
     {
@@ -1035,8 +1056,8 @@
             "table": "tk_crrc_metro_groupclass"
         },
         "target": {
-            "connect": "数据处理服务关系表存储-同步用",
-            "table": "ods_tk_crrc_metro_groupclass"
+            "connect": "数据处理服务关系表存储-同步ods",
+            "table": "tk_crrc_metro_groupclass"
         }
     }
 ]
