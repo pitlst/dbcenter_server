@@ -8,6 +8,8 @@ socket_port = 10089
 max_node_flow_cap = 100
 # 任务轮询也就是数据同步的最小间隔，单位秒
 min_sync_interval = 60
+# 无任务时等待时间，单位秒
+wait_sync_interval = 10
 # 系统默认请求头，系统默认为1年，如若出现更新失败请更新请求头
 [request_head]
 Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"

@@ -17,7 +17,7 @@ else:
     url = "mongodb://" + config["数据处理服务文档存储"]["ip"] + ":" + str(config["数据处理服务文档存储"]["port"])
 mongo_client = pymongo.MongoClient(url)
 # pgsql
-connect_str = "postgresql://" + config["数据处理服务关系表存储-web用"]["user"] + ":" + urlquote(config["数据处理服务关系表存储-web用"]["password"]) + "@" + config["数据处理服务关系表存储-web用"]["ip"] + ":" + str(config["数据处理服务关系表存储-web用"]["port"]) + "/" + config["数据处理服务关系表存储-web用"]["mode"]
+connect_str = "postgresql://" + config["数据处理服务关系表存储-web"]["user"] + ":" + urlquote(config["数据处理服务关系表存储-web"]["password"]) + "@" + config["数据处理服务关系表存储-web"]["ip"] + ":" + str(config["数据处理服务关系表存储-web"]["port"]) + "/" + config["数据处理服务关系表存储-web"]["mode"]
 pgsql_client = create_engine(connect_str)
 
 
