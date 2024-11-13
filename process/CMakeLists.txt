@@ -55,7 +55,7 @@ set(MONGO_CONCPP_DLLS
 find_package(bsoncxx REQUIRED)
 find_package(mongocxx REQUIRED)
 
-# # nanodbc连接配置
+# nanodbc连接配置
 set(nanodbc_DIR "${PROJECT_SOURCE_DIR}/3rd_party/nanodbc/cmake")
 find_package(nanodbc CONFIG REQUIRED)
 
@@ -89,8 +89,8 @@ add_executable(${PROJECT_NAME}
                 utils/queue.hpp
                 utils/general.hpp
                 utils/general.cpp
-                utils/table.cpp
-                utils/table.cpp
+                utils/data.cpp
+                utils/data.cpp
                 connect/connect.hpp
                 connect/connect.cpp
                 connect/mongo.hpp
@@ -143,8 +143,8 @@ add_executable(test_json
 # table测试
 add_executable(test_table 
                 tests/test_table.cpp 
-                utils/table.hpp
-                utils/table.cpp
+                utils/data.hpp
+                utils/data.cpp
 )
 
 # mongo链接测试

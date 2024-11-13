@@ -1,4 +1,4 @@
-#include "utils/table.hpp"
+#include "utils/data.hpp"
 
 #include <sstream>
 
@@ -23,9 +23,6 @@ data::data(const char *input_value) : m_value(input_value)
 {
 }
 data::data(const std::string &input_value) : m_value(input_value)
-{
-}
-data::data(const time_point &input_value) : m_value(input_value)
 {
 }
 data::data(const data &input_value) : m_value(input_value.m_value)
@@ -65,11 +62,6 @@ data &data::operator=(const std::string &input_value)
     m_value = input_value;
     return *this;
 }
-data &data::operator=(const time_point &input_value)
-{
-    m_value = input_value;
-    return *this;
-}
 data &data::operator=(const data &input_value)
 {
     m_value = input_value.m_value;
@@ -103,10 +95,6 @@ data::operator bool() const
     {
         return !(std::get<std::string>(m_value).empty());
     }
-    else if (std::holds_alternative<time_point>(m_value))
-    {
-        return true;
-    }
     else
     {
         throw std::logic_error("对data强制转换为bool时发生了未知错误");
@@ -133,10 +121,6 @@ data::operator long() const
     else if (std::holds_alternative<std::string>(m_value))
     {
         throw std::logic_error("对data强制转换为int时发生了错误:string不能转换为int");
-    }
-    else if (std::holds_alternative<time_point>(m_value))
-    {
-        throw std::logic_error("对data强制转换为int时发生了错误:时间不能转换为int");
     }
     else
     {
@@ -165,10 +149,6 @@ data::operator float() const
     {
         throw std::logic_error("对data强制转换为float时发生了错误:string不能转换为double");
     }
-    else if (std::holds_alternative<time_point>(m_value))
-    {
-        throw std::logic_error("对data强制转换为float时发生了错误:时间不能转换为double");
-    }
     else
     {
         throw std::logic_error("对data强制转换为float时发生了未知错误");
@@ -195,10 +175,6 @@ data::operator double() const
     else if (std::holds_alternative<std::string>(m_value))
     {
         throw std::logic_error("对data强制转换为double时发生了错误:string不能转换为double");
-    }
-    else if (std::holds_alternative<time_point>(m_value))
-    {
-        throw std::logic_error("对data强制转换为double时发生了错误:时间不能转换为double");
     }
     else
     {
@@ -235,13 +211,6 @@ data::operator std::string() const
     {
         return std::get<std::string>(m_value);
     }
-    else if (std::holds_alternative<time_point>(m_value))
-    {
-        std::stringstream s;
-        std::time_t tmNowTime = std::chrono::system_clock::to_time_t(std::get<time_point>(m_value));
-        s << std::put_time(std::localtime(&tmNowTime), "%F %T");
-        return s.str();
-    }
     else
     {
         throw std::logic_error("对data强制转换为string时发生了未知错误");
@@ -270,10 +239,6 @@ bool data::is_type(const std::string &input_type_name) const
     {
         return input_type_name == "string" || input_type_name == "str";
     }
-    else if (std::holds_alternative<time_point>(m_value))
-    {
-        return input_type_name == "time" || input_type_name == "datetime";
-    }
     else
     {
         throw std::logic_error("is_type函数中:获取data内部类型时发生了未知错误");
@@ -300,10 +265,6 @@ std::string data::get_type_name() const
     else if (std::holds_alternative<std::string>(m_value))
     {
         return "string";
-    }
-    else if (std::holds_alternative<time_point>(m_value))
-    {
-        return "datetime";
     }
     else
     {
@@ -341,13 +302,6 @@ std::optional<std::string> data::to_str() const noexcept
     {
         return std::get<std::string>(m_value);
     }
-    else if (std::holds_alternative<time_point>(m_value))
-    {
-        std::stringstream s;
-        std::time_t tmNowTime = std::chrono::system_clock::to_time_t(std::get<time_point>(m_value));
-        s << std::put_time(std::localtime(&tmNowTime), "%F %T");
-        return s.str();
-    }
     return std::nullopt;
 }
 std::optional<bool> data::to_bool() const noexcept
@@ -371,10 +325,6 @@ std::optional<bool> data::to_bool() const noexcept
     else if (std::holds_alternative<std::string>(m_value))
     {
         return !(std::get<std::string>(m_value).empty());
-    }
-    else if (std::holds_alternative<time_point>(m_value))
-    {
-        return true;
     }
     return std::nullopt;
 }
@@ -416,9 +366,5 @@ std::optional<double> data::to_double() const noexcept
     {
         return std::get<double>(m_value);
     }
-    return std::nullopt;
-}
-std::optional<time_point> data::to_time() const noexcept
-{
     return std::nullopt;
 }
