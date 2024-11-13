@@ -4,6 +4,8 @@ redis
 pymssql
 mysql
 cx_oracle
+sqlalchemy
+pyodbc
 pymongo
 redis
 xlrd
