@@ -111,7 +111,14 @@ add_executable(${PROJECT_NAME}
                 tasks/process_error.cpp
 )
 target_link_libraries(${PROJECT_NAME} nanodbc mongo::mongocxx_shared)
-
+foreach(FILE_I ${MONGO_CONCPP_DLLS})
+    add_custom_command(
+        TARGET ${PROJECT_NAME} 
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} 
+        ARGS -E copy_if_different ${FILE_I} "${PROJECT_SOURCE_DIR}/build/Release"
+    )
+endforeach(FILE_I)
 
 #--------------------------------------------------------------------------------------#
 #   测试执行测试
@@ -122,11 +129,24 @@ add_executable(test_nanodbc
 )
 target_link_libraries(test_nanodbc nanodbc)
 
+# json测试
+add_executable(test_json 
+                tests/test_json.cpp 
+                utils/json.hpp
+                utils/json.cpp
+)
+
+# table测试
+add_executable(test_table 
+                tests/test_table.cpp 
+                utils/table.hpp
+                utils/table.cpp
+)
+
 # mongo链接测试
 add_executable(test_mongo_connect 
                 tests/test_mongo_connect.cpp 
 )
-
 target_link_libraries(test_mongo_connect mongo::mongocxx_shared)
 foreach(FILE_I ${MONGO_CONCPP_DLLS})
     add_custom_command(
@@ -137,9 +157,3 @@ foreach(FILE_I ${MONGO_CONCPP_DLLS})
     )
 endforeach(FILE_I)
 
-# json测试
-add_executable(test_json 
-                tests/test_json.cpp 
-                utils/json.hpp
-                utils/json.cpp
-)   
