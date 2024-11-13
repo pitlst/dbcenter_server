@@ -97,6 +97,10 @@ add_executable(${PROJECT_NAME}
                 connect/mongo.cpp
                 connect/mysql.hpp
                 connect/mysql.cpp
+                connect/pgsql.hpp
+                connect/pgsql.cpp
+                connect/socket.hpp
+                connect/socket.cpp
                 process_manage/watch_dog.hpp
                 process_manage/watch_dog.cpp
                 process_manage/host.hpp
