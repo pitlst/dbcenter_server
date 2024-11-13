@@ -26,7 +26,10 @@ class sql_node(node_base):
                 # 确保输入没有参数匹配全是字符串
                 self.source_sql = text(file.read())
         elif self.type == "tabel_sync":
-            self.source_sql = text("select * from " + self.source["schema"] + "." + self.source["table"])
+            if "schema" in self.source.keys():
+                self.source_sql = text("select * from " + self.source["schema"] + "." + self.source["table"])
+            else:
+                self.source_sql = text("select * from " + self.source["table"])
 
     def read(self) -> list[int]:
         if self.type == "sql_sync":

@@ -4,10 +4,6 @@ from sqlalchemy import text
 from general.config import CONNECT_CONFIG
 from urllib.parse import quote_plus as urlquote
 
-'''
-注意，整表同步功能在EAS种有问题
-'''
-
 # 继承Exception自定义异常，用于在处理异常时筛选
 class connect_error(Exception):
      def __init__(self, msg) -> None:
