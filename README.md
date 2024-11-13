@@ -27,15 +27,15 @@
 
 ### 环境准备
 
-1. 安装mysql connect c++
+1. 安装nanodbc 
 
-默认识别路径为 3rd_party/mysql-concpp
+> git clone https://github.com/nanodbc/nanodbc.git
+> git checkout v2.14.0
+> mkdir build
+> cd build
+> cmake -G "Visual Studio 17 2022" -A "x64" -DNANODBC_DISABLE_TESTS=TRUE -DNANODBC_ENABLE_UNICODE=TRUE -DNANODBC_DISABLE_EXAMPLES=TRUE ..
+> cmake --build .
 
-使用官方的安装msi即可
-
-2. 安装pgsql c++
-
-待编写
 
 3. 安装mongo c++
 
