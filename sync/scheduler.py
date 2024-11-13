@@ -9,7 +9,7 @@ from node.file import table_read_node, json_read_node
 from node.api import heyform_node
 from general.config import SYNC_CONFIG
 from general.logger import node_logger
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor, wait
 
 '''
 这里主要想实现的一个想法是，对于没有前后依赖的sql同步节点
@@ -56,17 +56,21 @@ class scheduler:
                 run_node = self.get_node_run()
                 if len(run_node) == 0:
                     # 没任务运行就等10秒，不要让cpu一直卡在检查
-                    self.LOG.info("没有任务运行，等待" + str(WAIT_SYNC_INTERVAL) + "秒")
-                    time.sleep(WAIT_SYNC_INTERVAL)
+                    self.LOG.debug("没有新的任务触发执行")
                 else:
                     # 只有在本次获取的任务都执行完成后下一次执行才会开始
                     for ch in run_node:
                         total_tasks.append(tpool.submit(ch.run))
-                    # 对于运行任务等待结果，未运行完就更新需要添加的任务
-                    for future in as_completed(total_tasks, timeout=MIN_SYNC_INTERVAL):
+                # 对于运行任务等待结果，未运行完就更新需要添加的任务
+                if len(total_tasks) != 0:
+                    is_done, _ = wait(total_tasks, timeout=MIN_SYNC_INTERVAL)
+                    for future in is_done:
                         name = future.result()
                         self.notify(name)
                         total_tasks.remove(future)
+                else:
+                    self.LOG.debug("没有任务运行，等待" + str(WAIT_SYNC_INTERVAL) + "秒")
+                    time.sleep(WAIT_SYNC_INTERVAL)
                 
     def get_node_run(self) -> list[node_base]:
         '''获取当前需要执行的节点'''
