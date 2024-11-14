@@ -38,6 +38,7 @@ namespace dbs
         json &operator=(const std::map<std::string, json> &input_value);
 
         json &operator[](size_t index);
+        json &operator[](const char *input_value);
         json &operator[](const std::string &key);
 
         operator bool() const;

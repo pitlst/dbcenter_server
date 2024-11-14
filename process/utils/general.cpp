@@ -1,4 +1,9 @@
-#include "utils/general.hpp"
+#include <random>
+#include <sstream>
+#include <iostream>
+#include <fstream>
+
+#include "general.hpp"
 
 using namespace dbs;
 
@@ -23,4 +28,27 @@ std::string random_gen(int length)
         buffer += tmp;
     }
     return buffer;
+}
+
+std::string read_file(std::filesystem::path input_path)
+{
+	std::ifstream file;
+	file.open("cp.txt", std::ios::in | std::ios::out);
+    std::stringstream temps;
+    if (file.is_open())
+    {
+        std::string line;
+        while (std::getline(file, line))
+        {
+            temps << line << "\n"; 
+        }
+    }
+    else
+    {
+        // 如果文件无法打开，输出错误信息
+        std::cout << "Failed to open the file." << std::endl; 
+    }
+    // 关闭文件流
+    file.close(); 
+    return temps.str();
 }

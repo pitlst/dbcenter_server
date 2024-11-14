@@ -51,6 +51,18 @@ thread_pool::~thread_pool()
     shutdown();
 }
 
+void thread_pool::submit(std::function<void()> input_warpper)
+{
+    // 限定作用域控制加解锁的时间
+    {
+        std::unique_lock<std::shared_mutex> lock(m_tasks_queue.mutex);
+        // 向对列添加任务
+        m_tasks_queue.queue.emplace(std::move(input_warpper));
+    }
+    // 通知线程池中的一个线程
+    m_tasks_queue.cv.notify_one();
+}
+
 void thread_pool::shutdown(bool wait)
 {
     if (wait)

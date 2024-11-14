@@ -109,8 +109,12 @@ add_executable(${PROJECT_NAME}
                 scheduler/dag.cpp
                 scheduler/thread_pool.hpp
                 scheduler/thread_pool.cpp
-                tasks/process_error.hpp
-                tasks/process_error.cpp
+                tasks/node.hpp
+                tasks/node.cpp
+                tasks/process/travel.hpp
+                tasks/process/travel.cpp
+                tasks/process/error.hpp
+                tasks/process/error.cpp
 )
 target_link_libraries(${PROJECT_NAME} nanodbc mongo::mongocxx_shared)
 foreach(FILE_I ${MONGO_CONCPP_DLLS})

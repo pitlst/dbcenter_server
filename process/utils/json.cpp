@@ -92,7 +92,10 @@ json &json::operator[](size_t index)
     }
     return std::get<std::vector<json>>(m_value)[index];
 }
-
+json &json::operator[](const char *input_value)
+{   
+    return (*this)[std::string(input_value)];
+}
 json &json::operator[](const std::string &key)
 {
     if (!std::holds_alternative<std::map<std::string, json>>(m_value))

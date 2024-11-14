@@ -16,7 +16,7 @@ int main()
             std::cout << "world " << i << std::endl;
             return i * i;
         };
-        auto ans = dbs::thread_pool::instance().submit(std::move(tp));
+        auto ans = dbs::thread_pool::instance().submit_lambda(std::move(tp));
         results.emplace_back(std::move(ans));
     }
 

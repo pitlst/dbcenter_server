@@ -2,6 +2,7 @@
 #define DBS_THREADPOOL_INCLUDE
 
 #include <functional>
+#include <utility>
 #include <thread>
 #include <queue>
 #include <mutex>
@@ -32,9 +33,11 @@ namespace dbs
     public:
         // 获取单实例对象
         static thread_pool& instance();
-        // 提交任务
-        template<typename F, typename... Args>
-        auto submit(F&& f, Args&&... args)->std::future<typename std::invoke_result<F, Args...>::type>;
+        // 提交lambda函数执行
+        template<class F, class... Args>
+        auto submit_lambda(F&& f, Args&&... args)->std::future<typename std::invoke_result<F, Args...>::type>;
+        // 提交已经包装好的任务
+        void submit(std::function<void()> input_warpper);
         // 终止线程池，通过变量确定是否等待任务执行完成
         // not_wait表示不等待剩余任务执行完成马上退出，但是已经运行的任务会运行完成后再退出
         void shutdown(bool wait = true);
@@ -57,25 +60,40 @@ namespace dbs
 
 
     template<class F, class... Args>
-    auto thread_pool::submit(F&& f, Args&&... args)->std::future<typename std::invoke_result<F, Args...>::type>
+    auto thread_pool::submit_lambda(F&& f, Args&&... args)->std::future<typename std::invoke_result<F, Args...>::type>
     {
         // 连接函数和参数定义，特殊函数类型，避免左右值错误
         std::function<typename std::invoke_result<F, Args...>::type()> func = std::bind(std::forward<F>(f), std::forward<Args>(args)...); 
         auto task = std::make_shared< std::packaged_task<typename std::invoke_result<F, Args...>::type()> >(func);
         // 将任务封装为一个lambda表达式并放入任务队列
         // 该lambda表达式会调用std::packaged_task对象的operator()方法，从而执行任务
-        std::function<void()> warpper_func = [task]() {(*task)(); };    
+        std::function<void()> warpper_func = [task]() {(*task)(); };
         // 获取future也就是将来要返回的结果
         std::future<typename std::invoke_result<F,Args...>::type> res = task->get_future();
         // 限定作用域控制加解锁的时间
         {
             std::unique_lock<std::shared_mutex> lock(m_tasks_queue.mutex);
             // 向对列添加任务
-            m_tasks_queue.queue.emplace(warpper_func);
+            m_tasks_queue.queue.emplace(std::move(warpper_func));
         }
         // 通知线程池中的一个线程
         m_tasks_queue.cv.notify_one();
         return res;
+    }
+
+    // 将lambda函数对象类型擦除，包装成可调用对象，并返回类型推导的结果
+    template<typename F, typename... Args>
+    auto pack_func(F&& f, Args&&... args)->std::pair<std::function<void()>, std::future<typename std::invoke_result<F, Args...>::type>>
+    {
+        // 连接函数和参数定义，特殊函数类型，避免左右值错误
+        std::function<typename std::invoke_result<F, Args...>::type()> func = std::bind(std::forward<F>(f), std::forward<Args>(args)...); 
+        auto task = std::make_shared< std::packaged_task<typename std::invoke_result<F, Args...>::type()> >(func);
+        // 将任务封装为一个lambda表达式并放入任务队列
+        // 该lambda表达式会调用std::packaged_task对象的operator()方法，从而执行任务
+        std::function<void()> warpper_func = [task]() {(*task)(); };
+        // 获取future也就是将来要返回的结果
+        std::future<typename std::invoke_result<F,Args...>::type> res = task->get_future();
+        return std::make_pair(std::move(warpper_func), res);
     }
 }
 

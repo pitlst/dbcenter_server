@@ -9,6 +9,14 @@ user = ""
 password = ""
 mode = "logger"
 
+["访客系统数据库"]
+type = "mongo"
+ip = "localhost"
+port = 10086
+user = ""
+password = ""
+mode = "heyform"
+
 ["数据处理服务关系表存储-同步"]
 type = "pgsql"
 ip = "localhost"
