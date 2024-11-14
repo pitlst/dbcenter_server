@@ -80,13 +80,11 @@ add_compile_definitions(PROJECT_PATH=\"${PROJECT_SOURCE_DIR}/\")
 # 解决msvc的C4996警告
 add_compile_definitions(_CRT_SECURE_NO_WARNINGS=1)
 add_executable(${PROJECT_NAME} 
-                main.cpp 
-                utils/base.hpp
+                main.cpp
                 utils/big_int.hpp
                 utils/big_int.cpp
                 utils/high_float.hpp
                 utils/high_float.cpp
-                utils/queue.hpp
                 utils/general.hpp
                 utils/general.cpp
                 utils/data.cpp
@@ -161,10 +159,17 @@ add_executable(test_data
                 utils/data.cpp
 )
 
-# dag测试
-add_executable(test_dag 
+# 线程池测试
+add_executable(test_thread_pool 
+                tests/test_thread_pool.cpp 
+                scheduler/thread_pool.cpp
+                scheduler/thread_pool.cpp
+)
+
+# dag调度器测试
+add_executable(test_dag
                 tests/test_dag.cpp 
-                scheduler/dag.hpp
+                scheduler/dag.cpp
                 scheduler/dag.cpp
                 scheduler/thread_pool.cpp
                 scheduler/thread_pool.cpp
