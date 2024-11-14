@@ -133,20 +133,6 @@ add_executable(test_nanodbc
 )
 target_link_libraries(test_nanodbc nanodbc)
 
-# json测试
-add_executable(test_json 
-                tests/test_json.cpp 
-                utils/json.hpp
-                utils/json.cpp
-)
-
-# table测试
-add_executable(test_table 
-                tests/test_table.cpp 
-                utils/data.hpp
-                utils/data.cpp
-)
-
 # mongo链接测试
 add_executable(test_mongo_connect 
                 tests/test_mongo_connect.cpp 
@@ -160,4 +146,29 @@ foreach(FILE_I ${MONGO_CONCPP_DLLS})
         ARGS -E copy_if_different ${FILE_I} "${PROJECT_SOURCE_DIR}/build/Release"
     )
 endforeach(FILE_I)
+
+# json测试
+add_executable(test_json 
+                tests/test_json.cpp 
+                utils/json.hpp
+                utils/json.cpp
+)
+
+# data测试
+add_executable(test_data 
+                tests/test_data.cpp 
+                utils/data.hpp
+                utils/data.cpp
+)
+
+# dag测试
+add_executable(test_dag 
+                tests/test_dag.cpp 
+                scheduler/dag.hpp
+                scheduler/dag.cpp
+                scheduler/thread_pool.cpp
+                scheduler/thread_pool.cpp
+)
+
+
 

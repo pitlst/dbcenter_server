@@ -84,7 +84,7 @@ namespace dbs
     std::string format_json(const std::string json);
 
     // json的工厂类
-    struct json_parse
+    class json_parse
     {
     public:
         json_parse() = default;

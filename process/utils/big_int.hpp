@@ -8,7 +8,7 @@
 
 namespace dbs
 {
-    class big_int
+    struct big_int
     {
     public:
         big_int();
