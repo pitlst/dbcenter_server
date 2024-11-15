@@ -54,7 +54,8 @@ namespace dbs
             bool,
             int,
             double,
-            std::string>;
+            std::string,
+            std::tm>;
         m_type m_value;
     };
 }

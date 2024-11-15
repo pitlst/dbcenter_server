@@ -25,9 +25,9 @@
 
 在完成第一个正式版开发之前，旧有项目继续开发以维持业务迭代
 
-### 环境准备
+### 开发环境准备
 
-1. 安装nanodbc 
+1.编译安装soci
 
 > git clone https://github.com/nanodbc/nanodbc.git
 > git checkout v2.14.0

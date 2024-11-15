@@ -3,6 +3,8 @@
 #include <iostream>
 #include <fstream>
 
+#include <windows.h>
+
 #include "general.hpp"
 
 using namespace dbs;
@@ -30,25 +32,62 @@ std::string random_gen(int length)
     return buffer;
 }
 
-std::string read_file(std::filesystem::path input_path)
+std::string read_file(const std::string &input_path)
 {
-	std::ifstream file;
-	file.open("cp.txt", std::ios::in | std::ios::out);
+    std::ifstream file;
+    file.open(input_path, std::ios::in | std::ios::out);
     std::stringstream temps;
     if (file.is_open())
     {
         std::string line;
         while (std::getline(file, line))
         {
-            temps << line << "\n"; 
+            temps << line << "\n";
         }
     }
     else
     {
         // 如果文件无法打开，输出错误信息
-        std::cout << "Failed to open the file." << std::endl; 
+        std::cout << "Failed to open the file." << std::endl;
     }
     // 关闭文件流
-    file.close(); 
+    file.close();
     return temps.str();
+}
+
+std::string gbk_to_utf8(const std::string & input_str)
+{
+    std::string GBK = "";
+    // 1、GBK转unicode
+    // 1.1 统计转换后的字节数
+    auto data = input_str.c_str();
+    int len = MultiByteToWideChar(CP_ACP, // 转换的格式
+                                  0,      // 默认的转换方式
+                                  data,   // 输入的字节
+                                  -1,     // 输入的字符串大小 -1找\0结束  自己去算
+                                  0,      // 输出（不输出，统计转换后的字节数）
+                                  0       // 输出的空间大小
+    );
+    if (len <= 0)
+    {
+        return GBK;
+    }
+    std::wstring udata;     // 用wstring存储的
+    udata.resize(len); // 分配大小
+    // 开始写进去
+    MultiByteToWideChar(CP_ACP, 0, data, -1, (wchar_t *)udata.data(), len);
+
+    // 2 unicode 转 utf8
+    len = WideCharToMultiByte(CP_UTF8, 0, (wchar_t *)udata.data(), -1, 0, 0,
+                              0, // 失败替代默认字符
+                              0  // 是否使用默认替代  0 false
+    );
+    if (len <= 0)
+    {
+        return GBK;
+    }
+    GBK.resize(len);
+    WideCharToMultiByte(CP_UTF8, 0, (wchar_t *)udata.data(), -1, (char *)GBK.data(), len, 0, 0);
+
+    return GBK;
 }
