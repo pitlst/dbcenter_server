@@ -1,7 +1,6 @@
 import os
 import toml
 import pymongo
-from sqlalchemy import create_engine
 import datetime
 import logging
 import pandas as pd
@@ -10,15 +9,11 @@ from urllib.parse import quote_plus as urlquote
 
 
 config = toml.load(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "source", "config", "connect.toml"))
-# mongo
-if config["数据处理服务文档存储"]["user"] != "" and config["数据处理服务文档存储"]["password"] != "":
-    url = "mongodb://" + config["数据处理服务文档存储"]["user"] + ":" + urlquote(config["数据处理服务文档存储"]["password"]) + "@" + config["数据处理服务文档存储"]["ip"] + ":" + str(config["数据处理服务文档存储"]["port"])
+if config["数据处理服务存储"]["user"] != "" and config["数据处理服务存储"]["password"] != "":
+    url = "mongodb://" + config["数据处理服务存储"]["user"] + ":" + urlquote(config["数据处理服务存储"]["password"]) + "@" + config["数据处理服务存储"]["ip"] + ":" + str(config["数据处理服务存储"]["port"])
 else:
-    url = "mongodb://" + config["数据处理服务文档存储"]["ip"] + ":" + str(config["数据处理服务文档存储"]["port"])
+    url = "mongodb://" + config["数据处理服务存储"]["ip"] + ":" + str(config["数据处理服务存储"]["port"])
 mongo_client = pymongo.MongoClient(url)
-# pgsql
-connect_str = "postgresql://" + config["数据处理服务关系表存储-web"]["user"] + ":" + urlquote(config["数据处理服务关系表存储-web"]["password"]) + "@" + config["数据处理服务关系表存储-web"]["ip"] + ":" + str(config["数据处理服务关系表存储-web"]["port"]) + "/" + config["数据处理服务关系表存储-web"]["mode"]
-pgsql_client = create_engine(connect_str)
 
 
 class momgo_handler(logging.Handler):
@@ -79,15 +74,6 @@ def node_logger(name: str, level: int = logging.DEBUG) -> logging.Logger:
     mongoio.setLevel(level)
     LOG.addHandler(mongoio)
     return LOG
-
-
-def get_table(table_name: str):
-    """获取并处理数据库中的表"""
-    df = pd.read_sql_table(table_name, pgsql_client, chunksize=10000)
-    output = BytesIO()
-    writer = pd.ExcelWriter(output, engine='openpyxl')
-    df.to_excel(writer, sheet_name="sheet1")
-    return output
 
 def get_file(path: str) -> BytesIO:
     """将文件转换为字节流"""

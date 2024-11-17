@@ -8,9 +8,10 @@ SQL_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", 
 
 class sql_node(node_base):
     '''
-    数据库sql同步
+    使用sql从其他数据库抽取数据并同步
+    支持同步到mongo和其他关系型数据库
     '''
-    allow_type = ["sql_sync", "tabel_sync"]
+    allow_type = ["sql_to_table", "table_to_table", "sql_to_nosql", "table_to_nosql"]
     def __init__(self, node_define: dict) -> None:
         super().__init__(node_define["name"], db_engine, node_define["type"])
         self.source: dict = node_define["source"]

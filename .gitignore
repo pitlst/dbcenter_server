@@ -12,7 +12,7 @@ process/_deps
 process/CMakeUserPresets.json
 process/build
 .vscode
-process/3rd_party/*
+process/3rd_party/**
 !process/3rd_party/占位文件，存放第三方文件
 source/cache/*
 !source/cache/占位文件，该文件夹存放缓存文件

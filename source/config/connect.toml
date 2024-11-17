@@ -1,38 +1,21 @@
 # 连接配置文件
 
-["访客系统数据库"]
+["外网访客系统数据库"]
 type = "mongo"
 ip = "localhost"
 port = 10086
 user = ""
 password = ""
-mode = "heyform"
 
-["数据处理服务关系表存储-同步"]
-type = "pgsql"
+["数据处理服务存储"]
+# 注意，由于mongo存储日志，所以其在连接池中比较特殊
+type = "mongo"
 ip = "localhost"
-port = 5432
-user = "postgres"
-password = "Swq8855830."
-mode = "sync_data"
+port = 27017
+user = ""
+password = ""
 
-["数据处理服务关系表存储-日志"]
-type = "pgsql"
-ip = "localhost"
-port = 5432
-user = "postgres"
-password = "Swq8855830."
-mode = "logger"
-
-["数据处理服务关系表存储-web"]
-type = "pgsql"
-ip = "localhost"
-port = 5432
-user = "postgres"
-password = "Swq8855830."
-mode = "web_data"
-
-["数据仓库中转数据库"]
+["数仓正式库与小组数开用数据库"]
 type = "mysql"
 ip = "10.24.5.32"
 port = 3306

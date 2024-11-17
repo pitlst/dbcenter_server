@@ -9,7 +9,7 @@ class mongo_node(node_base):
     '''
     mongo数据库同步
     '''
-    allow_type = ["mongo_sync", "js_sync"]
+    allow_type = ["nosql_to_nosql", "js_to_nosql", "nosql_to_table"]
     def __init__(self, node_define: dict) -> None:
         super().__init__(node_define["name"], db_engine, node_define["type"])
         self.source: dict = node_define["source"]

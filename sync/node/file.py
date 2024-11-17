@@ -9,7 +9,7 @@ class table_read_node(node_base):
     '''
     读取表格类似文件类到数据库
     '''
-    allow_type = ["read_excel", "read_csv"]
+    allow_type = ["excel_to_table", "csv_to_table", "excel_to_nosql", "csv_to_nosql", "table_to_excel", "table_to_csv"]
     def __init__(self, node_define: dict) -> None:
         super().__init__(node_define["name"], db_engine, node_define["type"])
         self.source: dict = node_define["source"]
@@ -47,7 +47,7 @@ class json_read_node(node_base):
     '''
     读取json到数据库
     '''
-    allow_type = ["write_json"]
+    allow_type = ["json_to_nosql", "nosql_to_json"]
     def __init__(self, node_define: dict) -> None:
         super().__init__(node_define["name"], db_engine, node_define["type"])
         self.source: dict = node_define["source"]

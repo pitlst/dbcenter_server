@@ -1,16 +1,15 @@
 import datetime
 import logging
-
 from general.connect import db_engine
-
-class pgsql_handler(logging.Handler):
+            
+class momgo_handler(logging.Handler):
     """
-    pgsql日志handler
+    mongo日志handler
     """
     def __init__(self, name: str) -> None:
         logging.Handler.__init__(self)
-        self.temp_db = db_engine.get_sql("数据处理服务关系表存储-日志")
-        self.name = name
+        temp_db = db_engine.get_nosql("数据处理服务存储")
+        self.collection = temp_db["logger"][name]
  
     def emit(self, record) -> None:
         """
@@ -21,7 +20,6 @@ class pgsql_handler(logging.Handler):
             temp_msg = msg.split(":")
             level = temp_msg[0]
             msg = ":".join(temp_msg[1:])
-            sql_str = "INSERT INTO " + self.name + " VALUES (value1,value2,value3,...valueN);"
             self.collection.insert_one({ 
                 "时间": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 "等级": level,

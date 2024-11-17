@@ -1,3 +1,5 @@
+import socket
+import pymongo
 import sqlalchemy
 from general.config import CONNECT_CONFIG
 from urllib.parse import quote_plus as urlquote
@@ -12,9 +14,23 @@ class connect_error(Exception):
      
 
 class database_connect:
-    # 关系型数据库连接获取
+    # 数据库连接获取
     def __init__(self) -> None:
+        self.nosql_dict: dict[str, pymongo.MongoClient] = {}
         self.engine_dict: dict[str, sqlalchemy.Engine] = {}
+        # 连接非关系型数据库并保存引擎
+        for ch in CONNECT_CONFIG:
+            temp = CONNECT_CONFIG[ch]
+            if temp["type"] in ["oracle", "sqlserver", "mysql", "pgsql"]:
+                pass
+            elif temp["type"] == "mongo":
+                if temp["user"] != "" and temp["password"] != "":
+                    url = "mongodb://" + temp["user"] + ":" + urlquote(temp["password"]) + "@" + temp["ip"] + ":" + str(temp["port"])
+                else:
+                    url = "mongodb://" + temp["ip"] + ":" + str(temp["port"])
+                self.nosql_dict[ch] = pymongo.MongoClient(url)
+            else:
+                raise connect_error("不支持的数据库类型：" + temp["type"])
         # 连接关系型数据库并保存引擎
         for ch in CONNECT_CONFIG:
             temp = CONNECT_CONFIG[ch]
@@ -30,6 +46,8 @@ class database_connect:
             elif temp["type"] == "pgsql":
                 connect_str = "postgresql://" + temp["user"] + ":" + urlquote(temp["password"]) + "@" + temp["ip"] + ":" + str(temp["port"]) + "/" + temp["mode"]
                 self.engine_dict[ch] = sqlalchemy.create_engine(connect_str, pool_size=20)
+            elif temp["type"] == "mongo":
+                pass
             else:
                 raise connect_error("不支持的数据库类型：" + temp["type"])
         
@@ -40,5 +58,19 @@ class database_connect:
         else:
             raise connect_error("获取了未知的连接:" + name)
     
+    def get_nosql(self, name: str) -> pymongo.MongoClient:
+        temp_connect = self.nosql_dict[name]
+        if not temp_connect is None:
+            return temp_connect
+        else:
+            raise connect_error("获取了未知的连接:" + name)
+        
+
+class socket_connect:
+    # socket连接获取，用于进程间通信
+    ...
+        
+
 # 全局单例
 db_engine = database_connect()
+socket_conn = socket_connect()

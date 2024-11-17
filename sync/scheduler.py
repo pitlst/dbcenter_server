@@ -5,7 +5,7 @@ import datetime
 from node.base import node_base  # 用于类型标注
 from node.sql import sql_node
 from node.file import table_read_node, json_read_node
-from node.api import heyform_node
+from node.mongo import mongo_node
 from general.config import SYNC_CONFIG
 from general.logger import node_logger
 from concurrent.futures import ThreadPoolExecutor, wait
@@ -35,7 +35,7 @@ class input_scheduler:
     def __init__(self, task_apth: str = TASKS_PATH) -> None:
         self.node_list: list[node_base] = {}
         self.task_apth = task_apth
-        self.LOG = node_logger("scheduler_input")
+        self.LOG = node_logger("scheduler")
         self.update_node()
 
     def run_node(self) -> None:
@@ -72,6 +72,7 @@ class input_scheduler:
     def get_node_run(self) -> list[node_base]:
         '''获取当前需要执行的节点'''
         temp_node = []
+        # 检查无依赖的时间触发节点，是否应该运行
         temp_now = datetime.datetime.now()
         for _node in self.node_list:
             if _node.last_time <= temp_now:
@@ -84,15 +85,14 @@ class input_scheduler:
             node_json = json.load(file)
         self.node_list = []
         for ch in node_json:
-            if len(ch["next_name"]) == 0:
-                if ch["type"] in sql_node.allow_type:
-                    self.node_list.append(sql_node(ch))
-                elif ch["type"] in table_read_node.allow_type:
-                    self.node_list.append(table_read_node(ch))
-                elif ch["type"] in json_read_node.allow_type:
-                    self.node_list.append(json_read_node(ch))
-                elif ch["type"] in heyform_node.allow_type:
-                    self.node_list.append(heyform_node(ch))
+            if ch["type"] in sql_node.allow_type:
+                self.node_list.append(sql_node(ch))
+            elif ch["type"] in table_read_node.allow_type:
+                self.node_list.append(table_read_node(ch))
+            elif ch["type"] in json_read_node.allow_type:
+                self.node_list.append(json_read_node(ch))
+            elif ch["type"] in mongo_node.allow_type:
+                self.node_list.append(mongo_node(ch))
         self.check_node()
     
     def check_node(self):
@@ -104,12 +104,3 @@ class input_scheduler:
             else:
                 self.LOG.error("服务端已开始监听，正在等待客户端连接...")
                 raise ValueError("节点名称重复")
-            
-            
-class output_scheduler:
-    '''用于执行数据ETL过程中的发布，批量执行发布到其他数据库的节点'''
-    def __init__(self, task_apth: str = TASKS_PATH) -> None:
-        self.node_list: list[node_base] = {}
-        self.task_apth = task_apth
-        self.LOG = node_logger("scheduler")
-        self.update_node()
