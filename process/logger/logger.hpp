@@ -20,6 +20,8 @@ namespace dbs{
         void warn(const std::string & name, const std::string & msg);
         void error(const std::string & name, const std::string & msg);
         void emit(const std::string & level, const std::string & name, const std::string & msg);
+        // 创建日志的时间序列集合，因为日志几乎不会删除，只会按条插入，所以适合于日志
+        void create_time_collection(const std::string & name);
     private:
         // 禁止外部构造与析构
         logger();

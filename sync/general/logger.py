@@ -9,7 +9,12 @@ class momgo_handler(logging.Handler):
     def __init__(self, name: str) -> None:
         logging.Handler.__init__(self)
         temp_db = db_engine.get_nosql("数据处理服务存储")
-        self.collection = temp_db["logger"][name]
+        database = temp_db["logger"]
+        time_series_options = {
+            "timeField": "timestamp",
+            "metaField":"message"
+        }
+        self.collection = database.create_collection(name, timeseries=time_series_options)
  
     def emit(self, record) -> None:
         """
@@ -21,9 +26,11 @@ class momgo_handler(logging.Handler):
             level = temp_msg[0]
             msg = ":".join(temp_msg[1:])
             self.collection.insert_one({ 
-                "时间": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                "等级": level,
-                "消息": msg
+                "timestamp": datetime.datetime.now(),
+                "message": {                
+                    "等级": level,
+                    "消息": msg
+                    }
                 })
         except Exception:
             self.handleError(record)

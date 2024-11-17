@@ -89,10 +89,6 @@ add_executable(${PROJECT_NAME}
                 connect/socket.cpp
                 connect/mongo.hpp
                 connect/mongo.cpp
-                process_manage/watch_dog.hpp
-                process_manage/watch_dog.cpp
-                process_manage/host.hpp
-                process_manage/host.cpp
                 logger/logger.hpp
                 logger/logger.cpp
                 scheduler/dag.hpp

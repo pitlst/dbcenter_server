@@ -12,6 +12,7 @@ mongo_connect &mongo_connect::instance()
 
 mongo_connect::mongo_connect()
 {
+    // 因为c++程序不连接其他的数据库，所以这里写死即可
     auto data = toml::parse(std::string(PROJECT_PATH) + "../source/config/connect.toml")["数据处理服务存储"];
     auto ip = toml::get<std::string>(data["ip"]);
     auto port = std::to_string(toml::get<int>(data["port"]));
