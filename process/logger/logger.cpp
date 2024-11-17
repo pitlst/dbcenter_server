@@ -67,7 +67,7 @@ logger::logger()
         std::cin.tie(0),
         std::cout.tie(0);
     // 连接数据库
-    m_client_ptr = std::make_unique<mongocxx::pool::entry>(mongo_connect::instance().m_pool_ptr->acquire());
+    m_client_ptr = std::make_unique<mongocxx::pool::entry>(MONGO.m_pool_ptr->acquire());
     m_database_ptr = std::make_unique<mongocxx::database>((*m_client_ptr)[db_name]);
 }
 
@@ -95,7 +95,7 @@ void logger::create_time_collection(const std::string & name)
     m_database_ptr->create_collection(name, ts_info.view());
 }
 
-std::string logger::get_time_str(const std::chrono::system_clock::time_point &input_time) const
+std::string logger::get_time_str(const std::chrono::system_clock::time_point &input_time)
 {
     std::stringstream ss;
     std::time_t tt = std::chrono::system_clock::to_time_t(input_time);

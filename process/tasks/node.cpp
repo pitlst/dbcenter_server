@@ -14,9 +14,13 @@ node_base::node_base(const json & node_define)
     {
         next_name.emplace_back(temp_value[i]);
     }
+    LOGGER.create_time_collection(name);
 }
 
-node_base::node_base(const std::string &name, const std::string &type, const std::vector<std::string> &next_name) : name(name), type(type), next_name(next_name) {}
+node_base::node_base(const std::string &name, const std::string &type, const std::vector<std::string> &next_name) : name(name), type(type), next_name(next_name) 
+{
+    LOGGER.create_time_collection(name);
+}
 
 node_base &node_base::emplace(std::function<void()> input_warpper)
 {

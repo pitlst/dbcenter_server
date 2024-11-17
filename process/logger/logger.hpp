@@ -27,7 +27,7 @@ namespace dbs{
         logger();
         ~logger();
         // 获取当前时间的字符串
-        std::string get_time_str(const std::chrono::system_clock::time_point & input_time) const;
+        static std::string get_time_str(const std::chrono::system_clock::time_point & input_time);
 
         // 数据库客户端
         const std::string db_name = "logger";
@@ -35,5 +35,8 @@ namespace dbs{
         std::unique_ptr<mongocxx::database> m_database_ptr;
     };
 }
+
+// log的全局引用简写
+#define LOGGER dbs::logger::instance()
 
 #endif

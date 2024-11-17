@@ -8,6 +8,9 @@
 #include "json.hpp"
 using json = nlohmann::json;
 
+#include "mongo.hpp"
+#include "logger.hpp"
+
 namespace dbs
 {
     // 调度节点的基类
