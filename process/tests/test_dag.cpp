@@ -31,7 +31,7 @@ int main()
 
     demo d;
     std::function<int(int)> f = std::bind(&demo::test, &d, 1);
-    results.emplace_back(dbs::thread_pool::instance().submit(f, i));
+    results.emplace_back(dbs::thread_pool::instance().submit_lambda(f, i));
 
     for (auto &&result : results)
         std::cout << result.get() << ' ';

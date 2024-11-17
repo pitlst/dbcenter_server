@@ -1,6 +1,5 @@
 #include "node.hpp"
 #include "general.hpp"
-#include "odbc.hpp"
 
 using namespace dbs;
 
@@ -22,20 +21,5 @@ node_base::node_base(const std::string &name, const std::string &type, const std
 node_base &node_base::emplace(std::function<void()> input_warpper)
 {
     func_warpper = std::move(input_warpper);
+    return *this;
 }
-
-sql_node::sql_node(const json & node_define): node_base(node_define)
-{
-    
-    m_sql = read_file(PROJECT_PATH + "/" + source_config["sql"]);
-    auto sql_process  = [](){
-
-    }
-}
-
-mongojs_node::mongojs_node(const json & node_define): node_base(node_define)
-{
-    std::filesystem::path path;
-    path = path / PROJECT_PATH / source_config["js"];
-    m_js = read_file(path);
-};

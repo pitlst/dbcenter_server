@@ -46,13 +46,15 @@ cmake --build . --config Release -j16
 
 4. 执行script_tools中的打包脚本，将编译产物进行打包
 
-5. 复制到目标内网服务器中运行start.sh即可
+5. 复制到目标内网服务器中运行start.ps1即可
 
 ### process部分本地测试开发流程
 
 1. 首先，在联网的本地开发服务器上准备docker
 
 2. 运行准备好的script_tools中的docker-compose.yml
+
+3. 运行sql以获得测试数据
 
 ### dag运行任务图的编写要求
 

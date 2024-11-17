@@ -132,11 +132,22 @@ class scheduler:
         with open(self.task_apth, "r", encoding="utf-8") as file:
             node_json = json.load(file)
         # 删除所有的process节点和对process节点的依赖    
-        
+        new_json = []
+        for ch in node_json:
+            if ch["type"] != "process":
+                next_ch = []
+                for _ch in ch["next_name"]:
+                    for __ch in node_json:
+                        if __ch["name"] == _ch:
+                            if __ch["type"] != "process":
+                                next_ch.append(_ch)
+                            break
+                ch["next_name"] = next_ch
+                new_json.append(ch)
         # 重新初始化节点
         self.nodep_node = []
         self.havedep_node = []
-        for ch in node_json:
+        for ch in new_json:
             for __type__ in __all_node_type__:
                 if ch["type"] in __type__.allow_type:
                     if len(ch["next_name"]) == 0:
