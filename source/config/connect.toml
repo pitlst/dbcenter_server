@@ -1,14 +1,5 @@
 # 连接配置文件
 
-["数据处理服务文档存储"]
-# 注意，由于mongo存储日志，所以其在连接池中比较特殊
-type = "mongo"
-ip = "localhost"
-port = 27017
-user = ""
-password = ""
-mode = "logger"
-
 ["访客系统数据库"]
 type = "mongo"
 ip = "localhost"
@@ -24,6 +15,14 @@ port = 5432
 user = "postgres"
 password = "Swq8855830."
 mode = "sync_data"
+
+["数据处理服务关系表存储-日志"]
+type = "pgsql"
+ip = "localhost"
+port = 5432
+user = "postgres"
+password = "Swq8855830."
+mode = "logger"
 
 ["数据处理服务关系表存储-web"]
 type = "pgsql"

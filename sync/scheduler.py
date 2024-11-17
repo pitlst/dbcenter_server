@@ -1,6 +1,5 @@
 import os
 import json
-import socket
 import time
 import datetime
 from node.base import node_base  # 用于类型标注
@@ -24,35 +23,29 @@ from concurrent.futures import ThreadPoolExecutor, wait
 会有一个流量高峰，因为所有节点的状态和时间间隔会重新同步，所以建议在非业务时间重启
 '''
 
-SOCKET_DEBUG = SYNC_CONFIG["socket_debug"]
 SOCKET_IP = SYNC_CONFIG["socket_ip"]
 SOCKET_PORT = SYNC_CONFIG["socket_port"]
 MIN_SYNC_INTERVAL = SYNC_CONFIG["min_sync_interval"]
 WAIT_SYNC_INTERVAL = SYNC_CONFIG["wait_sync_interval"]
-TASKS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "source", "config", "task.json")
+POLLING_UPDATE_COUNT = SYNC_CONFIG["polling_update_count"]
+TASKS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "source", "config", "tasks.json")
 
-class scheduler:
-    '''调度器，用于调度sql节点的执行'''
+class input_scheduler:
+    '''用于执行数据ETL过程中的抽取，批量执行没有前向依赖的节点'''
     def __init__(self, task_apth: str = TASKS_PATH) -> None:
         self.node_list: list[node_base] = {}
-        self.LOG = node_logger("scheduler")
-        self.update_node(task_apth)
-        self.socket_server = socket.socket()
-        self.socket_server.bind((SOCKET_IP, SOCKET_PORT))
-        if SOCKET_DEBUG:
-            self.LOG.info("服务端已开始监听，正在等待客户端连接...")
-            try:
-                self.conn, address = self.socket_server.accept()
-            except Exception as me:
-                self.LOG.error(me)
-            self.LOG.info(f"接收到了客户端的连接，客户端的信息：{address}")
+        self.task_apth = task_apth
+        self.LOG = node_logger("scheduler_input")
+        self.update_node()
 
     def run_node(self) -> None:
         '''真正执行节点的地方'''
         with ThreadPoolExecutor() as tpool:
             # 死循环，不退出
             total_tasks = []
+            count = 0
             while True:
+                count += 1
                 run_node = self.get_node_run()
                 if len(run_node) == 0:
                     # 没任务运行就等10秒，不要让cpu一直卡在检查
@@ -61,16 +54,20 @@ class scheduler:
                     # 只有在本次获取的任务都执行完成后下一次执行才会开始
                     for ch in run_node:
                         total_tasks.append(tpool.submit(ch.run))
+                    self.LOG.debug("触发以下任务执行:" + ",".join([ch.name for ch in run_node]))
                 # 对于运行任务等待结果，未运行完就更新需要添加的任务
                 if len(total_tasks) != 0:
                     is_done, _ = wait(total_tasks, timeout=MIN_SYNC_INTERVAL)
                     for future in is_done:
-                        name = future.result()
-                        self.notify(name)
+                        self.LOG.debug(str(future.result()) + "节点执行完成")
                         total_tasks.remove(future)
                 else:
                     self.LOG.debug("没有任务运行，等待" + str(WAIT_SYNC_INTERVAL) + "秒")
                     time.sleep(WAIT_SYNC_INTERVAL)
+                # 更新节点配置，保证更新的后的task.json被使用
+                if count > POLLING_UPDATE_COUNT:
+                    count = 0
+                    self.update_node()
                 
     def get_node_run(self) -> list[node_base]:
         '''获取当前需要执行的节点'''
@@ -81,19 +78,9 @@ class scheduler:
                 temp_node.append(_node)
         return temp_node
 
-    def notify(self, name: str)-> None:
-        '''
-        在节点运行完成之后
-        使用socket通知处理程序
-        '''
-        msg = "节点：" + name + "已经执行完成。"
-        self.LOG.info(msg)
-        if SOCKET_DEBUG:
-            self.conn.send(msg.encode("UTF-8"))
-
-    def update_node(self, task_apth: str = TASKS_PATH)-> None:
+    def update_node(self)-> None:
         '''更新节点'''
-        with open(task_apth, "r+", encoding="utf-8") as file:
+        with open(self.task_apth, "r", encoding="utf-8") as file:
             node_json = json.load(file)
         self.node_list = []
         for ch in node_json:
@@ -117,3 +104,12 @@ class scheduler:
             else:
                 self.LOG.error("服务端已开始监听，正在等待客户端连接...")
                 raise ValueError("节点名称重复")
+            
+            
+class output_scheduler:
+    '''用于执行数据ETL过程中的发布，批量执行发布到其他数据库的节点'''
+    def __init__(self, task_apth: str = TASKS_PATH) -> None:
+        self.node_list: list[node_base] = {}
+        self.task_apth = task_apth
+        self.LOG = node_logger("scheduler")
+        self.update_node()

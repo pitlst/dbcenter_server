@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.12)
 set(PROJECT_NAME dbcenter_server)
 # 在这里直接指定项目为c++项目，节约查找tool chain的时间
 project(${PROJECT_NAME} VERSION 1.0.0 LANGUAGES CXX)
-# 设置c++标准等级
+# 设置c++标准等级为17
 set(CMAKE_CXX_STANDARD 17)
 # 导出执行命令到json
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -93,24 +93,14 @@ add_compile_definitions(PROJECT_PATH=\"${PROJECT_SOURCE_DIR}/\")
 add_compile_definitions(_CRT_SECURE_NO_WARNINGS=1)
 add_executable(${PROJECT_NAME} 
                 main.cpp
-                utils/big_int.hpp
-                utils/big_int.cpp
-                utils/high_float.hpp
-                utils/high_float.cpp
                 utils/general.hpp
                 utils/general.cpp
                 utils/data.cpp
                 utils/data.cpp
-                connect/connect.hpp
-                connect/connect.cpp
+                connect/odbc.hpp
+                connect/odbc.cpp
                 connect/mongo.hpp
                 connect/mongo.cpp
-                connect/mysql.hpp
-                connect/mysql.cpp
-                connect/pgsql.hpp
-                connect/pgsql.cpp
-                connect/socket.hpp
-                connect/socket.cpp
                 process_manage/watch_dog.hpp
                 process_manage/watch_dog.cpp
                 process_manage/host.hpp
@@ -132,6 +122,14 @@ target_link_libraries(${PROJECT_NAME} SOCI::soci_core SOCI::soci_odbc mongo::mon
 foreach(FILE_I ${MONGO_CONCPP_DLLS})
     add_custom_command(
         TARGET ${PROJECT_NAME} 
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} 
+        ARGS -E copy_if_different ${FILE_I} "${PROJECT_SOURCE_DIR}/build/Release"
+    )
+endforeach(FILE_I)
+foreach(FILE_I ${SOCI_DLLS})
+    add_custom_command(
+        TARGET ${PROJECT_NAME}  
         POST_BUILD
         COMMAND ${CMAKE_COMMAND} 
         ARGS -E copy_if_different ${FILE_I} "${PROJECT_SOURCE_DIR}/build/Release"
@@ -194,3 +192,4 @@ add_executable(test_dag
 
 
 
+# 创建 docker run -itd --name lhrora11204 -h lhrora11204 --privileged=true -p 1521:1521 -p 222:22  -p 1158:1158 lhrbest/oracle_11g_ee_lhr_11.2.0.4:1.0 init

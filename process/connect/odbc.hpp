@@ -11,16 +11,10 @@ namespace dbs
 {
 
     // 全局单例的连接类，用于组织对数据库的连接
-    struct mysql_connect
+    struct connect
     {
-
-        mysql_connect(const toml::value &input_config);
+        connect(const toml::value &input_config);
     };
-
-    class pgsql_connect
-    {
-    };
-
 }
 
 #endif
