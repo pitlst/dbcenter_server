@@ -31,31 +31,6 @@ namespace dbs
         // 包装好的函数指针，也就是函数实际执行的位置
         std::function<void()> func_warpper;
     };
-
-    // sql节点，用于运行sql
-    // 注意，常用复杂语句应当通过sql设计为存储过程，然后在sql中调用存储过程即可
-    class sql_node final: public node_base 
-    {
-    public:
-        sql_node(const json & node_define);
-        void operator()();
-
-    private:
-        // 读取进来执行的sql
-        std::string m_sql;
-    };
-
-    // mongo的js查询节点，用于运行查询脚本
-    class mongojs_node final: public node_base 
-    {
-    public:
-        mongojs_node(const json & node_define);
-        void operator()();
-
-    private:
-        // 读取进来执行的js
-        std::string m_js;
-    };
 }
 
 #endif

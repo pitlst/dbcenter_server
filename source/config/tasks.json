@@ -1,7 +1,6 @@
 [
     {
         "name": "shr人员信息同步",
-        "alias": "",
         "next_name": [],
         "type": "sql_sync",
         "source": {
