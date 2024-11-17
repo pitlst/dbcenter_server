@@ -17,7 +17,7 @@ from general.node import \
     nosql_to_table
 from general.config import SYNC_CONFIG
 from general.logger import node_logger
-from concurrent.futures import ThreadPoolExecutor, wait
+from concurrent.futures import ThreadPoolExecutor, wait, as_completed
 
 __all_node_type__: list[node_base] = [
     sql_to_table, 
@@ -37,7 +37,7 @@ __all_node_type__: list[node_base] = [
 这里主要想实现的一个想法是，对于没有前后依赖的sql同步节点
 在程序触发时根据日志检查上一次的同步数据量
 并根据一个系数来计算这一次触发时该节点是否要执行
-然后通过IPC来通知c++进行更新
+然后通过socket来通知c++进行更新
 对于有前后依赖的sql节点应当放到c++的处理中执行
 
 实际计算同步时间的方法是在节点的定义里，可以重写
@@ -50,10 +50,10 @@ SOCKET_IP = SYNC_CONFIG["socket_ip"]
 SOCKET_PORT = SYNC_CONFIG["socket_port"]
 MIN_SYNC_INTERVAL = SYNC_CONFIG["min_sync_interval"]
 WAIT_SYNC_INTERVAL = SYNC_CONFIG["wait_sync_interval"]
-POLLING_UPDATE_COUNT = SYNC_CONFIG["polling_update_count"]
+POLLING_UPDATE_TIME = SYNC_CONFIG["polling_update_time"]
 TASKS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "source", "config", "tasks.json")
 
-class input_scheduler:
+class scheduler:
     '''用于执行数据ETL过程中的抽取，批量执行没有前向依赖的节点'''
     def __init__(self, task_apth: str = TASKS_PATH) -> None:
         self.nodep_node: dict[str, node_base] = {}
@@ -68,7 +68,7 @@ class input_scheduler:
         with ThreadPoolExecutor() as tpool:
             # 死循环，不退出
             total_tasks = []
-            count = 0
+            last_load_time = datetime.datetime.now()
             while True:
                 count += 1
                 run_node = self.get_node_run()
@@ -92,9 +92,15 @@ class input_scheduler:
                     self.LOG.debug("没有任务运行，等待" + str(WAIT_SYNC_INTERVAL) + "秒")
                     time.sleep(WAIT_SYNC_INTERVAL)
                 # 更新节点配置，保证更新的后的task.json被使用
-                if count > POLLING_UPDATE_COUNT:
+                if last_load_time + datetime.timedelta(seconds=POLLING_UPDATE_TIME) >= datetime.datetime.now():
                     count = 0
+                    # 在更新配置前将所有节点都运行完成
+                    self.LOG.debug("准备更新节点配置，等待所有节点运行完成")
+                    for future in as_completed(total_tasks):
+                        self.LOG.debug(str(future.result()[0]) + "节点执行完成")
                     self.load_node()
+                    total_tasks = []
+                    self.LOG.debug("节点配置更新完成")
                 
     def get_node_run(self) -> list[node_base]:
         '''获取当前需要执行的节点'''
@@ -125,6 +131,9 @@ class input_scheduler:
         '''根据配置加载节点'''
         with open(self.task_apth, "r", encoding="utf-8") as file:
             node_json = json.load(file)
+        # 删除所有的process节点和对process节点的依赖    
+        
+        # 重新初始化节点
         self.nodep_node = []
         self.havedep_node = []
         for ch in node_json:
@@ -152,3 +161,9 @@ class input_scheduler:
             else:
                 self.LOG.error("节点名称重复")
                 raise ValueError("节点名称重复")
+            
+            
+
+
+if __name__ == "__main__":
+    scheduler().run_node()
