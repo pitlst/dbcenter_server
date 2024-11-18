@@ -60,8 +60,8 @@
         "next_name": [],
         "type": "excel_to_table",
         "source": {
-            "path": "table/ods_alignment_file.xlsx",
-            "sheert": "ods_alignment_file"
+            "path": "ods_alignment_file.xlsx",
+            "sheet": "ods_alignment_file"
         },
         "target": {
             "connect": "BI与数开用数据库",
@@ -73,7 +73,7 @@
         "next_name": [],
         "type": "csv_to_table",
         "source": {
-            "path": "table/ods_alignment_file.csv"
+            "path": "ods_alignment_file.csv"
         },
         "target": {
             "connect": "BI与数开用数据库",
@@ -85,8 +85,8 @@
         "next_name": [],
         "type": "excel_to_nosql",
         "source": {
-            "path": "table/ods_alignment_file.xlsx",
-            "sheert": "ods_alignment_file"
+            "path": "ods_alignment_file.xlsx",
+            "sheet": "ods_alignment_file"
         },
         "target": {
             "connect": "数据处理服务存储",
@@ -99,7 +99,7 @@
         "next_name": [],
         "type": "csv_to_nosql",
         "source": {
-            "path": "table/ods_alignment_file.csv"
+            "path": "ods_alignment_file.csv"
         },
         "target": {
             "connect": "数据处理服务存储",
@@ -116,8 +116,8 @@
             "table": "dm_abnormal"
         },
         "target": {
-            "path": "table/dm_abnormal.xlsx",
-            "sheert": "dm_abnormal"
+            "path": "dm_abnormal.xlsx",
+            "sheet": "dm_abnormal"
         }
     },
     {
@@ -129,7 +129,7 @@
             "table": "dm_abnormal"
         },
         "target": {
-            "path": "table/dm_abnormal.csv"
+            "path": "dm_abnormal.csv"
         }
     },
     {
@@ -140,7 +140,8 @@
             "path": "temp.json"
         },
         "target": {
-            "connect": "BI与数开用数据库",
+            "connect": "数据处理服务存储",
+            "database":"ods",
             "table": "dm_abnormal"
         }
     },

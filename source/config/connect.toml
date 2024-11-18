@@ -2,7 +2,7 @@
 
 ["外网访客系统数据库"]
 type = "mongo"
-ip = "localhost"
+ip = "18.0.163.64"
 port = 10086
 user = ""
 password = ""

@@ -3,8 +3,9 @@ import time
 import json
 import os
 import pandas as pd
+# 这个不能删
+import openpyxl
 from sys import getsizeof
-from openpyxl import load_workbook
 from sqlalchemy import text
 from general.connect import database_connect
 from general.logger import node_logger
@@ -13,8 +14,19 @@ from general.connect import db_engine
 # 当前服务的所有节点数的计数
 __total_node_num__ = 0
 
+def get_node_num() -> int:
+    # 获取当前服务的所有节点数的计数
+    return __total_node_num__
+
+def set_node_num(input_num: int):
+    # 设置当前服务的所有节点数的计数
+    global __total_node_num__
+    __total_node_num__ = input_num
+
 SQL_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "source", "sql")
 TABLE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "source", "table")
+JS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "source", "mongo_js")
+
 
 class node_base(abc.ABC):
     '''
@@ -82,8 +94,7 @@ class node_base(abc.ABC):
 
 def get_data_size(data) -> int:
     '''获取内存占用,用于计算同步时间间隔'''
-    return int(getsizeof(data) / 1024**2)
-
+    return int(getsizeof(data) / 1024 **2)
 
 class sql_to_table(node_base):
     allow_type = ["sql_to_table"]
@@ -113,7 +124,7 @@ class sql_to_table(node_base):
         self.LOG.info("正在执行sql:" + str(os.path.join(SQL_PATH, self.source["sql"])))
         self.data = pd.read_sql_query(self.source_sql, self.source_connect)
         self.LOG.info("数据形状为: " + str(self.data.shape[0]) + "," + str(self.data.shape[1]))
-        return get_data_size(self.data)
+        return self.data.shape[0] * self.data.shape[1]
 
     def write(self) -> None:
         self.LOG.info("正在写入表:" + self.target["table"])
@@ -155,7 +166,7 @@ class table_to_table(node_base):
         self.LOG.info("正在执行sql:" + str(self.source_sql))
         self.data = pd.read_sql_query(self.source_sql, self.source_connect)
         self.LOG.info("数据形状为: " + str(self.data.shape[0]) + "," + str(self.data.shape[1]))
-        return get_data_size()
+        return self.data.shape[0] * self.data.shape[1]
 
     def write(self) -> None:
         self.LOG.info("正在写入表:" + self.target["table"])
@@ -197,11 +208,14 @@ class sql_to_nosql(node_base):
         self.LOG.info("正在执行sql:" + str(os.path.join(SQL_PATH, self.source["sql"])))
         self.data = pd.read_sql_query(self.source_sql, self.source_connect)
         self.LOG.info("数据形状为: " + str(self.data.shape[0]) + "," + str(self.data.shape[1]))
-        return get_data_size()
+        return self.data.shape[0] * self.data.shape[1]
 
     def write(self) -> None:
+        self.LOG.info("正在清空表:" + self.target["table"])
+        self.target_connect[self.target["table"]].drop()
         self.LOG.info("正在写入表:" + self.target["table"])
-        self.target_connect[self.target["table"]].insert_many(self.data.to_dict('records'))
+        self.data = self.data.to_dict('records')
+        self.target_connect[self.target["table"]].insert_many(self.data)
 
     def release(self) -> None:
         self.data = None
@@ -230,9 +244,6 @@ class table_to_nosql(node_base):
         self.LOG.info("开始连接")
         self.source_connect = self.temp_db.get_sql(self.source["connect"])
         self.target_connect = self.temp_db.get_nosql(self.target["connect"])[self.target["database"]]
-        with open(os.path.join(SQL_PATH, self.source["sql"]), 'r', encoding='utf8') as file:
-            # 确保输入没有参数匹配全是字符串
-            self.source_sql = text(file.read())
         if "schema" in self.source.keys():
             self.source_sql = text("select * from " + self.source["schema"] + "." + self.source["table"])
         else:
@@ -241,12 +252,17 @@ class table_to_nosql(node_base):
     def read(self) -> list[int]:
         self.LOG.info("正在执行sql:" + str(self.source_sql))
         self.data = pd.read_sql_query(self.source_sql, self.source_connect)
+        for col_name in self.data.columns:
+            self.data[[col_name]] = self.data[[col_name]].astype(object).where(self.data[[col_name]].notnull(), None)
         self.LOG.info("数据形状为: " + str(self.data.shape[0]) + "," + str(self.data.shape[1]))
-        return get_data_size()
+        return self.data.shape[0] * self.data.shape[1]
 
     def write(self) -> None:
+        self.LOG.info("正在清空表:" + self.target["table"])
+        self.target_connect[self.target["table"]].drop()
         self.LOG.info("正在写入表:" + self.target["table"])
-        self.target_connect[self.target["table"]].insert_many(self.data.to_dict('records'))
+        self.data = self.data.to_dict('records')
+        self.target_connect[self.target["table"]].insert_many(self.data)
 
     def release(self) -> None:
         self.data = None
@@ -273,13 +289,14 @@ class excel_to_table(node_base):
         self.target_connect = self.temp_db.get_sql(self.target["connect"])
         
     def read(self) -> None:
-        self.LOG.info("正在获取:" + self.source["path"] + "的" + self.source["sheet"])
         if self.type == "excel_to_table":
+            self.LOG.info("正在获取:" + self.source["path"] + "的" + self.source["sheet"])
             self.data = pd.read_excel(os.path.join(TABLE_PATH, self.source["path"]), sheet_name=self.source["sheet"], dtype=object)
         elif self.type == "csv_to_table":
+            self.LOG.info("正在获取:" + self.source["path"])
             self.data = pd.read_csv(os.path.join(TABLE_PATH, self.source["path"]), dtype=object)
         self.LOG.info("数据形状为: " + str(self.data.shape[0]) + "," + str(self.data.shape[1]))
-        return get_data_size(self.data)
+        return self.data.shape[0] * self.data.shape[1]
 
     def write(self) -> None:
         self.LOG.info("正在写入:" + self.target["table"])
@@ -311,17 +328,21 @@ class excel_to_nosql(node_base):
         self.target_connect = self.temp_db.get_nosql(self.target["connect"])[self.target["database"]]
         
     def read(self) -> None:
-        self.LOG.info("正在获取:" + self.source["path"] + "的" + self.source["sheet"])
         if self.type == "excel_to_nosql":
+            self.LOG.info("正在获取:" + self.source["path"] + "的" + self.source["sheet"])
             self.data = pd.read_excel(os.path.join(TABLE_PATH, self.source["path"]), sheet_name=self.source["sheet"], dtype=object)
         elif self.type == "csv_to_nosql":
+            self.LOG.info("正在获取:" + self.source["path"])
             self.data = pd.read_csv(os.path.join(TABLE_PATH, self.source["path"]), dtype=object)
         self.LOG.info("数据形状为: " + str(self.data.shape[0]) + "," + str(self.data.shape[1]))
-        return get_data_size(self.data)
+        return self.data.shape[0] * self.data.shape[1]
 
     def write(self) -> None:
+        self.LOG.info("正在清空表:" + self.target["table"])
+        self.target_connect[self.target["table"]].drop()
         self.LOG.info("正在写入表:" + self.target["table"])
-        self.target_connect[self.target["table"]].insert_many(self.data.to_dict('records'))
+        self.data = self.data.to_dict('records')
+        self.target_connect[self.target["table"]].insert_many(self.data)
         
     def release(self) -> None:
         self.data = None
@@ -354,17 +375,15 @@ class table_to_excel(node_base):
         self.LOG.info("正在执行sql:" + str(self.source_sql))
         self.data = pd.read_sql_query(self.source_sql, self.source_connect)
         self.LOG.info("数据形状为: " + str(self.data.shape[0]) + "," + str(self.data.shape[1]))
-        return get_data_size()
+        return self.data.shape[0] * self.data.shape[1]
 
     def write(self) -> None:
         self.LOG.info("正在写入:" + self.target["path"])
-        temp_path = os.path.join(TABLE_PATH, self.source["path"])
+        temp_path = os.path.join(TABLE_PATH, self.target["path"])
         if self.type == "table_to_excel":
             # 保留原有excel数据并追加
-            book = load_workbook(temp_path)
             with pd.ExcelWriter(temp_path) as writer:
-                writer.book = book
-                self.data.to_excel(temp_path, sheet_name=self.target["sheet_name"], index=False)
+                self.data.to_excel(writer, sheet_name=self.target["sheet"], index=False)
         elif self.type == "table_to_csv":
             self.data.to_csv(temp_path, index=False)
             
@@ -393,12 +412,14 @@ class json_to_nosql(node_base):
         self.target_connect = self.temp_db.get_nosql(self.target["connect"])[self.target["database"]]
         
     def read(self) -> None:
-        self.LOG.info("正在获取:" + str(self.source["path"]))
-        with open(self.source["path"], mode='r', encoding='utf-8') as file:
+        self.LOG.info("正在获取:" + os.path.join(JS_PATH, self.source["path"]))
+        with open(os.path.join(JS_PATH, self.source["path"]), mode='r', encoding='utf-8') as file:
             self.data = json.load(file)
-        return get_data_size(self.data)
+        return get_data_size(str(self.data))
 
     def write(self) -> None:
+        self.LOG.info("正在清空表:" + self.target["table"])
+        self.target_connect[self.target["table"]].drop()
         self.LOG.info("正在写入表:" + self.target["table"])
         self.target_connect[self.target["table"]].insert_many(self.data)
         
@@ -429,11 +450,11 @@ class nosql_to_json(node_base):
     def read(self) -> None:
         self.LOG.info("正在获取:" + self.source["table"])
         self.data = self.source_connect[self.source["table"]].find().to_list()
-        return get_data_size(self.data)
+        return get_data_size(str(self.data))
 
     def write(self) -> None:
-        self.LOG.info("正在写入:" + self.target["path"])
-        with open(self.source["sql"], mode='w', encoding='utf-8') as file:
+        self.LOG.info("正在写入:" + os.path.join(JS_PATH, self.target["path"]))
+        with open(os.path.join(JS_PATH, self.target["path"]), mode='w', encoding='utf-8') as file:
             file.write(str(self.data))
         
     def release(self) -> None:
@@ -464,11 +485,14 @@ class nosql_to_nosql(node_base):
         
     def read(self) -> None:
         self.LOG.info("正在获取:" + self.source["table"])
-        self.data = self.source_connect[self.source["table"]].find().to_list()
-        return get_data_size(self.data)
+        # 查询时排除id字段
+        self.data = self.source_connect[self.source["table"]].find({}, {'_id': 0})
+        return get_data_size(str(self.data))
 
     def write(self) -> None:
-        self.LOG.info("正在写入:" + self.source["table"])
+        self.LOG.info("正在清空表:" + self.target["table"])
+        self.target_connect[self.target["table"]].drop()
+        self.LOG.info("正在写入表:" + self.target["table"])
         self.target_connect[self.target["table"]].insert_many(self.data)
         
     def release(self) -> None:
@@ -501,7 +525,7 @@ class nosql_to_table(node_base):
         self.LOG.info("正在获取:" + self.source["table"])
         temp_data = self.source_connect[self.source["table"]].find().to_list()
         self.data = pd.read_json(temp_data, orient="records")
-        return get_data_size(self.data)
+        return get_data_size(str(self.data))
 
     def write(self) -> None:
         self.LOG.info("正在写入:" + self.target["table"])

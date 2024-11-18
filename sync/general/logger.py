@@ -14,7 +14,10 @@ class momgo_handler(logging.Handler):
             "timeField": "timestamp",
             "metaField":"message"
         }
-        self.collection = database.create_collection(name, timeseries=time_series_options)
+        if name not in database.list_collection_names():
+            self.collection = database.create_collection(name, timeseries=time_series_options)
+        else:
+            self.collection = database[name]
  
     def emit(self, record) -> None:
         """

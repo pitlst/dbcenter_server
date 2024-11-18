@@ -2,7 +2,7 @@ import os
 import json
 import time
 import datetime
-from sync.general.node import node_base, __total_node_num__
+from general.node import node_base, get_node_num, set_node_num
 from general.node import \
     sql_to_table, \
     table_to_table, \
@@ -51,6 +51,7 @@ SOCKET_PORT = SYNC_CONFIG["socket_port"]
 MIN_SYNC_INTERVAL = SYNC_CONFIG["min_sync_interval"]
 WAIT_SYNC_INTERVAL = SYNC_CONFIG["wait_sync_interval"]
 POLLING_UPDATE_TIME = SYNC_CONFIG["polling_update_time"]
+
 TASKS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "source", "config", "tasks.json")
 
 class scheduler:
@@ -67,11 +68,13 @@ class scheduler:
         '''真正执行节点的地方'''
         with ThreadPoolExecutor() as tpool:
             # 死循环，不退出
+            # 存储当前正在运行节点的名称
+            is_run_node_tasks = set()
+            # 存储运行任务未来返回的结果
             total_tasks = []
             last_load_time = datetime.datetime.now()
             while True:
-                count += 1
-                run_node = self.get_node_run()
+                run_node = self.get_node_run(is_run_node_tasks)
                 if len(run_node) == 0:
                     # 没任务运行就等10秒，不要让cpu一直卡在检查
                     self.LOG.debug("没有新的任务触发执行")
@@ -79,6 +82,7 @@ class scheduler:
                     # 只有在本次获取的任务都执行完成后下一次执行才会开始
                     for ch in run_node:
                         total_tasks.append(tpool.submit(ch.run))
+                        is_run_node_tasks.add(ch.name)
                     self.LOG.debug("触发以下任务执行:" + ",".join([ch.name for ch in run_node]))
                 # 对于运行任务等待结果，未运行完就更新需要添加的任务
                 if len(total_tasks) != 0:
@@ -86,33 +90,34 @@ class scheduler:
                     for future in is_done:
                         node_result = future.result()
                         total_tasks.remove(future)
+                        is_run_node_tasks.remove(str(node_result[0]))
                         self.LOG.debug(str(node_result[0]) + "节点执行完成")
                         self.update_node(node_result)
                 else:
                     self.LOG.debug("没有任务运行，等待" + str(WAIT_SYNC_INTERVAL) + "秒")
                     time.sleep(WAIT_SYNC_INTERVAL)
                 # 更新节点配置，保证更新的后的task.json被使用
-                if last_load_time + datetime.timedelta(seconds=POLLING_UPDATE_TIME) >= datetime.datetime.now():
-                    count = 0
+                if last_load_time + datetime.timedelta(seconds=POLLING_UPDATE_TIME) <= datetime.datetime.now():
                     # 在更新配置前将所有节点都运行完成
                     self.LOG.debug("准备更新节点配置，等待所有节点运行完成")
                     for future in as_completed(total_tasks):
                         self.LOG.debug(str(future.result()[0]) + "节点执行完成")
                     self.load_node()
+                    is_run_node_tasks = set()
                     total_tasks = []
                     self.LOG.debug("节点配置更新完成")
                 
-    def get_node_run(self) -> list[node_base]:
+    def get_node_run(self, is_run_node_tasks: set[str]) -> list[node_base]:
         '''获取当前需要执行的节点'''
         temp_node = []
         # 检查无依赖节点的时间是否需要触发，是否应该运行
         temp_now = datetime.datetime.now()
         for _node in self.nodep_node_last_time:
-            if self.nodep_node_last_time[_node] <= temp_now:
+            if _node not in is_run_node_tasks and self.nodep_node_last_time[_node] <= temp_now:
                 temp_node.append(self.nodep_node[_node])
         # 检查有依赖的节点是否被通知需要运行
         for _node in self.havedep_node:
-            if self.havedep_node[_node].need_run:
+            if _node not in is_run_node_tasks and self.havedep_node[_node].need_run:
                 temp_node.append(self.havedep_node[_node])
         return temp_node
     
@@ -121,7 +126,9 @@ class scheduler:
         name, data_size = node_result
         # 没有依赖的节点计算下一次触发时间即可
         if name in self.nodep_node.keys():
-            self.nodep_node_last_time[name] = datetime.datetime.now() + datetime.timedelta(seconds=data_size / (SYNC_CONFIG["max_node_flow_cap"] / __total_node_num__))
+            if data_size == 0:
+                data_size = 10
+            self.nodep_node_last_time[name] = datetime.datetime.now() + datetime.timedelta(seconds=data_size / (SYNC_CONFIG["max_node_flow_cap"] / get_node_num()))
         # 通知所有依赖他的节点可以跑了
         for _node in self.havedep_node:
             if name in self.havedep_node[_node].next_name:
@@ -129,6 +136,8 @@ class scheduler:
 
     def load_node(self)-> None:
         '''根据配置加载节点'''
+        # 重置节点计数
+        set_node_num(0)
         with open(self.task_apth, "r", encoding="utf-8") as file:
             node_json = json.load(file)
         # 删除所有的process节点和对process节点的依赖    
@@ -145,8 +154,8 @@ class scheduler:
                 ch["next_name"] = next_ch
                 new_json.append(ch)
         # 重新初始化节点
-        self.nodep_node = []
-        self.havedep_node = []
+        self.nodep_node = {}
+        self.havedep_node = {}
         for ch in new_json:
             for __type__ in __all_node_type__:
                 if ch["type"] in __type__.allow_type:
@@ -173,8 +182,6 @@ class scheduler:
                 self.LOG.error("节点名称重复")
                 raise ValueError("节点名称重复")
             
-            
-
 
 if __name__ == "__main__":
     scheduler().run_node()
