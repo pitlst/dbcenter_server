@@ -129,7 +129,7 @@ foreach(FILE_I ${MONGO_CONCPP_DLLS})
     )
 endforeach(FILE_I)
 
-# logger链接测试
+# logger测试
 add_executable(test_logger 
                 tests/test_logger.cpp 
                 connect/mongo.hpp
@@ -169,3 +169,5 @@ add_executable(test_dag
                 scheduler/thread_pool.cpp
                 scheduler/thread_pool.cpp
 )
+
+# socket通信测试
