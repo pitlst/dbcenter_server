@@ -15,7 +15,7 @@ port = 27017
 user = ""
 password = ""
 
-["数仓正式库与小组数开用数据库"]
+["BI与数开用数据库"]
 type = "mysql"
 ip = "10.24.5.32"
 port = 3306
@@ -65,7 +65,7 @@ mode = "crrc_temp"
 
 ["金蝶云苍穹-测试库"]
 type = "mysql"
-ip = "10.24.204.37"
+ip ="10.24.204.37"
 port = 3306
 user = "kingdee"
 password = "kingdee2020"

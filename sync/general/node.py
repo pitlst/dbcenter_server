@@ -14,7 +14,7 @@ from general.connect import db_engine
 __total_node_num__ = 0
 
 SQL_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "source", "sql")
-
+TABLE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "source", "table")
 
 class node_base(abc.ABC):
     '''
@@ -93,6 +93,13 @@ class sql_to_table(node_base):
         self.source: dict = node_define["source"]
         self.target: dict = node_define["target"]
         self.data: pd.DataFrame | None = None
+        # 检查节点格式是否符合要求
+        source_key = self.source.keys()
+        assert "connect" in source_key, "节点的格式不符合要求：source中没有connect"
+        assert "sql" in source_key, "节点的格式不符合要求：source中没有sql"
+        target_key = self.target.keys()
+        assert "connect" in target_key, "节点的格式不符合要求：target中没有connect"
+        assert "table" in target_key, "节点的格式不符合要求：target中没有table"
 
     def connect(self) -> None:
         self.LOG.info("开始连接")
@@ -127,6 +134,13 @@ class table_to_table(node_base):
         self.source: dict = node_define["source"]
         self.target: dict = node_define["target"]
         self.data: pd.DataFrame | None = None
+        # 检查节点格式是否符合要求
+        source_key = self.source.keys()
+        assert "connect" in source_key, "节点的格式不符合要求：source中没有connect"
+        assert "table" in source_key, "节点的格式不符合要求：source中没有table"
+        target_key = self.target.keys()
+        assert "connect" in target_key, "节点的格式不符合要求：target中没有connect"
+        assert "table" in target_key, "节点的格式不符合要求：target中没有table"
 
     def connect(self) -> None:
         self.LOG.info("开始连接")
@@ -138,7 +152,7 @@ class table_to_table(node_base):
             self.source_sql = text("select * from " + self.source["table"])
 
     def read(self) -> list[int]:
-        self.LOG.info("正在执行sql:" + str(os.path.join(SQL_PATH, self.source["sql"])))
+        self.LOG.info("正在执行sql:" + str(self.source_sql))
         self.data = pd.read_sql_query(self.source_sql, self.source_connect)
         self.LOG.info("数据形状为: " + str(self.data.shape[0]) + "," + str(self.data.shape[1]))
         return get_data_size()
@@ -162,6 +176,14 @@ class sql_to_nosql(node_base):
         self.source: dict = node_define["source"]
         self.target: dict = node_define["target"]
         self.data: pd.DataFrame | None = None
+        # 检查节点格式是否符合要求
+        source_key = self.source.keys()
+        assert "connect" in source_key, "节点的格式不符合要求：source中没有connect"
+        assert "sql" in source_key, "节点的格式不符合要求：source中没有sql"
+        target_key = self.target.keys()
+        assert "connect" in target_key, "节点的格式不符合要求：target中没有connect"
+        assert "database" in target_key, "节点的格式不符合要求：target中没有database"
+        assert "table" in target_key, "节点的格式不符合要求：target中没有table"
 
     def connect(self) -> None:
         self.LOG.info("开始连接")
@@ -195,6 +217,14 @@ class table_to_nosql(node_base):
         self.source: dict = node_define["source"]
         self.target: dict = node_define["target"]
         self.data: pd.DataFrame | None = None
+        # 检查节点格式是否符合要求
+        source_key = self.source.keys()
+        assert "connect" in source_key, "节点的格式不符合要求：source中没有connect"
+        assert "table" in source_key, "节点的格式不符合要求：source中没有table"
+        target_key = self.target.keys()
+        assert "connect" in target_key, "节点的格式不符合要求：target中没有connect"
+        assert "database" in target_key, "节点的格式不符合要求：target中没有database"
+        assert "table" in target_key, "节点的格式不符合要求：target中没有table"
 
     def connect(self) -> None:
         self.LOG.info("开始连接")
@@ -209,7 +239,7 @@ class table_to_nosql(node_base):
             self.source_sql = text("select * from " + self.source["table"])
 
     def read(self) -> list[int]:
-        self.LOG.info("正在执行sql:" + str(os.path.join(SQL_PATH, self.source["sql"])))
+        self.LOG.info("正在执行sql:" + str(self.source_sql))
         self.data = pd.read_sql_query(self.source_sql, self.source_connect)
         self.LOG.info("数据形状为: " + str(self.data.shape[0]) + "," + str(self.data.shape[1]))
         return get_data_size()
@@ -231,6 +261,12 @@ class excel_to_table(node_base):
         self.source: dict = node_define["source"]
         self.target: dict = node_define["target"]
         self.data: pd.DataFrame|None = None
+        # 检查节点格式是否符合要求
+        source_key = self.source.keys()
+        assert "path" in source_key, "节点的格式不符合要求：source中没有path"
+        target_key = self.target.keys()
+        assert "connect" in target_key, "节点的格式不符合要求：target中没有connect"
+        assert "table" in target_key, "节点的格式不符合要求：target中没有table"
 
     def connect(self) -> None:
         self.LOG.info("开始连接")
@@ -239,9 +275,9 @@ class excel_to_table(node_base):
     def read(self) -> None:
         self.LOG.info("正在获取:" + self.source["path"] + "的" + self.source["sheet"])
         if self.type == "excel_to_table":
-            self.data = pd.read_excel(self.source["path"], sheet_name=self.source["sheet"], dtype=object)
+            self.data = pd.read_excel(os.path.join(TABLE_PATH, self.source["path"]), sheet_name=self.source["sheet"], dtype=object)
         elif self.type == "csv_to_table":
-            self.data = pd.read_csv(self.source["path"], dtype=object)
+            self.data = pd.read_csv(os.path.join(TABLE_PATH, self.source["path"]), dtype=object)
         self.LOG.info("数据形状为: " + str(self.data.shape[0]) + "," + str(self.data.shape[1]))
         return get_data_size(self.data)
 
@@ -262,6 +298,13 @@ class excel_to_nosql(node_base):
         self.source: dict = node_define["source"]
         self.target: dict = node_define["target"]
         self.data: pd.DataFrame|None = None
+        # 检查节点格式是否符合要求
+        source_key = self.source.keys()
+        assert "path" in source_key, "节点的格式不符合要求：source中没有path"
+        target_key = self.target.keys()
+        assert "connect" in target_key, "节点的格式不符合要求：target中没有connect"
+        assert "database" in target_key, "节点的格式不符合要求：target中没有database"
+        assert "table" in target_key, "节点的格式不符合要求：target中没有table"
 
     def connect(self) -> None:
         self.LOG.info("开始连接")
@@ -270,9 +313,9 @@ class excel_to_nosql(node_base):
     def read(self) -> None:
         self.LOG.info("正在获取:" + self.source["path"] + "的" + self.source["sheet"])
         if self.type == "excel_to_nosql":
-            self.data = pd.read_excel(self.source["path"], sheet_name=self.source["sheet"], dtype=object)
+            self.data = pd.read_excel(os.path.join(TABLE_PATH, self.source["path"]), sheet_name=self.source["sheet"], dtype=object)
         elif self.type == "csv_to_nosql":
-            self.data = pd.read_csv(self.source["path"], dtype=object)
+            self.data = pd.read_csv(os.path.join(TABLE_PATH, self.source["path"]), dtype=object)
         self.LOG.info("数据形状为: " + str(self.data.shape[0]) + "," + str(self.data.shape[1]))
         return get_data_size(self.data)
 
@@ -292,6 +335,12 @@ class table_to_excel(node_base):
         self.source: dict = node_define["source"]
         self.target: dict = node_define["target"]
         self.data: pd.DataFrame|None = None
+        # 检查节点格式是否符合要求
+        source_key = self.source.keys()
+        assert "connect" in source_key, "节点的格式不符合要求：source中没有connect"
+        assert "table" in source_key, "节点的格式不符合要求：source中没有table"
+        target_key = self.target.keys()
+        assert "path" in target_key, "节点的格式不符合要求：target中没有path"
 
     def connect(self) -> None:
         self.LOG.info("开始连接")
@@ -302,21 +351,22 @@ class table_to_excel(node_base):
             self.source_sql = text("select * from " + self.source["table"])
         
     def read(self) -> None:
-        self.LOG.info("正在执行sql:" + str(os.path.join(SQL_PATH, self.source["sql"])))
+        self.LOG.info("正在执行sql:" + str(self.source_sql))
         self.data = pd.read_sql_query(self.source_sql, self.source_connect)
         self.LOG.info("数据形状为: " + str(self.data.shape[0]) + "," + str(self.data.shape[1]))
         return get_data_size()
 
     def write(self) -> None:
         self.LOG.info("正在写入:" + self.target["path"])
+        temp_path = os.path.join(TABLE_PATH, self.source["path"])
         if self.type == "table_to_excel":
             # 保留原有excel数据并追加
-            book = load_workbook(self.target["path"])
-            with pd.ExcelWriter(self.target["path"]) as writer:
+            book = load_workbook(temp_path)
+            with pd.ExcelWriter(temp_path) as writer:
                 writer.book = book
-                self.data.to_excel(self.target["path"], sheet_name=self.target["sheet_name"], index=False)
+                self.data.to_excel(temp_path, sheet_name=self.target["sheet_name"], index=False)
         elif self.type == "table_to_csv":
-            self.data.to_csv(self.target["path"], index=False)
+            self.data.to_csv(temp_path, index=False)
             
     def release(self) -> None:
         self.data = None
@@ -330,14 +380,21 @@ class json_to_nosql(node_base):
         self.source: dict = node_define["source"]
         self.target: dict = node_define["target"]
         self.data = None
+        # 检查节点格式是否符合要求
+        source_key = self.source.keys()
+        assert "path" in source_key, "节点的格式不符合要求：source中没有path"
+        target_key = self.target.keys()
+        assert "connect" in target_key, "节点的格式不符合要求：target中没有connect"
+        assert "database" in target_key, "节点的格式不符合要求：target中没有database"
+        assert "table" in target_key, "节点的格式不符合要求：target中没有table"
 
     def connect(self) -> None:
         self.LOG.info("开始连接")
         self.target_connect = self.temp_db.get_nosql(self.target["connect"])[self.target["database"]]
         
     def read(self) -> None:
-        self.LOG.info("正在获取:" + str(self.source["sql"]))
-        with open(self.source["sql"], mode='r', encoding='utf-8') as file:
+        self.LOG.info("正在获取:" + str(self.source["path"]))
+        with open(self.source["path"], mode='r', encoding='utf-8') as file:
             self.data = json.load(file)
         return get_data_size(self.data)
 
@@ -357,6 +414,13 @@ class nosql_to_json(node_base):
         self.source: dict = node_define["source"]
         self.target: dict = node_define["target"]
         self.data = None
+        # 检查节点格式是否符合要求
+        source_key = self.source.keys()
+        assert "connect" in source_key, "节点的格式不符合要求：source中没有connect"
+        assert "database" in source_key, "节点的格式不符合要求：source中没有database"
+        assert "table" in source_key, "节点的格式不符合要求：source中没有table"
+        target_key = self.target.keys()
+        assert "path" in target_key, "节点的格式不符合要求：target中没有path"
 
     def connect(self) -> None:
         self.LOG.info("开始连接")
@@ -383,6 +447,15 @@ class nosql_to_nosql(node_base):
         self.source: dict = node_define["source"]
         self.target: dict = node_define["target"]
         self.data = None
+        # 检查节点格式是否符合要求
+        source_key = self.source.keys()
+        assert "connect" in source_key, "节点的格式不符合要求：source中没有connect"
+        assert "database" in source_key, "节点的格式不符合要求：source中没有database"
+        assert "table" in source_key, "节点的格式不符合要求：source中没有table"
+        target_key = self.target.keys()
+        assert "connect" in target_key, "节点的格式不符合要求：target中没有connect"
+        assert "database" in target_key, "节点的格式不符合要求：target中没有database"
+        assert "table" in target_key, "节点的格式不符合要求：target中没有table"
 
     def connect(self) -> None:
         self.LOG.info("开始连接")
@@ -410,6 +483,14 @@ class nosql_to_table(node_base):
         self.source: dict = node_define["source"]
         self.target: dict = node_define["target"]
         self.data = None
+        # 检查节点格式是否符合要求
+        source_key = self.source.keys()
+        assert "connect" in source_key, "节点的格式不符合要求：source中没有connect"
+        assert "database" in source_key, "节点的格式不符合要求：source中没有database"
+        assert "table" in source_key, "节点的格式不符合要求：source中没有table"
+        target_key = self.target.keys()
+        assert "connect" in target_key, "节点的格式不符合要求：target中没有connect"
+        assert "table" in target_key, "节点的格式不符合要求：target中没有table"
 
     def connect(self) -> None:
         self.LOG.info("开始连接")

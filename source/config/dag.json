@@ -1,0 +1,1317 @@
+// 1
+{
+    "_id": ObjectId("66ea4c906a4d00001f001d99"),
+    "name": "shr人员信息同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "SHR",
+        "sql": "shr_staff.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_shr_staff"
+    }
+}
+
+// 2
+{
+    "_id": ObjectId("66ea4c906a4d00001f001d9a"),
+    "name": "考勤人员信息同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "考勤系统",
+        "sql": "kq_staff.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_kq_staff"
+    }
+}
+
+// 3
+{
+    "_id": ObjectId("66ea4c906a4d00001f001d9b"),
+    "name": "城轨通讯录同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "生产辅助系统",
+        "sql": "phonebook_staff.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_phonebook_staff"
+    }
+}
+
+// 4
+{
+    "_id": ObjectId("66ea4c906a4d00001f001d9c"),
+    "name": "mes在岗情况同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "MES",
+        "sql": "mes_staff.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_mes_staff"
+    }
+}
+
+// 5
+{
+    "_id": ObjectId("66ea4c906a4d00001f001d9d"),
+    "name": "项目基础数据信息同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "project_basic.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_project_basic"
+    }
+}
+
+// 6
+{
+    "_id": ObjectId("66ea4c906a4d00001f001d9e"),
+    "name": "全员型改善同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "ameliorate.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_ameliorate"
+    }
+}
+
+// 7
+{
+    "_id": ObjectId("66ea4c906a4d00001f001d9f"),
+    "name": "售后服务段业联未关闭统计同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "Industry_association_closure_statistics.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_tk_crrc_mesjob"
+    }
+}
+
+// 8
+{
+    "_id": ObjectId("66ea4c906a4d00001f001da0"),
+    "name": "业联执行关闭同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "Industry_association.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_industry_association"
+    }
+}
+
+// 9
+{
+    "_id": ObjectId("66ea4c906a4d00001f001da1"),
+    "name": "派工单同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "MES",
+        "sql": "dispatch_list.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_dispatch_list"
+    }
+}
+
+// 10
+{
+    "_id": ObjectId("66ea4c906a4d00001f001da2"),
+    "name": "调试任务同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "MES",
+        "sql": "debug_tasks.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_debug_tasks"
+    }
+}
+
+// 11
+{
+    "_id": ObjectId("66ea4c906a4d00001f001da3"),
+    "name": "交车轨道负责人同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "delivery_train.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_delivery_train"
+    }
+}
+
+// 12
+{
+    "_id": ObjectId("66ea4c906a4d00001f001da4"),
+    "name": "异常同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "MES",
+        "sql": "abnormal.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_abnormal"
+    }
+}
+
+// 13
+{
+    "_id": ObjectId("66ea4c906a4d00001f001da5"),
+    "name": "异常类型同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "MES",
+        "sql": "abnormal_type.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_abnormal_type"
+    }
+}
+
+// 14
+{
+    "_id": ObjectId("66ea4c906a4d00001f001da6"),
+    "name": "考勤节假日同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "考勤系统",
+        "sql": "kq_scheduling_holiday.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_kq_scheduling_holiday"
+    }
+}
+
+// 15
+{
+    "_id": ObjectId("66ea4c906a4d00001f001da7"),
+    "name": "考勤类型同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "考勤系统",
+        "sql": "kq_type.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_kq_type"
+    }
+}
+
+// 16
+{
+    "_id": ObjectId("66ea4c906a4d00001f001da8"),
+    "name": "考勤时间计算后同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "考勤系统",
+        "sql": "kq_time.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_kq_time"
+    }
+}
+
+// 17
+{
+    "_id": ObjectId("66ea4c906a4d00001f001da9"),
+    "name": "工时同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "EAS",
+        "sql": "worktime.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_work_time"
+    }
+}
+
+// 18
+{
+    "_id": ObjectId("66ea4c906a4d00001f001daa"),
+    "name": "工时人员筛选同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "worktime_fillter.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_work_time_fillter"
+    }
+}
+
+// 19
+{
+    "_id": ObjectId("66ea4c906a4d00001f001dab"),
+    "name": "定额外工时同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "生产辅助系统",
+        "sql": "worktime_temporary.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_work_time_temp"
+    }
+}
+
+// 20
+{
+    "_id": ObjectId("66ea4c906a4d00001f001dac"),
+    "name": "线下工时同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "worktime_offline.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_work_time_offline"
+    }
+}
+
+// 21
+{
+    "_id": ObjectId("66ea4c906a4d00001f001dad"),
+    "name": "差旅信息同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "EAS",
+        "sql": "travel.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_travel"
+    }
+}
+
+// 22
+{
+    "_id": ObjectId("66ea4c906a4d00001f001dae"),
+    "name": "差旅筛选单据同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "travel_fillter.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_travel_fillter"
+    }
+}
+
+// 23
+{
+    "_id": ObjectId("66ea4c906a4d00001f001daf"),
+    "name": "标杆产品用工量同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "product_labor.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_product_labor"
+    }
+}
+
+// 24
+{
+    "_id": ObjectId("66f26bd36a4d00001f001dd6"),
+    "name": "业联-基础资料-班组同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "business_connection/class_group.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_class_group"
+    }
+}
+
+// 25
+{
+    "_id": ObjectId("66f97648456a6413970821d1"),
+    "name": "业联-工艺流程同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "business_connection/technological_process.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_technological_process"
+    }
+}
+
+// 26
+{
+    "_id": ObjectId("66f97655456a6413970821d2"),
+    "name": "业联-工艺流程-工艺变更分录同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "business_connection/technological_process_change.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_technological_process_change"
+    }
+}
+
+// 27
+{
+    "_id": ObjectId("66f97666456a6413970821d3"),
+    "name": "业联-工艺流程-任务流程分录同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "business_connection/technological_process_flow.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_technological_process_flow"
+    }
+}
+
+// 28
+{
+    "_id": ObjectId("66f978a8155363a9150111e5"),
+    "name": "业联-设计变更同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "business_connection/design_change.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_design_change"
+    }
+}
+
+// 29
+{
+    "_id": ObjectId("66f978c2155363a9150111e6"),
+    "name": "业联-车间执行单备料工艺工序同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "business_connection/shop_exeecution_material_preparation_technology_unit_process.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_shop_exeecution_material_preparation_technology_unit_process"
+    }
+}
+
+// 30
+{
+    "_id": ObjectId("66f979fc155363a9150111e7"),
+    "name": "业联-车间执行单备料工艺班组同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "business_connection/shop_exeecution_material_preparation_technology_unit_class.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_shop_exeecution_material_preparation_technology_unit_class"
+    }
+}
+
+// 31
+{
+    "_id": ObjectId("66f97a13155363a9150111e8"),
+    "name": "业联-车间执行单备料工艺同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "business_connection/shop_exeecution_material_preparation_technology.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_shop_exeecution_material_preparation_technology"
+    }
+}
+
+// 32
+{
+    "_id": ObjectId("66f97a23155363a9150111e9"),
+    "name": "业联-车间执行单任务项点分录同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "business_connection/shop_execution_task_item_point_unit.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_shop_execution_task_item_point_unit"
+    }
+}
+
+// 33
+{
+    "_id": ObjectId("66f97a3d155363a9150111eb"),
+    "name": "业联-车间执行单任务项点同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "business_connection/shop_execution_task_item_point.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_shop_execution_task_item_point"
+    }
+}
+
+// 34
+{
+    "_id": ObjectId("66f97a49155363a9150111ec"),
+    "name": "业联-车间执行单返工物料分录同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "business_connection/shop_execution_reworked_material_unit.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_shop_execution_reworked_material_unit"
+    }
+}
+
+// 35
+{
+    "_id": ObjectId("66f97a55155363a9150111ed"),
+    "name": "业联-车间执行单返工物料同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "business_connection/shop_execution_reworked_material.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_shop_execution_reworked_material"
+    }
+}
+
+// 36
+{
+    "_id": ObjectId("66f97a62155363a9150111ee"),
+    "name": "业联-车间执行单抄送单位同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "business_connection/shop_execution_copy_delivery_unit.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_shop_execution_copy_delivery_unit"
+    }
+}
+
+// 37
+{
+    "_id": ObjectId("66f97a70155363a9150111ef"),
+    "name": "业联-车间执行单主送单位同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "business_connection/shop_execution_main_delivery_unit.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_shop_execution_main_delivery_unit"
+    }
+}
+
+// 38
+{
+    "_id": ObjectId("66f97a79155363a9150111f0"),
+    "name": "业联-车间执行单经办同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "business_connection/shop_execution_handle.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_shop_execution_handle"
+    }
+}
+
+// 39
+{
+    "_id": ObjectId("66f97a86155363a9150111f1"),
+    "name": "业联-车间执行单审核同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "business_connection/shop_execution_audit.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_shop_execution_audit"
+    }
+}
+
+// 40
+{
+    "_id": ObjectId("66f97a9a155363a9150111f2"),
+    "name": "业联-车间执行单同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "business_connection/shop_execution.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_shop_execution"
+    }
+}
+
+// 41
+{
+    "_id": ObjectId("66f97aaa155363a9150111f3"),
+    "name": "业联-业务联系书抄送单位同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "business_connection/business_connection_copy_delivery_unit.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_business_connection_copy_delivery_unit"
+    }
+}
+
+// 42
+{
+    "_id": ObjectId("66f97ab5155363a9150111f4"),
+    "name": "业联-业务联系书主送单位同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "business_connection/business_connection_main_delivery_unit.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_business_connection_main_delivery_unit"
+    }
+}
+
+// 43
+{
+    "_id": ObjectId("66f97ac2155363a9150111f5"),
+    "name": "业联-业务联系书同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "business_connection/business_connection.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_business_connection"
+    }
+}
+
+// 44
+{
+    "_id": ObjectId("66f97acc155363a9150111f6"),
+    "name": "业联-班组分录同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "business_connection/class_group_entry.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_class_group_entry"
+    }
+}
+
+// 45
+{
+    "_id": ObjectId("66f97b0b155363a9150111f8"),
+    "name": "业联-设计变更分录同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "business_connection/design_change_entry.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_design_change_entry"
+    }
+}
+
+// 46
+{
+    "_id": ObjectId("66fd6aa6155363a9150111f9"),
+    "name": "业联-设计变更执行同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "business_connection/design_change_execution.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_design_change_execution"
+    }
+}
+
+// 47
+{
+    "_id": ObjectId("66fd6ab7155363a9150111fa"),
+    "name": "业联-设计变更执行返工工艺同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "business_connection/design_change_execution_reworked_material.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_design_change_execution_reworked_material"
+    }
+}
+
+// 48
+{
+    "_id": ObjectId("66fd6ac4155363a9150111fb"),
+    "name": "业联-设计变更执行返工工艺分录同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "business_connection/design_change_execution_reworked_material_unit.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_design_change_execution_reworked_material_unit"
+    }
+}
+
+// 49
+{
+    "_id": ObjectId("66fd6ad5155363a9150111fc"),
+    "name": "业联-设计变更执行备料工艺同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "business_connection/design_change_execution_material_preparation_technology.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_design_change_execution_material_preparation_technology"
+    }
+}
+
+// 50
+{
+    "_id": ObjectId("66fd6ae4155363a9150111fd"),
+    "name": "业联-设计变更执行备料工艺分录同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "business_connection/design_change_execution_material_preparation_technology_unit.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_design_change_execution_material_preparation_technology_unit"
+    }
+}
+
+// 51
+{
+    "_id": ObjectId("66fd6af0155363a9150111fe"),
+    "name": "业联-设计变更执行物料变更同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "business_connection/design_change_execution_material_change.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_design_change_execution_material_change"
+    }
+}
+
+// 52
+{
+    "_id": ObjectId("66fd6aff155363a9150111ff"),
+    "name": "业联-设计变更执行主送单位同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "business_connection/design_change_execution_main_delivery_unit.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_design_change_execution_main_delivery_unit"
+    }
+}
+
+// 53
+{
+    "_id": ObjectId("66fd6b0c155363a915011200"),
+    "name": "业联-设计变更执行抄送单位同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "business_connection/design_change_execution_copy_delivery_unit.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_design_change_execution_copy_delivery_unit"
+    }
+}
+
+// 54
+{
+    "_id": ObjectId("66fd6b18155363a915011201"),
+    "name": "业联-设计变更执行经办同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "business_connection/design_change_execution_handle.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_design_change_execution_handle"
+    }
+}
+
+// 55
+{
+    "_id": ObjectId("66fd6b25155363a915011202"),
+    "name": "业联-设计变更执行审核同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "business_connection/design_change_execution_audit.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_design_change_execution_audit"
+    }
+}
+
+// 56
+{
+    "_id": ObjectId("66fd6b30155363a915011203"),
+    "name": "业联-设计变更执行文档变更同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "business_connection/design_change_execution_document_change.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_design_change_execution_document_change"
+    }
+}
+
+// 57
+{
+    "_id": ObjectId("66fd6b3b155363a915011204"),
+    "name": "业联-设计变更执行文档变更分录同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "business_connection/design_change_execution_document_change_unit.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_design_change_execution_document_change_unit"
+    }
+}
+
+// 58
+{
+    "_id": ObjectId("66fd6b46155363a915011205"),
+    "name": "业联-设计变更执行文档变更内容同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "business_connection/design_change_execution_change_content.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_design_change_execution_change_content"
+    }
+}
+
+// 59
+{
+    "_id": ObjectId("6717473be2c8cdaa0d097952"),
+    "name": "自主型改善同步",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "autonomous_ameliorate.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_autonomous_ameliorate"
+    }
+}
+
+// 60
+{
+    "_id": ObjectId("6720460729509efeef008441"),
+    "name": "邓芳用-CT_BCP_PROSTDTIME",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "EAS",
+        "sql": "dengfang/CT_BCP_PROSTDTIME.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_ct_bcp_prostdtime"
+    }
+}
+
+// 61
+{
+    "_id": ObjectId("6720461829509efeef008442"),
+    "name": "邓芳用-CT_BCP_PROSTDTIMEENTRY",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "EAS",
+        "sql": "dengfang/CT_BCP_PROSTDTIMEENTRY.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_ct_bcp_prostdtimeentry"
+    }
+}
+
+// 62
+{
+    "_id": ObjectId("672047b429509efeef008443"),
+    "name": "邓芳用-CT_BCP_PROSTDTIMEOPENTRYS",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "EAS",
+        "sql": "dengfang/CT_BCP_PROSTDTIMEOPENTRYS.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_ct_bcp_prostdtimeopentrys"
+    }
+}
+
+// 63
+{
+    "_id": ObjectId("6720523329509efeef008444"),
+    "name": "唐渝用-alignment_file",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "MES",
+        "sql": "tangyu/alignment_file.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_alignment_file"
+    }
+}
+
+// 64
+{
+    "_id": ObjectId("672052d529509efeef008445"),
+    "name": "唐渝用-同步alignment_file至机车",
+    "type": "common",
+    "next_name": [
+        "唐渝用-alignment_file"
+    ],
+    "source": {
+        "connect": "数据仓库缓存_新",
+        "sql": "tangyu/ods_alignment_file.sql"
+    },
+    "target": {
+        "connect": "机车数据库",
+        "table": "ods_alignment_file"
+    }
+}
+
+// 65
+{
+    "_id": ObjectId("6720a53129509efeef008447"),
+    "name": "邓芳用-T_MM_Operation",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "EAS",
+        "sql": "dengfang/T_MM_Operation.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_t_mm_operation"
+    }
+}
+
+// 66
+{
+    "_id": ObjectId("6720a55329509efeef008448"),
+    "name": "邓芳用-T_MM_WorkCenter",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "EAS",
+        "sql": "dengfang/T_MM_WorkCenter.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_t_mm_workcenter"
+    }
+}
+
+// 67
+{
+    "_id": ObjectId("6720a57229509efeef008449"),
+    "name": "邓芳用-T_ORG_CostCenter",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "EAS",
+        "sql": "dengfang/T_ORG_CostCenter.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_t_org_costcenter"
+    }
+}
+
+// 68
+{
+    "_id": ObjectId("6720a59929509efeef00844a"),
+    "name": "邓芳用-T_PRO_ProjectJCH",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "EAS",
+        "sql": "dengfang/T_PRO_ProjectJCH.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_t_pro_projectjch"
+    }
+}
+
+// 69
+{
+    "_id": ObjectId("6720a78129509efeef00844b"),
+    "name": "邓芳用-T_MM_project",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "EAS",
+        "sql": "dengfang/T_MM_project.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_t_mm_project"
+    }
+}
+
+// 70
+{
+    "_id": ObjectId("6720a86f29509efeef00844d"),
+    "name": "邓芳用-tk_crrc_metro_zbdy",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "dengfang/tk_crrc_metro_zbdy.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_tk_crrc_metro_zbdy"
+    }
+}
+
+// 71
+{
+    "_id": ObjectId("6720a8a629509efeef00844e"),
+    "name": "邓芳用-tk_crrc_org_structure",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "dengfang/tk_crrc_org_structure.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_tk_crrc_org_structure"
+    }
+}
+
+// 72
+{
+    "_id": ObjectId("6721aa2c29509efeef00844f"),
+    "name": "邓芳用-T_ORG_Storage",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "EAS",
+        "sql": "dengfang/T_ORG_Storage.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_t_org_storage"
+    }
+}
+
+// 73
+{
+    "_id": ObjectId("6724949429509efeef008450"),
+    "name": "邓芳用-T_MM_TrackNumber",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "EAS",
+        "sql": "dengfang/T_MM_TrackNumber.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_t_mm_tracknumber"
+    }
+}
+
+// 74
+{
+    "_id": ObjectId("672977646fa7d86bd501d071"),
+    "name": "邓芳用-dwd_df_work_time",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "数据仓库缓存_新",
+        "sql": "dengfang/dwd_df_work_time.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "dwd_df_work_time"
+    }
+}
+
+// 75
+{
+    "_id": ObjectId("6731b1d177045224e80ac1f2"),
+    "name": "邓芳用-tk_crrc_gxrwxf",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "dengfang/tk_crrc_gxrwxf.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_tk_crrc_gxrwxf"
+    }
+}
+
+// 76
+{
+    "_id": ObjectId("6731b23d77045224e80ac1f3"),
+    "name": "邓芳用-tk_crrc_dispatch",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "dengfang/tk_crrc_dispatch.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_tk_crrc_dispatch"
+    }
+}
+
+// 77
+{
+    "_id": ObjectId("6731b26477045224e80ac1f4"),
+    "name": "邓芳用-tk_crrc_entry_dispatch",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "dengfang/tk_crrc_entry_dispatch.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_tk_crrc_entry_dispatch"
+    }
+}
+
+// 78
+{
+    "_id": ObjectId("6731b29477045224e80ac1f5"),
+    "name": "邓芳用-tk_crrc_exc_user",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "dengfang/tk_crrc_exc_user.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_tk_crrc_exc_user"
+    }
+}
+
+// 79
+{
+    "_id": ObjectId("6731b2e177045224e80ac1f7"),
+    "name": "邓芳用-tk_crrc_metro_bzrydy_fl",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "dengfang/tk_crrc_metro_bzrydy_fl.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_tk_crrc_metro_bzrydy_fl"
+    }
+}
+
+// 80
+{
+    "_id": ObjectId("6731b2fd77045224e80ac1f8"),
+    "name": "邓芳用-tk_crrc_metro_groupclass",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "dengfang/tk_crrc_metro_groupclass.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_tk_crrc_metro_groupclass"
+    }
+}
+
+// 81
+{
+    "_id": ObjectId("6735bde61d404404ad0a9631"),
+    "name": "邓芳用-ods_worktime_new",
+    "type": "common",
+    "next_name": [ ],
+    "source": {
+        "connect": "金蝶云苍穹-正式库",
+        "sql": "dengfang/ods_worktime_new.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "ods_df_worktime_new"
+    }
+}
+
+// 82
+{
+    "_id": ObjectId("673717ce1d404404ad0a9633"),
+    "name": "邓芳用-dwd_gx_user",
+    "type": "common",
+    "next_name": [
+        "邓芳用-ods_tk_crrc_gxrwxf",
+        "邓芳用-ods_t_sec_user",
+        "邓芳用-ods_df_worktime_new"
+    ],
+    "source": {
+        "connect": "数据仓库缓存_新",
+        "sql": "dengfang/dwd_gx_user.sql"
+    },
+    "target": {
+        "connect": "数据仓库缓存_新",
+        "table": "dwd_gx_user"
+    }
+}
