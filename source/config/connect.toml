@@ -23,6 +23,22 @@ user = "cheakf"
 password = "Swq8855830."
 mode = "dataframe_flow_v2"
 
+["BI与数开用数据库_旧"]
+type = "mysql"
+ip = "10.24.5.32"
+port = 3306
+user = "cheakf"
+password = "Swq8855830."
+mode = "dataframe_flow"
+
+["BI与数开用数据库_供应商"]
+type = "mysql"
+ip = "10.24.5.32"
+port = 3306
+user = "cheakf"
+password = "Swq8855830."
+mode = "supplier_use"
+
 [EAS]
 type = "oracle"
 ip = "172.18.1.121"

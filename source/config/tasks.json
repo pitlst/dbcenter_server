@@ -8,8 +8,658 @@
             "sql": "old_etl/dispatch_list.sql"
         },
         "target": {
-            "connect": "BI与数开用数据库",
-            "table": "ods_dispatch_list"
+            "connect": "BI与数开用数据库_旧",
+            "table": "ods_shr_staff"
+        }
+    },
+    {
+        "name": "旧ETL-调试任务同步",
+        "next_name": [],
+        "type": "sql_to_table",
+        "source": {
+            "connect": "MES",
+            "sql": "old_etl/debug_tasks.sql"
+        },
+        "target": {
+            "connect": "BI与数开用数据库_旧",
+            "table": "ods_debug_tasks"
+        }
+    },
+    {
+        "name": "旧ETL-交车看板同步bi",
+        "next_name": [],
+        "type": "table_to_table",
+        "source": {
+            "connect": "BI与数开用数据库_旧",
+            "table": "dm_delivery"
+        },
+        "target": {
+            "connect": "机车数据库",
+            "table": "dm_delivery"
+        }
+    },
+    {
+        "name": "旧ETL-年计划同步",
+        "next_name": [],
+        "type": "sql_to_table",
+        "source": {
+            "connect": "生产辅助系统",
+            "sql": "old_etl/yearly_plan.sql"
+        },
+        "target": {
+            "connect": "BI与数开用数据库_旧",
+            "table": "ods_year_plan"
+        }
+    },
+    {
+        "name": "旧ETL-月计划同步",
+        "next_name": [],
+        "type": "sql_to_table",
+        "source": {
+            "connect": "生产辅助系统",
+            "sql": "old_etl/monthly_plan.sql"
+        },
+        "target": {
+            "connect": "BI与数开用数据库_旧",
+            "table": "ods_month_plan"
+        }
+    },
+    {
+        "name": "旧ETL-异常同步",
+        "next_name": [],
+        "type": "sql_to_table",
+        "source": {
+            "connect": "MES",
+            "sql": "old_etl/abnormal.sql"
+        },
+        "target": {
+            "connect": "BI与数开用数据库_旧",
+            "table": "ods_abnormal"
+        }
+    },
+    {
+        "name": "旧ETL-异常同步bi_1",
+        "next_name": [],
+        "type": "table_to_table",
+        "source": {
+            "connect": "BI与数开用数据库_旧",
+            "table": "dm_abnormal"
+        },
+        "target": {
+            "connect": "机车数据库",
+            "table": "dm_abnormal"
+        }
+    },
+    {
+        "name": "旧ETL-异常同步bi_2",
+        "next_name": [],
+        "type": "table_to_table",
+        "source": {
+            "connect": "BI与数开用数据库_旧",
+            "table": "dm_abnormal_department"
+        },
+        "target": {
+            "connect": "机车数据库",
+            "table": "dm_abnormal_department"
+        }
+    },
+    {
+        "name": "旧ETL-异常同步bi_3",
+        "next_name": [],
+        "type": "table_to_table",
+        "source": {
+            "connect": "BI与数开用数据库_旧",
+            "table": "dm_abnormal_project"
+        },
+        "target": {
+            "connect": "机车数据库",
+            "table": "dm_abnormal_project"
+        }
+    },
+    {
+        "name": "旧ETL-异常同步bi_3",
+        "next_name": [],
+        "type": "table_to_table",
+        "source": {
+            "connect": "BI与数开用数据库_旧",
+            "table": "dm_abnormal_project"
+        },
+        "target": {
+            "connect": "机车数据库",
+            "table": "dm_abnormal_project"
+        }
+    },
+    {
+        "name": "旧ETL-校线异常同步",
+        "next_name": [],
+        "type": "table_to_table",
+        "source": {
+            "connect": "BI与数开用数据库_旧",
+            "table": "dm_calibration"
+        },
+        "target": {
+            "connect": "机车数据库",
+            "table": "dm_calibration"
+        }
+    },
+    {
+        "name": "旧ETL-异常类型同步",
+        "next_name": [],
+        "type": "sql_to_table",
+        "source": {
+            "connect": "MES",
+            "sql": "old_etl/exception_type.sql"
+        },
+        "target": {
+            "connect": "BI与数开用数据库_旧",
+            "table": "ods_exception_type"
+        }
+    },
+    {
+        "name": "旧ETL-工时同步",
+        "next_name": [],
+        "type": "sql_to_table",
+        "source": {
+            "connect": "EAS",
+            "sql": "old_etl/working_hours.sql"
+        },
+        "target": {
+            "connect": "BI与数开用数据库_旧",
+            "table": "ods_working_hours"
+        }
+    },
+    {
+        "name": "旧ETL-短信信息同步",
+        "next_name": [],
+        "type": "sql_to_table",
+        "source": {
+            "connect": "EAS",
+            "sql": "old_etl/short_message.sql"
+        },
+        "target": {
+            "connect": "BI与数开用数据库_旧",
+            "table": "ods_short_message"
+        }
+    },
+    {
+        "name": "旧ETL-mes人员在岗情况同步",
+        "next_name": [],
+        "type": "sql_to_table",
+        "source": {
+            "connect": "MES",
+            "sql": "old_etl/mes_staff.sql"
+        },
+        "target": {
+            "connect": "BI与数开用数据库_旧",
+            "table": "ods_mes_staff"
+        }
+    },
+    {
+        "name": "旧ETL-城轨通讯录信息同步",
+        "next_name": [],
+        "type": "sql_to_table",
+        "source": {
+            "connect": "生产辅助系统",
+            "sql": "old_etl/staff.sql"
+        },
+        "target": {
+            "connect": "BI与数开用数据库_旧",
+            "table": "ods_staff"
+        }
+    },
+    {
+        "name": "旧ETL-shr人员信息同步",
+        "next_name": [],
+        "type": "sql_to_table",
+        "source": {
+            "connect": "SHR",
+            "sql": "old_etl/shr_staff.sql"
+        },
+        "target": {
+            "connect": "BI与数开用数据库_旧",
+            "table": "ods_shr_staff"
+        }
+    },
+    {
+        "name": "旧ETL-项目基础数据信息同步",
+        "next_name": [],
+        "type": "sql_to_table",
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "old_etl/project_basic.sql"
+        },
+        "target": {
+            "connect": "BI与数开用数据库_旧",
+            "table": "ods_project_basic"
+        }
+    },
+    {
+        "name": "旧ETL-项目基础数据信息同步_供应商",
+        "next_name": [],
+        "type": "table_to_table",
+        "source": {
+            "connect": "BI与数开用数据库_旧",
+            "table": "dwd_project_basic"
+        },
+        "target": {
+            "connect": "BI与数开用数据库_供应商",
+            "table": "ods_project_basic"
+        }
+    },
+    {
+        "name": "旧ETL-交车看板同步",
+        "next_name": [],
+        "type": "sql_to_table",
+        "source": {
+            "connect": "生产辅助系统",
+            "sql": "old_etl/delivery_train.sql"
+        },
+        "target": {
+            "connect": "BI与数开用数据库_旧",
+            "table": "ods_delivery_train"
+        }
+    },
+    {
+        "name": "旧ETL-全员型改善同步",
+        "next_name": [],
+        "type": "sql_to_table",
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "old_etl/ameliorate.sql"
+        },
+        "target": {
+            "connect": "BI与数开用数据库_旧",
+            "table": "ods_ameliorate"
+        }
+    },
+    {
+        "name": "旧ETL-全员型改善同步bi-部门",
+        "next_name": [],
+        "type": "table_to_table",
+        "source": {
+            "connect": "BI与数开用数据库_旧",
+            "table": "dm_ameliorate_department"
+        },
+        "target": {
+            "connect": "机车数据库",
+            "table": "dm_ameliorate_department"
+        }
+    },
+    {
+        "name": "旧ETL-全员型改善同步bi-组室",
+        "next_name": [],
+        "type": "table_to_table",
+        "source": {
+            "connect": "BI与数开用数据库_旧",
+            "table": "dm_ameliorate_group"
+        },
+        "target": {
+            "connect": "机车数据库",
+            "table": "dm_ameliorate_group"
+        }
+    },
+    {
+        "name": "旧ETL-督察信息同步",
+        "next_name": [],
+        "type": "sql_to_table",
+        "source": {
+            "connect": "生产辅助系统",
+            "sql": "old_etl/supervise.sql"
+        },
+        "target": {
+            "connect": "BI与数开用数据库_旧",
+            "table": "ods_supervise"
+        }
+    },
+    {
+        "name": "旧ETL-智能立库库存同步",
+        "next_name": [],
+        "type": "sql_to_table",
+        "source": {
+            "connect": "智能立库",
+            "sql": "old_etl/smart_inventory.sql"
+        },
+        "target": {
+            "connect": "BI与数开用数据库_旧",
+            "table": "ods_smart_inventory"
+        }
+    },
+    {
+        "name": "旧ETL-智能立库出入库同步",
+        "next_name": [],
+        "type": "sql_to_table",
+        "source": {
+            "connect": "智能立库",
+            "sql": "old_etl/smart_io.sql"
+        },
+        "target": {
+            "connect": "BI与数开用数据库_旧",
+            "table": "ods_smart_io"
+        }
+    },
+    {
+        "name": "旧ETL-绩效填报-改善创新",
+        "next_name": [],
+        "type": "sql_to_table",
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "old_etl/performance_improve_innovatioon.sql"
+        },
+        "target": {
+            "connect": "BI与数开用数据库_旧",
+            "table": "ods_performance_improve_innovatioon"
+        }
+    },
+    {
+        "name": "旧ETL-差旅信息同步",
+        "next_name": [],
+        "type": "sql_to_table",
+        "source": {
+            "connect": "EAS",
+            "sql": "old_etl/travel.sql"
+        },
+        "target": {
+            "connect": "BI与数开用数据库_旧",
+            "table": "ods_travel"
+        }
+    },    
+    {
+        "name": "旧ETL-差旅信息筛选同步",
+        "next_name": [],
+        "type": "sql_to_table",
+        "source": {
+            "connect": "生产辅助系统",
+            "sql": "old_etl/travel_filter.sql"
+        },
+        "target": {
+            "connect": "BI与数开用数据库_旧",
+            "table": "ods_travel_filter"
+        }
+    },
+    {
+        "name": "旧ETL-差旅信息同步bi_1",
+        "next_name": [],
+        "type": "table_to_table",
+        "source": {
+            "connect": "BI与数开用数据库_旧",
+            "table": "dm_travel_out"
+        },
+        "target": {
+            "connect": "机车数据库",
+            "table": "dataframe_travel_out"
+        }
+    },
+    {
+        "name": "旧ETL-差旅信息同步bi_2",
+        "next_name": [],
+        "type": "table_to_table",
+        "source": {
+            "connect": "BI与数开用数据库_旧",
+            "table": "dm_travel_total_all"
+        },
+        "target": {
+            "connect": "机车数据库",
+            "table": "dataframe_travel_total_all"
+        }
+    },
+    {
+        "name": "旧ETL-差旅信息同步bi_3",
+        "next_name": [],
+        "type": "table_to_table",
+        "source": {
+            "connect": "BI与数开用数据库_旧",
+            "table": "dm_travel_month"
+        },
+        "target": {
+            "connect": "机车数据库",
+            "table": "dataframe_travel_month"
+        }
+    },
+    {
+        "name": "旧ETL-差旅信息同步bi_4",
+        "next_name": [],
+        "type": "table_to_table",
+        "source": {
+            "connect": "BI与数开用数据库_旧",
+            "table": "dm_travel_department"
+        },
+        "target": {
+            "connect": "机车数据库",
+            "table": "dataframe_travel_department"
+        }
+    },
+    {
+        "name": "旧ETL-标杆产品用量同步",
+        "next_name": [],
+        "type": "table_to_table",
+        "source": {
+            "connect": "生产辅助系统-中转",
+            "table": "tabDIYTable161"
+        },
+        "target": {
+            "connect": "机车数据库",
+            "table": "dm_bgcp"
+        }
+    },
+    {
+        "name": "旧ETL-手动上传的考勤数据同步",
+        "next_name": [],
+        "type": "table_to_table",
+        "source": {
+            "connect": "生产辅助系统",
+            "table": "tabDIYTable4490"
+        },
+        "target": {
+            "connect": "机车数据库",
+            "table": "dm_attendance"
+        }
+    },
+    {
+        "name": "旧ETL-交车看板同步bi旧-工序任务下发",
+        "next_name": [],
+        "type": "sql_to_table",
+        "source": {
+            "connect": "MES",
+            "sql": "old_etl/工序任务下发_从mes查询.sql"
+        },
+        "target": {
+            "connect": "机车数据库",
+            "table": "swq_process_task_delivery"
+        }
+    },
+    {
+        "name": "旧ETL-交车看板同步bi旧-项目基础数据",
+        "next_name": [],
+        "type": "table_to_table",
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "table": "tk_crrc_projectmanager"
+        },
+        "target": {
+            "connect": "机车数据库",
+            "table": "dm_tk_crrc_projectmanager"
+        }
+    },
+    {
+        "name": "旧ETL-交车看板同步bi旧-调试任务同步",
+        "next_name": [],
+        "type": "sql_to_table",
+        "source": {
+            "connect": "MES",
+            "sql": "old_etl/调试任务_从mes查询.sql"
+        },
+        "target": {
+            "connect": "机车数据库",
+            "table": "MES_commissioning_task"
+        }
+    },
+    {
+        "name": "旧ETL-交车看板同步bi旧-交车控制面板",
+        "next_name": [],
+        "type": "table_to_table",
+        "source": {
+            "connect": "生产辅助系统",
+            "table": "tabDIYTable4565"
+        },
+        "target": {
+            "connect": "机车数据库",
+            "table": "dm_tabDIYTable4565"
+        }
+    },
+    {
+        "name": "旧ETL-交车看板同步bi旧-城轨通讯录",
+        "next_name": [],
+        "type": "table_to_table",
+        "source": {
+            "connect": "生产辅助系统-中转",
+            "table": "swq_phonebook"
+        },
+        "target": {
+            "connect": "机车数据库",
+            "table": "dm_crrc_swq_phonebook"
+        }
+    },
+    {
+        "name": "旧ETL-异常同步bi旧-异常明细",
+        "next_name": [],
+        "type": "sql_to_table",
+        "source": {
+            "connect": "MES",
+            "sql": "old_etl/异常数据_从mes查询.sql"
+        },
+        "target": {
+            "connect": "机车数据库",
+            "table": "swq_abnormal_data"
+        }
+    },
+    {
+        "name": "旧ETL-异常同步bi旧-异常类型",
+        "next_name": [],
+        "type": "sql_to_table",
+        "source": {
+            "connect": "MES",
+            "sql": "old_etl/异常类型_从mes查询.sql"
+        },
+        "target": {
+            "connect": "机车数据库",
+            "table": "MES_EXCEPTION_TYPE"
+        }
+    },
+    {
+        "name": "旧ETL-工作量同步bi旧-项目效率",
+        "next_name": [],
+        "type": "table_to_table",
+        "source": {
+            "connect": "生产辅助系统-中转",
+            "table": "swq_project_efficiency"
+        },
+        "target": {
+            "connect": "机车数据库",
+            "table": "dm_crrc_swq_project_efficiency"
+        }
+    },
+    {
+        "name": "旧ETL-计划看板同步bi旧-年计划",
+        "next_name": [],
+        "type": "table_to_table",
+        "source": {
+            "connect": "生产辅助系统",
+            "table": "tabDIYTable3184"
+        },
+        "target": {
+            "connect": "机车数据库",
+            "table": "dm_crrc_tabdiytable3184"
+        }
+    },
+    {
+        "name": "旧ETL-计划看板同步bi旧-月计划",
+        "next_name": [],
+        "type": "table_to_table",
+        "source": {
+            "connect": "生产辅助系统",
+            "table": "tabDIYTable3183"
+        },
+        "target": {
+            "connect": "机车数据库",
+            "table": "dm_crrc_tabDIYTable3183"
+        }
+    },
+    {
+        "name": "旧ETL-计划看板同步bi旧-日计划",
+        "next_name": [],
+        "type": "sql_to_table",
+        "source": {
+            "connect": "MES",
+            "sql": "old_etl/计划看板日计划_从mes查询.sql"
+        },
+        "target": {
+            "connect": "机车数据库",
+            "table": "swq_daily_plan"
+        }
+    },
+    {
+        "name": "旧ETL-计划看板同步bi旧-工序工时",
+        "next_name": [],
+        "type": "sql_to_table",
+        "source": {
+            "connect": "MES",
+            "sql": "old_etl/工序工时_从mes查询.sql"
+        },
+        "target": {
+            "connect": "机车数据库",
+            "table": "swq_process_time"
+        }
+    },
+    {
+        "name": "旧ETL-人员效能看板同步bi-旧",
+        "next_name": [],
+        "type": "table_to_table",
+        "source": {
+            "connect": "生产辅助系统-中转",
+            "table": "tabDIYTable108"
+        },
+        "target": {
+            "connect": "机车数据库",
+            "table": "dm_tabdiytable108"
+        }
+    },
+    {
+        "name": "旧ETL-人员工时同步bi-旧",
+        "next_name": [],
+        "type": "sql_to_table",
+        "source": {
+            "connect": "EAS",
+            "sql": "old_etl/人员工时新_从eas查询.sql"
+        },
+        "target": {
+            "connect": "生产辅助系统-中转",
+            "table": "swq_person_worktime_new"
+        }
+    },
+    {
+        "name": "旧ETL-考勤系统考勤类型同步",
+        "next_name": [],
+        "type": "sql_to_table",
+        "source": {
+            "connect": "考勤系统",
+            "sql": "old_etl/attemdamce_type.sql"
+        },
+        "target": {
+            "connect": "BI与数开用数据库_旧",
+            "table": "ods_attemdamce_type"
+        }
+    },
+    {
+        "name": "旧ETL-业联关闭统计同步",
+        "next_name": [],
+        "type": "sql_to_table",
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "old_etl/Industry_association_closure_statistics.sql"
+        },
+        "target": {
+            "connect": "BI与数开用数据库_旧",
+            "table": "ods_tk_crrc_mesjob"
         }
     }
 ]
