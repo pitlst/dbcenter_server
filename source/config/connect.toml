@@ -95,6 +95,14 @@ user = "cosmic"
 password = "Mysql@2022!"
 mode = "crrc_secd"
 
+["金蝶云苍穹-正式库-系统"]
+type = "mysql"
+ip = "10.24.206.138"
+port = 3306
+user = "cosmic"
+password = "Mysql@2022!"
+mode = "crrc_sys"
+
 ["机车数据库"]
 type = "mysql"
 ip = "10.29.31.159"
