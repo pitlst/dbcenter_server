@@ -1,4 +1,6 @@
 import os
+import traceback
+import socket
 import json
 import time
 import datetime
@@ -42,8 +44,8 @@ __all_node_type__: list[node_base] = [
 
 实际计算同步时间的方法是在节点的定义里，可以重写
 
-对于更新节点的情况建议直接重启数据同步服务
-会有一个流量高峰，因为所有节点的状态和时间间隔会重新同步，所以建议在非业务时间重启
+在启动服务时为了保证数据的实时性会直接触发全部节点
+导致有一个流量高峰，所有节点的状态和时间间隔会重新同步，所以建议在非业务时间重启
 '''
 
 SOCKET_IP = SYNC_CONFIG["socket_ip"]
@@ -51,6 +53,9 @@ SOCKET_PORT = SYNC_CONFIG["socket_port"]
 MIN_SYNC_INTERVAL = SYNC_CONFIG["min_sync_interval"]
 WAIT_SYNC_INTERVAL = SYNC_CONFIG["wait_sync_interval"]
 POLLING_UPDATE_TIME = SYNC_CONFIG["polling_update_time"]
+
+SOCKET_IP = SYNC_CONFIG["socket_ip"]
+SOCKET_PORT = SYNC_CONFIG["socket_port"]
 
 TASKS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "source", "config", "tasks.json")
 
@@ -62,6 +67,12 @@ class scheduler:
         self.nodep_node_last_time: dict[str, datetime.datetime] = {}
         self.task_apth = task_apth
         self.LOG = node_logger("scheduler")
+        try:
+            self.soc = socket.socket()
+            self.soc.connect((SOCKET_IP, SOCKET_PORT))
+        except Exception as me:
+            self.LOG.error(traceback.format_exc())
+            raise RuntimeError("节点处理部分无法连接")
         self.load_node()
 
     def run_node(self) -> None:
@@ -90,8 +101,9 @@ class scheduler:
                     for future in is_done:
                         node_result = future.result()
                         total_tasks.remove(future)
-                        is_run_node_tasks.remove(str(node_result[0]))
-                        self.LOG.debug(str(node_result[0]) + "节点执行完成")
+                        isdone_node_name = str(node_result[0])
+                        is_run_node_tasks.remove(isdone_node_name)
+                        self.send_notice(isdone_node_name)
                         self.update_node(node_result)
                 else:
                     self.LOG.debug("没有任务运行，等待" + str(WAIT_SYNC_INTERVAL) + "秒")
@@ -101,7 +113,7 @@ class scheduler:
                     # 在更新配置前将所有节点都运行完成
                     self.LOG.debug("准备更新节点配置，等待所有节点运行完成")
                     for future in as_completed(total_tasks):
-                        self.LOG.debug(str(future.result()[0]) + "节点执行完成")
+                        self.send_notice(str(future.result()[0]))
                     self.load_node()
                     is_run_node_tasks = set()
                     total_tasks = []
@@ -181,6 +193,12 @@ class scheduler:
             else:
                 self.LOG.error("节点名称重复")
                 raise ValueError("节点名称重复")
+            
+    def send_notice(self, msg):
+        '''通知处理线程节点完成'''
+        sebd_msg = msg + "节点执行完成\n"
+        self.LOG.debug(sebd_msg)
+        self.soc.send(bytes(sebd_msg, encoding='utf-8'))
             
 
 if __name__ == "__main__":

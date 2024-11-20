@@ -1,4 +1,4 @@
-import socket
+
 import pymongo
 import sqlalchemy
 from general.config import CONNECT_CONFIG
@@ -65,12 +65,5 @@ class database_connect:
         else:
             raise connect_error("获取了未知的连接:" + name)
         
-
-class socket_connect:
-    # socket连接获取，用于进程间通信
-    ...
-        
-
 # 全局单例
 db_engine = database_connect()
-socket_conn = socket_connect()

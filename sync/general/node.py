@@ -2,6 +2,7 @@ import abc
 import time
 import json
 import os
+import traceback
 import pandas as pd
 # 这个不能删
 import openpyxl
@@ -65,7 +66,7 @@ class node_base(abc.ABC):
             t = time.perf_counter() - t
             self.LOG.info("计算耗时为" + str(t) + "s")
         except Exception as me:
-            self.LOG.error(str(me))
+            self.LOG.error(traceback.format_exc())
         self.release()
         self.LOG.info("已释放资源")
         self.need_run = False
