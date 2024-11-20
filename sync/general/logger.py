@@ -1,5 +1,6 @@
 import datetime
 import logging
+import colorlog
 from general.connect import db_engine
             
 class momgo_handler(logging.Handler):
@@ -46,8 +47,18 @@ def node_logger(name: str, level:int = logging.DEBUG) -> logging.Logger:
     # 设置log日志的标准输出打印
     console = logging.StreamHandler()
     console.setLevel(level)
-    formatter = logging.Formatter('%(levelname)s: %(asctime)s ' + name + ' %(message)s')
-    console.setFormatter(formatter)
+    # 定义颜色输出格式
+    color_formatter = colorlog.ColoredFormatter(
+        '%(log_color)s%(levelname)s: %(asctime)s ' + name + ' %(message)s',
+        log_colors={
+            'DEBUG': 'cyan',
+            'INFO': 'green',
+            'WARNING': 'yellow',
+            'ERROR': 'red',
+            'CRITICAL': 'red,bg_white',
+        }
+    )
+    console.setFormatter(color_formatter)
     LOG.addHandler(console)
     # 设置log的mongo日志输出
     mongoio = momgo_handler(name)

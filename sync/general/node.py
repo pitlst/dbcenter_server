@@ -133,6 +133,8 @@ class sql_to_table(node_base):
 
     def release(self) -> None:
         self.data = None
+        self.source_connect.close()
+        self.target_connect.close()
         self.source_connect = None
         self.target_connect = None
 
@@ -175,6 +177,8 @@ class table_to_table(node_base):
 
     def release(self) -> None:
         self.data = None
+        self.source_connect.close()
+        self.target_connect.close()
         self.source_connect = None
         self.target_connect = None
 
@@ -207,6 +211,8 @@ class sql_to_nosql(node_base):
     def read(self) -> list[int]:
         self.LOG.info("正在执行sql:" + str(os.path.join(SQL_PATH, self.source["sql"])))
         self.data = pd.read_sql_query(self.source_sql, self.source_connect)
+        for col_name in self.data.columns:
+            self.data[[col_name]] = self.data[[col_name]].astype(object).where(self.data[[col_name]].notnull(), None)
         self.LOG.info("数据形状为: " + str(self.data.shape[0]) + "," + str(self.data.shape[1]))
         return self.data.shape[0] * self.data.shape[1]
 
@@ -219,6 +225,7 @@ class sql_to_nosql(node_base):
 
     def release(self) -> None:
         self.data = None
+        self.source_connect.close()
         self.source_connect = None
         self.target_connect = None
 
@@ -266,6 +273,7 @@ class table_to_nosql(node_base):
 
     def release(self) -> None:
         self.data = None
+        self.source_connect.close()
         self.source_connect = None
         self.target_connect = None
 
@@ -305,6 +313,7 @@ class excel_to_table(node_base):
         
     def release(self) -> None:
         self.data = None
+        self.target_connect.close()
         self.target_connect = None
         
 
@@ -334,6 +343,8 @@ class excel_to_nosql(node_base):
         elif self.type == "csv_to_nosql":
             self.LOG.info("正在获取:" + self.source["path"])
             self.data = pd.read_csv(os.path.join(TABLE_PATH, self.source["path"]), dtype=object)
+        for col_name in self.data.columns:
+            self.data[[col_name]] = self.data[[col_name]].astype(object).where(self.data[[col_name]].notnull(), None)
         self.LOG.info("数据形状为: " + str(self.data.shape[0]) + "," + str(self.data.shape[1]))
         return self.data.shape[0] * self.data.shape[1]
 
@@ -389,6 +400,7 @@ class table_to_excel(node_base):
             
     def release(self) -> None:
         self.data = None
+        self.source_connect.close()
         self.source_connect = None
         
         
@@ -534,5 +546,6 @@ class nosql_to_table(node_base):
         
     def release(self) -> None:
         self.data = None
+        self.target_connect.close()
         self.source_connect = None
         self.target_connect = None
