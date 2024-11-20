@@ -17,7 +17,7 @@ from general.node import \
     nosql_to_json, \
     nosql_to_nosql, \
     nosql_to_table
-from general.config import SYNC_CONFIG
+from general.config import gc
 from general.logger import node_logger
 from concurrent.futures import ThreadPoolExecutor, wait, as_completed
 
@@ -48,14 +48,25 @@ __all_node_type__: list[node_base] = [
 导致有一个流量高峰，所有节点的状态和时间间隔会重新同步，所以建议在非业务时间重启
 '''
 
-SOCKET_IP = SYNC_CONFIG["socket_ip"]
-SOCKET_PORT = SYNC_CONFIG["socket_port"]
-MIN_SYNC_INTERVAL = SYNC_CONFIG["min_sync_interval"]
-WAIT_SYNC_INTERVAL = SYNC_CONFIG["wait_sync_interval"]
-POLLING_UPDATE_TIME = SYNC_CONFIG["polling_update_time"]
+SOCKET_IP = gc.SYNC_CONFIG["socket_ip"]
+SOCKET_PORT = gc.SYNC_CONFIG["socket_port"]
+MIN_SYNC_INTERVAL = gc.SYNC_CONFIG["min_sync_interval"]
+WAIT_SYNC_INTERVAL = gc.SYNC_CONFIG["wait_sync_interval"]
+POLLING_UPDATE_TIME = gc.SYNC_CONFIG["polling_update_time"]
+NODE_SYNC_MIN_DATASIZE = gc.SYNC_CONFIG["node_sync_min_datasize"]
+MAX_NODE_FLOW_CAP = gc.SYNC_CONFIG["max_node_flow_cap"]
 
-SOCKET_IP = SYNC_CONFIG["socket_ip"]
-SOCKET_PORT = SYNC_CONFIG["socket_port"]
+def update_vars():
+    # 更新当前上下文的全局变量
+    global SOCKET_IP, SOCKET_PORT, MIN_SYNC_INTERVAL, WAIT_SYNC_INTERVAL, POLLING_UPDATE_TIME, NODE_SYNC_MIN_DATASIZE, MAX_NODE_FLOW_CAP
+    gc.update()
+    SOCKET_IP = gc.SYNC_CONFIG["socket_ip"]
+    SOCKET_PORT = gc.SYNC_CONFIG["socket_port"]
+    MIN_SYNC_INTERVAL = gc.SYNC_CONFIG["min_sync_interval"]
+    WAIT_SYNC_INTERVAL = gc.SYNC_CONFIG["wait_sync_interval"]
+    POLLING_UPDATE_TIME = gc.SYNC_CONFIG["polling_update_time"]
+    NODE_SYNC_MIN_DATASIZE = gc.SYNC_CONFIG["node_sync_min_datasize"]
+    MAX_NODE_FLOW_CAP = gc.SYNC_CONFIG["max_node_flow_cap"]
 
 TASKS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "source", "config", "tasks.json")
 
@@ -138,9 +149,9 @@ class scheduler:
         name, data_size = node_result
         # 没有依赖的节点计算下一次触发时间即可
         if name in self.nodep_node.keys():
-            if data_size == 0:
-                data_size = 10
-            self.nodep_node_last_time[name] = datetime.datetime.now() + datetime.timedelta(seconds=data_size / (SYNC_CONFIG["max_node_flow_cap"] / get_node_num()))
+            if data_size < NODE_SYNC_MIN_DATASIZE:
+                data_size = NODE_SYNC_MIN_DATASIZE
+            self.nodep_node_last_time[name] = datetime.datetime.now() + datetime.timedelta(seconds=data_size / MAX_NODE_FLOW_CAP * get_node_num())
         # 通知所有依赖他的节点可以跑了
         for _node in self.havedep_node:
             if name in self.havedep_node[_node].next_name:
@@ -150,6 +161,9 @@ class scheduler:
         '''根据配置加载节点'''
         # 重置节点计数
         set_node_num(0)
+        # 更新调度器参数配置
+        update_vars()
+        # 读取新的节点配置
         with open(self.task_apth, "r", encoding="utf-8") as file:
             node_json = json.load(file)
         # 删除所有的process节点和对process节点的依赖    
@@ -196,9 +210,10 @@ class scheduler:
             
     def send_notice(self, msg):
         '''通知处理线程节点完成'''
-        sebd_msg = msg + "节点执行完成\n"
+        sebd_msg = msg + "节点执行完成"
         self.LOG.debug(sebd_msg)
-        self.soc.send(bytes(sebd_msg, encoding='utf-8'))
+        # 用换行符来分割不同次通知
+        self.soc.send(bytes(sebd_msg + "\n", encoding='utf-8'))
             
 
 if __name__ == "__main__":

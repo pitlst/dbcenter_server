@@ -1,7 +1,7 @@
 
 import pymongo
 import sqlalchemy
-from general.config import CONNECT_CONFIG
+from general.config import gc
 from urllib.parse import quote_plus as urlquote
 
 # 继承Exception自定义异常，用于在处理异常时筛选
@@ -19,8 +19,8 @@ class database_connect:
         self.nosql_dict: dict[str, pymongo.MongoClient] = {}
         self.engine_dict: dict[str, sqlalchemy.Engine] = {}
         # 连接非关系型数据库并保存引擎
-        for ch in CONNECT_CONFIG:
-            temp = CONNECT_CONFIG[ch]
+        for ch in gc.CONNECT_CONFIG:
+            temp = gc.CONNECT_CONFIG[ch]
             if temp["type"] in ["oracle", "sqlserver", "mysql", "pgsql"]:
                 pass
             elif temp["type"] == "mongo":
@@ -32,8 +32,8 @@ class database_connect:
             else:
                 raise connect_error("不支持的数据库类型：" + temp["type"])
         # 连接关系型数据库并保存引擎
-        for ch in CONNECT_CONFIG:
-            temp = CONNECT_CONFIG[ch]
+        for ch in gc.CONNECT_CONFIG:
+            temp = gc.CONNECT_CONFIG[ch]
             if temp["type"] == "oracle":
                 connect_str = "oracle+cx_oracle://" + temp["user"] + ":" + urlquote(temp["password"]) + "@" + temp["ip"] + ":" + str(temp["port"]) + "/?service_name=" + temp["mode"]
                 self.engine_dict[ch] = sqlalchemy.create_engine(connect_str, pool_size=20)

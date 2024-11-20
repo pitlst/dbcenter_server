@@ -102,7 +102,7 @@ add_executable(${PROJECT_NAME}
                 tasks/process/error.hpp
                 tasks/process/error.cpp
 )
-target_link_libraries(${PROJECT_NAME} mongo::mongocxx_shared)
+target_link_libraries(${PROJECT_NAME} mongo::mongocxx_shared Ws2_32.lib)
 foreach(FILE_I ${MONGO_CONCPP_DLLS})
     add_custom_command(
         TARGET ${PROJECT_NAME} 
@@ -171,3 +171,9 @@ add_executable(test_dag
 )
 
 # socket通信测试
+add_executable(test_socket 
+                tests/test_socket.cpp 
+                connect/socket.cpp
+                connect/socket.cpp
+)
+target_link_libraries(test_socket Ws2_32.lib)

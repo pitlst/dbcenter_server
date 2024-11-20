@@ -4,12 +4,16 @@ socket_debug = false
 socket_ip = "localhost"
 # scoket通信的端口
 socket_port = 10089
+# socket通信读取的字节数
+socket_buffer = 1024
 # 系统数据库同步速率上限定义，单位Mb/s
 max_node_flow_cap = 1
 # 任务轮询也就是数据同步的最小间隔，单位秒
 min_sync_interval = 20
 # 无任务时等待时间，单位秒
 wait_sync_interval = 10
+# 节点两次同步的最小间隔，该参数用在计算节点同步数据量的使用
+node_sync_min_datasize = 200
 # 在任务经过多长时间后读取本地的json任务配置进行更新，单位秒
 # 注意这个数字不要设置的太小否则会卡在磁盘io上
 # 目前是每12小时同步一次
