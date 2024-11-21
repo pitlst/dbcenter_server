@@ -175,5 +175,17 @@ add_executable(test_socket
                 tests/test_socket.cpp 
                 connect/socket.cpp
                 connect/socket.cpp
+                connect/mongo.hpp
+                connect/mongo.cpp
+                logger/logger.hpp
+                logger/logger.cpp
 )
-target_link_libraries(test_socket Ws2_32.lib)
+target_link_libraries(test_socket mongo::mongocxx_shared Ws2_32.lib)
+foreach(FILE_I ${MONGO_CONCPP_DLLS})
+    add_custom_command(
+        TARGET test_socket 
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} 
+        ARGS -E copy_if_different ${FILE_I} "${PROJECT_SOURCE_DIR}/build/Release"
+    )
+endforeach(FILE_I)

@@ -17,15 +17,27 @@ namespace dbs
         static socket &instance();
         // 获取socket通信传输的字符串
         std::string get();
+        // 连接socket，阻塞直到联通
+        void connect(int input_port = -1);
+        // 断开socket，并清空资源
+        void close();
 
+        // 用于表示是否处于连接状态的标志位
+        bool is_connect = false;
     private:
         socket();
         ~socket();
 
+        // 抛出异常
+        void throw_error(const std::string & func_name);
+        void throw_error_l(const std::string & func_name);
+
         // winsokcet的操作状态返回
-        int iResult;
-        // 接受字符串的字节长度
-        int recvbuflen;
+        int result_lable;
+        // 接受字符串的缓冲区
+        char recv_buffer[1024];
+        // 默认连接的端口号
+        int port;
 
         // winsocket需要的变量
         WSADATA wsaData;
