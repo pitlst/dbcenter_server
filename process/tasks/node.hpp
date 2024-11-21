@@ -3,37 +3,55 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
+#include <unordered_set>
 #include <functional>
 
 #include "json.hpp"
 using json = nlohmann::json;
 
-#include "mongo.hpp"
-#include "logger.hpp"
+#include "node.hpp"
+#include "general.hpp"
 
 namespace dbs
 {
-    // 调度节点的基类
-    // 在继承后需要编写括号的重载，在其中编写真正的逻辑
-    struct node_base
+    // 节点的定义
+    struct node
     {
-        node_base(const json & node_define);
-        node_base(const std::string &name, const std::string &type, const std::vector<std::string> &next_name);
-        // 为节点填充可执行对象
-        virtual node_base &emplace(std::function<void()> input_warpper) final;
-
-        // 数据来源和目标的配置
-        json source_config;
-        json target_config; 
         // 节点名称
         std::string name;
-        // 节点类型
-        std::string type;
-        // 节点的依赖
-        std::vector<std::string> next_name;
-        // 包装好的函数指针，也就是函数实际执行的位置
-        std::function<void()> func_warpper;
+        // 节点的执行方法
+        std::function<void()> func;
+        // 节点依赖的节点名称
+        std::unordered_set<std::string> deps;
     };
+
+    // 获取所有的节点的定义
+    std::unordered_set<node> get_total_node_define(const json & input_node_define);
+    // 检查已经定义的节点的问题，并生成对应的报告字符串
+    std::string check_node(const std::unordered_set<node> & input_node);
 }
+
+// 哈希支持，使node支持哈希，从而支持underorder_set一类的无序容器
+namespace std
+{
+    template <> 
+    struct hash<dbs::node>
+    {
+    public:
+        size_t operator()(const dbs::node &node_) const
+        {
+            // 将节点的名称与依赖拼在一起作为哈希用的唯一项
+            std::string temp_hash = node_.name;
+            for(const auto & ch : node_.deps)
+            {
+                temp_hash += ch;
+            }
+            // 增加随机字符串防止空节点装桶
+            temp_hash += dbs::random_gen(8);
+            return hash<std::string>()(temp_hash);
+        }
+    };
+};
 
 #endif

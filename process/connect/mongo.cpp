@@ -18,6 +18,12 @@ mongo_connect::mongo_connect()
     auto port = std::to_string(toml::get<int>(data["port"]));
     mongocxx::uri url("mongodb://" + ip + ":" + port + "/");
     m_pool_ptr = std::make_unique<mongocxx::pool>(url);
+    if(m_pool_ptr == nullptr)
+    {
+        std::string temp_err = "获取mongo数据库连接失败，连接池指针为空";
+        std::cerr << temp_err << '\n';
+        throw std::runtime_error(temp_err);
+    }
 }
 
 mongo_connect::~mongo_connect()
