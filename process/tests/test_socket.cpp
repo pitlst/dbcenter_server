@@ -8,7 +8,7 @@ int main()
     std::cout << "hello" << std::endl;
     while (true)
     {
-        std::cout << dbs::socket::instance().get() << std::endl;
+        std::cout << MYSOCKET.get() << std::endl;
     }
     return 0;
 }

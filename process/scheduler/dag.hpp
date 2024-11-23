@@ -15,24 +15,25 @@ namespace dbs
     public:
         dag_scheduler(const toml::value & config_define);
         ~dag_scheduler();
-
-        // 获取所有节点的定义
-        void set_node(const node & input_node);
-        void set_node(const std::unordered_set<node> & input_nodes);
         // 真正运行并派发节点的地方
         void run();
 
     private:
-        // 获取当前可以执行的方法
-        std::vector<std::function<void()>> get_run_node();
-        // 更新节点信息
-        void update_node();
+        // 获取当前执行的节点
+        std::vector<node> make_node();
         // 接收并处理ipc通信
         void get_notice();
+        // 对当前的节点做拓扑排序，保证先执行的节点先被推进线程池
 
     private:
-        // 在整理好后的所有节点定义
-        std::unordered_map<std::string, std::pair<std::unordered_set<std::string>, std::function<void()>>> nodes;
+        // 任务轮询也就是数据同步的最小间隔，单位秒
+        std::size_t min_sync_interval;
+        // 无任务时等待时间，单位秒
+        std::size_t wait_sync_interval;
+        // socket通信的未完全接收的节点信息缓存
+        std::string socket_buffer;
+        // 所有节点和他的被依赖关系，注意这里的依赖关系和tasks.json文件中定义的是相反的
+        std::unordered_map<std::string, std::unordered_set<std::string>> node_deps;
     };
 }
 

@@ -55,7 +55,7 @@ std::string read_file(const std::string &input_path)
     return temps.str();
 }
 
-std::string gbk_to_utf8(const std::string & input_str)
+std::string gbk_to_utf8(const std::string &input_str)
 {
     std::string GBK = "";
     // 1、GBK转unicode
@@ -72,8 +72,8 @@ std::string gbk_to_utf8(const std::string & input_str)
     {
         return GBK;
     }
-    std::wstring udata;     // 用wstring存储的
-    udata.resize(len); // 分配大小
+    std::wstring udata; // 用wstring存储的
+    udata.resize(len);  // 分配大小
     // 开始写进去
     MultiByteToWideChar(CP_ACP, 0, data, -1, (wchar_t *)udata.data(), len);
 
@@ -90,4 +90,29 @@ std::string gbk_to_utf8(const std::string & input_str)
     WideCharToMultiByte(CP_UTF8, 0, (wchar_t *)udata.data(), -1, (char *)GBK.data(), len, 0, 0);
 
     return GBK;
+}
+
+std::vector<std::string_view> split_string(std::string_view input, char delimiter)
+{
+    std::vector<std::string_view> tokens;
+    const char *token_start = input.data();
+    const char *p = token_start;
+    const char *end_pos = input.data() + input.size();
+    for (; p != end_pos; ++p)
+    {
+        if (*p == delimiter)
+        {
+            if (p > token_start)
+            {
+                tokens.emplace_back(token_start, p - token_start);
+            }
+            token_start = p + 1;
+            continue;
+        }
+    }
+    if (p > token_start)
+    {
+        tokens.emplace_back(token_start, p - token_start);
+    }
+    return tokens;
 }

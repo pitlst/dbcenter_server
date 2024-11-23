@@ -1,0 +1,8 @@
+# 开启后不做socket通信
+socket_debug = false
+# scoket通信的端口
+socket_port = 10089
+# 任务轮询也就是数据同步的最小间隔，单位秒
+min_sync_interval = 20
+# 无任务时等待时间，单位秒
+wait_sync_interval = 10

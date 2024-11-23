@@ -3,16 +3,16 @@
 #include "logger.hpp"
 #include "socket.hpp"
 
-// 因为头文件中定义过socket，所以不能使用using namespace
+using namespace dbs;
 
-dbs::socket &dbs::socket::instance()
+mysocket &mysocket::instance()
 {
-    static socket m_self;
+    static mysocket m_self;
     return m_self;
 }
 
 // 获取socket通信传输的字符串
-std::string dbs::socket::get()
+std::string mysocket::get()
 {
     if (!is_connect)
     {
@@ -42,7 +42,7 @@ std::string dbs::socket::get()
     }
 }
 
-void dbs::socket::connect(int input_port)
+void mysocket::connect(int input_port)
 {
     // 输入默认值使用初始化时读入的配置
     if (input_port == -1)
@@ -116,7 +116,7 @@ void dbs::socket::connect(int input_port)
     is_connect = true;
 }
 
-void dbs::socket::close()
+void mysocket::close()
 {
     is_connect = false;
 
@@ -134,26 +134,26 @@ void dbs::socket::close()
     WSACleanup();
 }
 
-dbs::socket::socket()
+mysocket::mysocket()
 {
-    auto data = toml::parse(std::string(PROJECT_PATH) + "../source/config/sync_scheduler.toml");
+    auto data = toml::parse(std::string(PROJECT_PATH) + "../source/config/process_scheduler.toml");
     port = toml::get<int>(data["socket_port"]);
     connect(port);
 }
 
-dbs::socket::~socket()
+mysocket::~mysocket()
 {
     close();
 }
 
-void dbs::socket::throw_error(const std::string &func_name)
+void mysocket::throw_error(const std::string &func_name)
 {
     std::string error_msg = func_name + "出现问题，错误码" + std::to_string(result_lable);
     LOGGER.error("process", error_msg);
     // throw std::runtime_error(error_msg);
 }
 
-void dbs::socket::throw_error_l(const std::string &func_name)
+void mysocket::throw_error_l(const std::string &func_name)
 {
     std::string error_msg = func_name + "出现问题，错误码" + std::to_string(WSAGetLastError());
     LOGGER.error("process", error_msg);

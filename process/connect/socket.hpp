@@ -10,11 +10,11 @@
 
 namespace dbs
 {
-    class socket
+    class mysocket
     {
     public:
         // 获取单实例对象
-        static socket &instance();
+        static mysocket &instance();
         // 获取socket通信传输的字符串
         std::string get();
         // 连接socket，阻塞直到联通
@@ -25,8 +25,8 @@ namespace dbs
         // 用于表示是否处于连接状态的标志位
         bool is_connect = false;
     private:
-        socket();
-        ~socket();
+        mysocket();
+        ~mysocket();
 
         // 抛出异常
         void throw_error(const std::string & func_name);
@@ -47,6 +47,9 @@ namespace dbs
         struct addrinfo hints;
     };
 }
+
+// log的全局引用简写
+#define MYSOCKET dbs::mysocket::instance()
 
 
 #endif

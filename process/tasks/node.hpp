@@ -3,33 +3,37 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include <unordered_map>
 #include <unordered_set>
 #include <functional>
+#include <future>
+#include <any>
+#include <atomic>
 
 #include "json.hpp"
 using json = nlohmann::json;
 
-#include "node.hpp"
 #include "general.hpp"
 
 namespace dbs
 {
-    // 节点的定义
+    // 节点的基类定义
     struct node
     {
         // 节点名称
         std::string name;
-        // 节点的执行方法
-        std::function<void()> func;
         // 节点依赖的节点名称
         std::unordered_set<std::string> deps;
+        // 节点执行的逻辑
+        // 在这里要求所有的节点都不能有函数上下文的输入输出值
+        // 这些数据的传递要么通过mongo的中转数据库，要么通过全局共享的线程安全原子变量传递，通过将变量的生命周期扩展到全程序来保证变量的生命周期安全
+        std::function<void()> func;
     };
 
-    // 获取所有的节点的定义
-    std::unordered_set<node> get_total_node_define(const json & input_node_define);
-    // 检查已经定义的节点的问题，并生成对应的报告字符串
-    std::string check_node(const std::unordered_set<node> & input_node);
+    // 因为lambda函数的实现不限制作用域，所以之后要求所有的节点实际实现全部放在头文件中方便引用
+    // 同时要求节点必须在dbs命名空间中
+    // 这里用于预定义函数上下文传递的全局线程安全的变量，一定要做好人工检查，因为没有编译器检查了
 }
 
 // 哈希支持，使node支持哈希，从而支持underorder_set一类的无序容器
