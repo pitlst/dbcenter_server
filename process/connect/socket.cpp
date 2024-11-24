@@ -25,9 +25,7 @@ std::string mysocket::get()
         if (error == WSAETIMEDOUT)
         {
             LOGGER.debug("process","socket获取函数超时");
-            std::string temp_res(recvbuf);
-            temp_res += ';';
-            return temp_res;
+            return std::string(recvbuf);
         }
         else
         {
@@ -43,9 +41,7 @@ std::string mysocket::get()
     }
     else
     {
-        std::string temp_res(recvbuf);
-        temp_res += ';';
-        return temp_res;
+        return std::string(recvbuf);
     }
 }
 
