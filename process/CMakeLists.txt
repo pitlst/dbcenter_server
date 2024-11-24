@@ -42,7 +42,6 @@ include_directories(
     ${ODBC_INCLUDE_DIRS}
     3rd_party/nlohmann
     3rd_party/toml11
-    3rd_party/asio
     utils
     connect
     logger

@@ -4,8 +4,9 @@
 #include <string>
 #include <memory>
 
-#include "asio.hpp"
-#include "asio/placeholders.hpp"
+#include <winsock2.h>
+#include <ws2tcpip.h>
+
 #include "toml.hpp"
 
 namespace dbs
@@ -30,12 +31,15 @@ namespace dbs
         std::string ip;
         // 默认连接的端口号
         int port;
-        // socket接收的缓冲区大小
-        int buffer_size;
+        // 接收超时时间
+        int time_out;
 
-        // winsocket需要的变量
-        asio::io_service m_io;
-        std::shared_ptr<asio::ip::tcp::socket> m_socket_ptr;
+        WSADATA wsaData;
+        SOCKET ListenSocket = INVALID_SOCKET;
+        SOCKET ClientSocket = INVALID_SOCKET;
+        struct addrinfo* result = NULL;
+        struct addrinfo hints;
+        int iResult;
     };
 }
 

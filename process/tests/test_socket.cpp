@@ -9,7 +9,6 @@ int main()
     while (true)
     {
         std::cout << MYSOCKET.get() << std::endl;
-        std::cout << "a" << std::endl;
     }
     return 0;
 }

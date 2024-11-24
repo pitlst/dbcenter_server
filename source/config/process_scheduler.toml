@@ -4,8 +4,8 @@ socket_debug = false
 socket_ip = "localhost"
 # scoket通信的端口
 socket_port = 10089
-# socket的接收缓冲区大小
-socket_buffer_size = 1024
+# socket通信的等待超时时间，单位秒
+sokcet_time_out = 1
 # 任务轮询也就是数据同步的最小间隔，单位秒
 min_sync_interval = 20
 # 无任务时等待时间，单位秒
