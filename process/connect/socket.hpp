@@ -2,10 +2,10 @@
 #define DBS_SOCKET_INCLUDE
 
 #include <string>
+#include <memory>
 
-#include <winsock2.h>
-#include <ws2tcpip.h>
-
+#include "asio.hpp"
+#include "asio/placeholders.hpp"
 #include "toml.hpp"
 
 namespace dbs
@@ -18,33 +18,24 @@ namespace dbs
         // 获取socket通信传输的字符串
         std::string get();
         // 连接socket，阻塞直到联通
-        void connect(int input_port = -1);
+        void connect();
         // 断开socket，并清空资源
         void close();
 
-        // 用于表示是否处于连接状态的标志位
-        bool is_connect = false;
     private:
         mysocket();
         ~mysocket();
 
-        // 抛出异常
-        void throw_error(const std::string & func_name);
-        void throw_error_l(const std::string & func_name);
-
-        // winsokcet的操作状态返回
-        int result_lable;
-        // 接受字符串的缓冲区
-        char recv_buffer[1024];
+        // 默认链接的ip
+        std::string ip;
         // 默认连接的端口号
         int port;
+        // socket接收的缓冲区大小
+        int buffer_size;
 
         // winsocket需要的变量
-        WSADATA wsaData;
-        SOCKET ListenSocket = INVALID_SOCKET;
-        SOCKET ClientSocket = INVALID_SOCKET;
-        struct addrinfo *result = NULL;
-        struct addrinfo hints;
+        asio::io_service m_io;
+        std::shared_ptr<asio::ip::tcp::socket> m_socket_ptr;
     };
 }
 

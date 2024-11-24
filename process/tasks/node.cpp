@@ -1,6 +1,7 @@
 #include <chrono>
 
 #include "node.hpp"
+#include "process/person.hpp"
 
 using namespace dbs;
 
@@ -55,10 +56,10 @@ node dbs::make_node_one(const std::string& node_name)
     node temp_node;
     // 这里维护一张表，实际上就是ORM(对象关系映射)
     // 就是json中定义的process节点和lambda函数的映射关系
-    // if (node_name == "人员处理")
-    // {
-    //     temp_node = make_person_node(node_name);
-    // }
+    if (node_name == "人员处理")
+    {
+        temp_node = make_person_node(node_name);
+    }
     return temp_node;
 }
 

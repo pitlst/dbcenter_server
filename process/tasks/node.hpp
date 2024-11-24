@@ -13,8 +13,6 @@
 #include "general.hpp"
 #include "logger.hpp"
 
-// #include "process/person.hpp"
-
 namespace dbs
 {
     // 节点的基类定义

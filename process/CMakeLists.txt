@@ -42,6 +42,7 @@ include_directories(
     ${ODBC_INCLUDE_DIRS}
     3rd_party/nlohmann
     3rd_party/toml11
+    3rd_party/asio
     utils
     connect
     logger
@@ -79,26 +80,26 @@ find_package(mongocxx REQUIRED)
 add_compile_definitions(PROJECT_PATH=\"${PROJECT_SOURCE_DIR}/\")
 # 解决msvc的C4996警告
 add_compile_definitions(_CRT_SECURE_NO_WARNINGS=1)
-add_executable(${PROJECT_NAME} 
-                main.cpp
-                utils/general.hpp
-                utils/general.cpp
-                utils/data.cpp
-                utils/data.cpp
-                connect/socket.hpp
-                connect/socket.cpp
-                connect/mongo.hpp
-                connect/mongo.cpp
-                logger/logger.hpp
-                logger/logger.cpp
-                scheduler/dag.hpp
-                scheduler/dag.cpp
-                scheduler/thread_pool.hpp
-                scheduler/thread_pool.cpp
-                tasks/node.hpp
-                tasks/node.cpp
-                tasks/process/person.hpp
+set(ALL_SOURCE_FILE                 
+    utils/general.hpp
+    utils/general.cpp
+    utils/data.cpp
+    utils/data.cpp
+    connect/socket.hpp
+    connect/socket.cpp
+    connect/mongo.hpp
+    connect/mongo.cpp
+    logger/logger.hpp
+    logger/logger.cpp
+    scheduler/dag.hpp
+    scheduler/dag.cpp
+    scheduler/thread_pool.hpp
+    scheduler/thread_pool.cpp
+    tasks/node.hpp
+    tasks/node.cpp
+    tasks/process/person.hpp
 )
+add_executable(${PROJECT_NAME} main.cpp ${ALL_SOURCE_FILE})
 target_link_libraries(${PROJECT_NAME} mongo::mongocxx_shared Ws2_32.lib)
 foreach(FILE_I ${MONGO_CONCPP_DLLS})
     add_custom_command(
@@ -113,31 +114,24 @@ endforeach(FILE_I)
 #   测试执行测试
 #--------------------------------------------------------------------------------------#
 # mongo链接测试
-add_executable(test_mongo_connect 
-                tests/test_mongo_connect.cpp 
-)
-target_link_libraries(test_mongo_connect mongo::mongocxx_shared)
+add_executable(test_mongo_connect tests/test_mongo_connect.cpp  ${ALL_SOURCE_FILE})
+target_link_libraries(test_mongo_connect mongo::mongocxx_shared Ws2_32.lib)
 foreach(FILE_I ${MONGO_CONCPP_DLLS})
     add_custom_command(
-        TARGET test_mongo_connect 
+        TARGET test_mongo_connect
         POST_BUILD
         COMMAND ${CMAKE_COMMAND} 
         ARGS -E copy_if_different ${FILE_I} "${PROJECT_SOURCE_DIR}/build/Release"
     )
 endforeach(FILE_I)
 
+
 # logger测试
-add_executable(test_logger 
-                tests/test_logger.cpp 
-                connect/mongo.hpp
-                connect/mongo.cpp
-                logger/logger.hpp
-                logger/logger.cpp
-)
-target_link_libraries(test_logger mongo::mongocxx_shared)
+add_executable(test_logger tests/test_logger.cpp  ${ALL_SOURCE_FILE})
+target_link_libraries(test_logger mongo::mongocxx_shared Ws2_32.lib)
 foreach(FILE_I ${MONGO_CONCPP_DLLS})
     add_custom_command(
-        TARGET test_logger 
+        TARGET test_logger
         POST_BUILD
         COMMAND ${CMAKE_COMMAND} 
         ARGS -E copy_if_different ${FILE_I} "${PROJECT_SOURCE_DIR}/build/Release"
@@ -145,42 +139,47 @@ foreach(FILE_I ${MONGO_CONCPP_DLLS})
 endforeach(FILE_I)
 
 # data测试
-add_executable(test_data 
-                tests/test_data.cpp 
-                utils/data.hpp
-                utils/data.cpp
-)
+add_executable(test_data tests/test_data.cpp  ${ALL_SOURCE_FILE})
+target_link_libraries(test_data mongo::mongocxx_shared Ws2_32.lib)
+foreach(FILE_I ${MONGO_CONCPP_DLLS})
+    add_custom_command(
+        TARGET test_data
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} 
+        ARGS -E copy_if_different ${FILE_I} "${PROJECT_SOURCE_DIR}/build/Release"
+    )
+endforeach(FILE_I)
 
 # 线程池测试
-add_executable(test_thread_pool 
-                tests/test_thread_pool.cpp 
-                scheduler/thread_pool.cpp
-                scheduler/thread_pool.cpp
-)
+add_executable(test_thread_pool tests/test_thread_pool.cpp  ${ALL_SOURCE_FILE})
+target_link_libraries(test_thread_pool mongo::mongocxx_shared Ws2_32.lib)
+foreach(FILE_I ${MONGO_CONCPP_DLLS})
+    add_custom_command(
+        TARGET test_thread_pool
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} 
+        ARGS -E copy_if_different ${FILE_I} "${PROJECT_SOURCE_DIR}/build/Release"
+    )
+endforeach(FILE_I)
 
 # dag调度器测试
-add_executable(test_dag
-                tests/test_dag.cpp 
-                scheduler/dag.cpp
-                scheduler/dag.cpp
-                scheduler/thread_pool.cpp
-                scheduler/thread_pool.cpp
-)
+add_executable(test_dag tests/test_dag.cpp  ${ALL_SOURCE_FILE})
+target_link_libraries(test_dag mongo::mongocxx_shared Ws2_32.lib)
+foreach(FILE_I ${MONGO_CONCPP_DLLS})
+    add_custom_command(
+        TARGET test_dag
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} 
+        ARGS -E copy_if_different ${FILE_I} "${PROJECT_SOURCE_DIR}/build/Release"
+    )
+endforeach(FILE_I)
 
 # socket通信测试
-add_executable(test_socket 
-                tests/test_socket.cpp 
-                connect/socket.cpp
-                connect/socket.cpp
-                connect/mongo.hpp
-                connect/mongo.cpp
-                logger/logger.hpp
-                logger/logger.cpp
-)
+add_executable(test_socket tests/test_socket.cpp  ${ALL_SOURCE_FILE})
 target_link_libraries(test_socket mongo::mongocxx_shared Ws2_32.lib)
 foreach(FILE_I ${MONGO_CONCPP_DLLS})
     add_custom_command(
-        TARGET test_socket 
+        TARGET test_socket
         POST_BUILD
         COMMAND ${CMAKE_COMMAND} 
         ARGS -E copy_if_different ${FILE_I} "${PROJECT_SOURCE_DIR}/build/Release"

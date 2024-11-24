@@ -2,6 +2,10 @@
 #include <chrono>
 #include <sstream>
 
+#include "mongocxx/client.hpp"
+#include "mongocxx/instance.hpp"
+#include "mongocxx/uri.hpp"
+
 #include "bsoncxx/builder/basic/array.hpp"
 #include "bsoncxx/builder/basic/document.hpp"
 #include "bsoncxx/builder/basic/kvp.hpp"
@@ -46,15 +50,11 @@ void logger::emit(const std::string &level, const std::string &name, const std::
     using bsoncxx::builder::basic::kvp;
     using bsoncxx::builder::basic::make_document;
     collection.insert_one(
-            make_document(
-                kvp("timestamp", bsoncxx::types::b_date{now}),
-                kvp("message", make_document(
-                        kvp("等级", level),
-                        kvp("消息", msg)
-                    )
-                )
-            )
-        );
+        make_document(
+            kvp("timestamp", bsoncxx::types::b_date{now}),
+            kvp("message", make_document(
+                               kvp("等级", level),
+                               kvp("消息", msg)))));
     // 命令行输出
     std::cout << "[" << level << "]" << get_time_str(now) << ": " << msg << std::endl;
 }
@@ -62,9 +62,9 @@ void logger::emit(const std::string &level, const std::string &name, const std::
 logger::logger()
 {
     // 取消c与c++共用的输出缓冲区
-    std::ios::sync_with_stdio(0),
-        std::cin.tie(0),
-        std::cout.tie(0);
+    std::ios::sync_with_stdio(0);
+    std::cin.tie(0);
+    std::cout.tie(0);
     // 连接数据库
     m_client_ptr = std::make_unique<mongocxx::pool::entry>(MONGO.m_pool_ptr->acquire());
     m_database_ptr = std::make_unique<mongocxx::database>((*m_client_ptr)[db_name]);
@@ -78,20 +78,31 @@ logger::~logger()
     m_client_ptr = nullptr;
 }
 
-void logger::create_time_collection(const std::string & name)
+void logger::create_time_collection(const std::string &name)
 {
-    // 创建集合
-    using bsoncxx::builder::basic::kvp;
-    using bsoncxx::builder::basic::make_document;
-    auto ts_info = make_document(
-        kvp("timeseries", 
+    // 检查集合是否创建
+    bool is_exist = false;
+    auto collections = m_database_ptr->list_collections();
+    for (const auto &coll : collections)
+    {
+        if (coll["name"].get_string().value == name)
+        {
+            is_exist = true;
+            break;
+        }
+    }
+    if (!is_exist)
+    {
+        // 创建集合
+        using bsoncxx::builder::basic::kvp;
+        using bsoncxx::builder::basic::make_document;
+        auto ts_info = make_document(
+            kvp("timeseries",
                 make_document(
                     kvp("timeField", "timestamp"),
-                    kvp("metaField", "message")
-                )
-            )
-        );
-    m_database_ptr->create_collection(name, ts_info.view());
+                    kvp("metaField", "message"))));
+        m_database_ptr->create_collection(name, ts_info.view());
+    }
 }
 
 std::string logger::get_time_str(const std::chrono::system_clock::time_point &input_time)

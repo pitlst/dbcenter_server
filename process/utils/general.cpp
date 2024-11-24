@@ -9,7 +9,7 @@
 
 using namespace dbs;
 
-std::string random_gen(int length)
+std::string dbs::random_gen(int length)
 {
     char tmp;
     std::string buffer; // buffer: 保存返回值
@@ -32,7 +32,7 @@ std::string random_gen(int length)
     return buffer;
 }
 
-std::string read_file(const std::string &input_path)
+std::string dbs::read_file(const std::string &input_path)
 {
     std::ifstream file;
     file.open(input_path, std::ios::in | std::ios::out);
@@ -55,7 +55,7 @@ std::string read_file(const std::string &input_path)
     return temps.str();
 }
 
-std::string gbk_to_utf8(const std::string &input_str)
+std::string dbs::gbk_to_utf8(const std::string &input_str)
 {
     std::string GBK = "";
     // 1、GBK转unicode
@@ -92,12 +92,12 @@ std::string gbk_to_utf8(const std::string &input_str)
     return GBK;
 }
 
-std::vector<std::string> split_string(const std::string & input, char delimiter)
+std::vector<std::string> dbs::split_string(const std::string & input_, char delimiter)
 {
     std::vector<std::string> tokens;
-    const char *token_start = input.data();
+    const char *token_start = input_.data();
     const char *p = token_start;
-    const char *end_pos = input.data() + input.size();
+    const char *end_pos = input_.data() + input_.size();
     for (; p != end_pos; ++p)
     {
         if (*p == delimiter)
