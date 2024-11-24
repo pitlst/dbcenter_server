@@ -92,9 +92,9 @@ std::string gbk_to_utf8(const std::string &input_str)
     return GBK;
 }
 
-std::vector<std::string_view> split_string(std::string_view input, char delimiter)
+std::vector<std::string> split_string(const std::string & input, char delimiter)
 {
-    std::vector<std::string_view> tokens;
+    std::vector<std::string> tokens;
     const char *token_start = input.data();
     const char *p = token_start;
     const char *end_pos = input.data() + input.size();

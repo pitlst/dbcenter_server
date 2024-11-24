@@ -4,58 +4,84 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <unordered_map>
 #include <unordered_set>
 #include <functional>
 #include <future>
 #include <any>
 #include <atomic>
 
-#include "json.hpp"
-using json = nlohmann::json;
-
 #include "general.hpp"
+#include "logger.hpp"
+
+// #include "process/person.hpp"
 
 namespace dbs
 {
     // 节点的基类定义
     struct node
     {
+        node() = default;
+        // 拷贝与移动构造的特殊定义
+        node(const node &node_);
+        node(node &&node_);
+        node &operator=(const node &node_);
+        node &operator=(node &&node_);
+
+        // 节点的执行方法，节点通用的一些包装放在这里
+        void operator()();
+        // 为hash添加相等的对比
+        bool operator==(const node &node_) const;
+
         // 节点名称
         std::string name;
-        // 节点依赖的节点名称
-        std::unordered_set<std::string> deps;
         // 节点执行的逻辑
         // 在这里要求所有的节点都不能有函数上下文的输入输出值
-        // 这些数据的传递要么通过mongo的中转数据库，要么通过全局共享的线程安全原子变量传递，通过将变量的生命周期扩展到全程序来保证变量的生命周期安全
+        // 这些数据的传递要么通过mongo的中转数据库，要么通过全局共享的线程安全变量传递，通过将变量的生命周期扩展到全程序来保证变量的生命周期安全
         std::function<void()> func;
+        // 标记节点是否完成的标志位
+        std::atomic<bool> is_closed = false;
     };
 
-    // 因为lambda函数的实现不限制作用域，所以之后要求所有的节点实际实现全部放在头文件中方便引用
-    // 同时要求节点必须在dbs命名空间中
-    // 这里用于预定义函数上下文传递的全局线程安全的变量，一定要做好人工检查，因为没有编译器检查了
-}
-
-// 哈希支持，使node支持哈希，从而支持underorder_set一类的无序容器
-namespace std
-{
-    template <> 
-    struct hash<dbs::node>
+    // 这里用于定义函数上下文传递的全局变量，使用单例模式维护线程安全，
+    // 一定要做好人工检查，因为没有编译器检查了
+    // 相当于手动维护的节点堆空间
+    class node_public_buffer
     {
     public:
-        size_t operator()(const dbs::node &node_) const
+        // 获取单实例对象
+        static node_public_buffer &instance();
+        // 变量的存储位置
+        std::map<std::string, std::any> m_buffer;
+
+    private:
+        // 禁止外部构造与析构
+        node_public_buffer() = default;
+        ~node_public_buffer() = default;
+    };
+
+    // 节点的工厂类
+    node make_node_one(const std::string &node_name);
+    std::unordered_set<node> make_node(const std::unordered_set<std::string> &node_);
+
+    // 检查所有定义的节点是否符合要求，不符合则抛出异常
+    void check_node_define(const std::unordered_set<node> &input_node);
+}
+
+// buffer的全局引用简写
+#define NODE_BUFFER dbs::node_public_buffer::instance().m_buffer
+
+namespace std
+{
+    template <>
+    class hash<dbs::node>
+    {
+        // 偏特化（这里使用了标准库已经提供的hash偏特化类hash<string>，hash<int>()）
+    public:
+        size_t operator()(const dbs::node &p) const
         {
-            // 将节点的名称与依赖拼在一起作为哈希用的唯一项
-            std::string temp_hash = node_.name;
-            for(const auto & ch : node_.deps)
-            {
-                temp_hash += ch;
-            }
-            // 增加随机字符串防止空节点装桶
-            temp_hash += dbs::random_gen(8);
-            return hash<std::string>()(temp_hash);
+            return hash<std::string>()(p.name + dbs::random_gen(8));
         }
     };
-};
+}
 
 #endif

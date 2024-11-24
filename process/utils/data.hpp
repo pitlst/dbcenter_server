@@ -6,7 +6,7 @@
 #include <optional>
 #include <variant>
 
-#include "utils/general.hpp"
+#include "general.hpp"
 
 namespace dbs
 {

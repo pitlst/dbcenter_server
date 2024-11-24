@@ -1,15 +1,20 @@
-#include "dag.hpp"
-#include "socket.hpp"
+#include <algorithm>
+#include <iterator>
+
 #include "thread_pool.hpp"
 #include "general.hpp"
+#include "dag.hpp"
+
 
 using namespace dbs;
 
-dag_scheduler::dag_scheduler(const toml::value &config_define)
+dag_scheduler::dag_scheduler(const toml::value &config_define, const json & total_tasks)
 {
     auto data = toml::parse(std::string(PROJECT_PATH) + "../source/config/process_scheduler.toml");
     min_sync_interval = toml::get<std::size_t>(data["min_sync_interval"]);
     wait_sync_interval = toml::get<std::size_t>(data["wait_sync_interval"]);
+
+    make_deps(total_tasks);
 }
 
 dag_scheduler::~dag_scheduler()
@@ -17,98 +22,78 @@ dag_scheduler::~dag_scheduler()
 
 }
 
-void dag_scheduler::set_node(node &input_node)
-{
-    nodes.emplace(input_node.name, input_node);
-    for(const auto & ch : input_node.deps)
-    {
-        node_deps[ch].emplace(input_node.name);
-    }
-}
-
-void dag_scheduler::set_node(std::unordered_set<node> &input_nodes)
-{
-    for (auto &ch : input_nodes)
-    {
-        nodes.emplace(ch.name, ch);
-        for(const auto & ch_ : ch.deps)
-        {
-            node_deps[ch_].emplace(ch.name);
-        }
-    }
-}
-
 void dag_scheduler::run()
 {
-    while (true)
+    auto ipc_ndoe_names = get_notice();
+    auto need_run_node_names = get_deps(get_runned());
+    std::set_union(ipc_ndoe_names.begin(),ipc_ndoe_names.end(),need_run_node_names.begin(),need_run_node_names.end(), std::insert_iterator(need_run_node_names, need_run_node_names.end()));
+    auto need_run_nodes = make_node(need_run_node_names);
+    // 这里实际上有一个拷贝，一定要先存到running_nodes中再根据running_nodes中的节点发送执行函数
+    // 不然通知变量通知的不正确，检测不到执行完成
+    for (const auto & ch : need_run_nodes)
     {
-        get_notice();
-        auto need_run_nodes = get_run_node();
-        for (const auto & node_name : need_run_nodes)
-        {
-            auto temp_packed = pack_func(nodes[node_name]);
-            auto f = std::bind(&node::operator(), &(nodes[node_name]));
-            all_node_result[node_name] = temp_packed.second;
-            thread_pool::instance().submit(temp_packed.first);
-        }
-        update_after_run();
-    }
-    
-}
-
-std::vector<std::string> dag_scheduler::get_run_node()
-{
-    std::vector<std::string> temp_nodes;
-    for (auto& [key , node_]: nodes)
-    {
-        if (node_.m_status == node::need_run)
-        {
-            temp_nodes.emplace_back(key);
-        }
-    }
-    return temp_nodes;
-}
-
-void dag_scheduler::update_after_run()
-{
-    
-    for (auto& [key , node_]: nodes)
-    {
-        // 对所有已经进行完的类变更状态
-        if (node_.m_status == node::end_run)
-        {
-            node_.m_status = node::not_run;
-            // 对依赖其的节点变更状态准备运行
-            for (const auto & ch_ : node_deps[key])
-            {
-                auto &node = nodes[ch_];
-                if (node.m_status == node::not_run)
-                {
-                    node.m_status = node::need_run;
-                }
-            }
-        }
+        auto temp_node = running_nodes.emplace_back(ch);
+        // thread_pool::instance().submit_lambda(temp_node);
     }
 }
 
-void dag_scheduler::get_notice()
+std::unordered_set<std::string> dag_scheduler::get_notice()
 {
-    socket_buffer += MYSOCKET.get();
-    std::vector<std::string_view> split_str = split_string(socket_buffer, ';');
+    // socket_buffer += MYSOCKET.get();
+    std::vector<std::string> split_str = split_string(socket_buffer, ';');
     socket_buffer = split_str[split_str.size() - 1];
-    std::vector<std::string_view> node_str;
-    std::vector<std::string_view> inter_node;
-    for (auto& [key , _]: nodes)
+    split_str.pop_back();
+
+    std::unordered_set<std::string> temp_ndoes;
+    for (const auto & ch : split_str)
     {
-        node_str.emplace_back(key);
+        temp_ndoes.emplace(ch);
     }
-    std::set_intersection(split_str.begin(), split_str.end(), node_str.begin(), node_str.end(), std::back_inserter(inter_node));
-    for (const auto &ch : inter_node)
+    return temp_ndoes;
+}
+
+std::unordered_set<std::string> dag_scheduler::get_runned()
+{
+    std::unordered_set<std::string> runned_nodes;
+    auto it = running_nodes.begin();
+    while (it != running_nodes.end())
     {
-        auto &node = nodes[std::string(ch)];
-        if(node.m_status == node::not_run)
+        if(it->is_closed == true)
         {
-            node.m_status = node::need_run;
+            runned_nodes.emplace(it->name);
+            it = running_nodes.erase(it);
+        }
+        else
+        {
+            it++;
+        }
+    }
+    return runned_nodes;
+}
+
+std::unordered_set<std::string> dag_scheduler::get_deps(const std::unordered_set<std::string> & runned_nodes)
+{
+    std::unordered_set<std::string> temp_name;
+    for (const auto & ch : runned_nodes)
+    {
+        if (node_deps.find(ch) != node_deps.end())
+        {
+            std::set_union(temp_name.begin(),temp_name.end(),node_deps[ch].begin(),node_deps[ch].end(), std::insert_iterator(temp_name, temp_name.end()));
+        }
+    }
+    return temp_name;
+}
+
+void dag_scheduler::make_deps(const json & total_tasks)
+{
+    for (const auto & ch : total_tasks)
+    {
+        if (ch["type"] == "process")
+        {
+            for (const auto & ch_ : ch["next_name"])
+            {
+                node_deps[ch_].emplace(ch["name"]);
+            }
         }
     }
 }

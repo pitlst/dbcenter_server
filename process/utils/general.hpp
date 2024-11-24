@@ -17,7 +17,7 @@ namespace dbs
     // 将gbk字符串转换为utf8
     std::string gbk_to_utf8(const std::string & input_str);
     // 切割字符串，并将最后一个分割好的字符串单独包装
-    std::vector<std::string_view> split_string(std::string_view input, char delimiter);
+    std::vector<std::string> split_string(const std::string & input, char delimiter);
 
 
     // 将有参数输入的对象类型擦除，包装成无参数的可调用对象，并返回类型推导的未来结果

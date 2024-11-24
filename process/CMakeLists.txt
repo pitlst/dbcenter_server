@@ -97,6 +97,7 @@ add_executable(${PROJECT_NAME}
                 scheduler/thread_pool.cpp
                 tasks/node.hpp
                 tasks/node.cpp
+                tasks/process/person.hpp
 )
 target_link_libraries(${PROJECT_NAME} mongo::mongocxx_shared Ws2_32.lib)
 foreach(FILE_I ${MONGO_CONCPP_DLLS})

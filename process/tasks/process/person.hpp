@@ -5,10 +5,18 @@
 
 namespace dbs
 {
-    auto process_person = []()
+    inline node make_person_node(const std::string & node_name)
     {
+        auto process_person = []()
+        {
 
-    };
+        };
+
+        node person;
+        person.name = node_name;
+        person.func = process_person;
+        return person;
+    }
 }
 
 #endif

@@ -8,7 +8,6 @@
 #include "bsoncxx/types.hpp"
 
 #include "logger.hpp"
-#include "mongo.hpp"
 
 using namespace dbs;
 
