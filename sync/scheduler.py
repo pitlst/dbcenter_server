@@ -213,7 +213,7 @@ class scheduler:
         sebd_msg = msg + "节点执行完成"
         self.LOG.debug(sebd_msg)
         # 用换行符来分割不同次通知
-        self.soc.send(bytes(sebd_msg + ";", encoding='utf-8'))
+        self.soc.send(bytes(sebd_msg, encoding='utf-8'))
             
 
 if __name__ == "__main__":
