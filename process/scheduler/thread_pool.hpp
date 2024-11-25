@@ -35,9 +35,7 @@ namespace dbs
         static thread_pool& instance();
         // 提交lambda函数执行
         template<class F, class... Args>
-        auto submit_lambda(F&& f, Args&&... args)->std::future<typename std::invoke_result<F, Args...>::type>;
-        // 提交已经包装好的任务
-        void submit(std::function<void()> input_warpper);
+        auto submit(F&& f, Args&&... args)->std::future<typename std::invoke_result<F, Args...>::type>;
         // 终止线程池，通过变量确定是否等待任务执行完成
         // not_wait表示不等待剩余任务执行完成马上退出，但是已经运行的任务会运行完成后再退出
         void shutdown(bool wait = true);
@@ -60,7 +58,7 @@ namespace dbs
 
 
     template<class F, class... Args>
-    auto thread_pool::submit_lambda(F&& f, Args&&... args)->std::future<typename std::invoke_result<F, Args...>::type>
+    auto thread_pool::submit(F&& f, Args&&... args)->std::future<typename std::invoke_result<F, Args...>::type>
     {
         // 连接函数和参数定义，特殊函数类型，避免左右值错误
         std::function<typename std::invoke_result<F, Args...>::type()> func = std::bind(std::forward<F>(f), std::forward<Args>(args)...); 

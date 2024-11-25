@@ -92,27 +92,16 @@ std::string dbs::gbk_to_utf8(const std::string &input_str)
     return GBK;
 }
 
-std::vector<std::string> dbs::split_string(const std::string & input_, char delimiter)
+std::vector<std::string> dbs::split_string(const std::string &str, const std::string &delimiter)
 {
     std::vector<std::string> tokens;
-    const char *token_start = input_.data();
-    const char *p = token_start;
-    const char *end_pos = input_.data() + input_.size();
-    for (; p != end_pos; ++p)
+    std::string token;
+    std::istringstream tokenStream(str);
+
+    while (std::getline(tokenStream, token, delimiter[0]))
     {
-        if (*p == delimiter)
-        {
-            if (p > token_start)
-            {
-                tokens.emplace_back(token_start, p - token_start);
-            }
-            token_start = p + 1;
-            continue;
-        }
+        tokens.push_back(token);
     }
-    if (p > token_start)
-    {
-        tokens.emplace_back(token_start, p - token_start);
-    }
+
     return tokens;
 }

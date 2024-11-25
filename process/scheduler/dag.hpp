@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <deque>
+#include <memory>
 #include <unordered_set>
 
 #include "json.hpp"
@@ -37,9 +38,11 @@ namespace dbs
         std::size_t wait_sync_interval;
         // socket通信的未完全接收的节点信息缓存
         std::string socket_buffer;
-        // 当前正在运行的所有节点
-        std::deque<node> running_nodes;
-        // 所有节点和他的被依赖关系，注意这里的依赖关系和tasks.json文件中定义的是相反的
+        // 当前正在运行的所有节点的名称
+        std::deque<std::string> running_nodes;
+        // 所有节点的名称
+        std::unordered_set<std::string> nodes;
+        // 所有节点的被依赖关系，注意这里的依赖关系和tasks.json文件中定义的是相反的，并且没有被依赖关系时不会存入
         std::unordered_map<std::string, std::unordered_set<std::string>> node_deps;
     };
 }

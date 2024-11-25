@@ -6,17 +6,10 @@
 
 namespace dbs
 {
-    inline node make_person_node(const std::string & node_name)
+    inline void process_person()
     {
-        auto process_person = []()
-        {
-            std::cout << "person已执行" << std::endl;
-        };
 
-        node person;
-        person.name = node_name;
-        person.func = process_person;
-        return person;
+
     }
 }
 

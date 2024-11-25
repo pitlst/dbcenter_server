@@ -29,30 +29,29 @@ void dag_scheduler::run()
     {
         auto ipc_ndoe_names = get_notice();
         auto need_run_node_names = get_deps(get_runned());
+        std::cout << need_run_node_names.size() << std::endl;
         std::set_union(ipc_ndoe_names.begin(), ipc_ndoe_names.end(), need_run_node_names.begin(), need_run_node_names.end(), std::insert_iterator(need_run_node_names, need_run_node_names.end()));
-        std::cout << ipc_ndoe_names.size() << std::endl;
-        auto need_run_nodes = make_node(need_run_node_names);
-        // 这里实际上有一个拷贝，一定要先存到running_nodes中再根据running_nodes中的节点发送执行函数
-        // 不然通知变量通知的不正确，检测不到执行完成
-        for (const auto &ch : need_run_nodes)
+        for (const auto &node_name : need_run_node_names)
         {
-            auto node_ = running_nodes.emplace_back(ch);
-            node_();
+            std::cout << "nnode_name" << node_name << std::endl;
+            running_nodes.emplace_back(node_name);
+            thread_pool::instance().submit(get_func(), node_name);
         }
     }
 }
 
 std::unordered_set<std::string> dag_scheduler::get_notice()
 {
-    socket_buffer += MYSOCKET.get();
-    std::vector<std::string> split_str = split_string(socket_buffer, ';');
-    socket_buffer = split_str[split_str.size() - 1];
-    split_str.pop_back();
-
+    socket_buffer = MYSOCKET.get();
+    std::vector<std::string> split_str = split_string(socket_buffer, "节点执行完成");
     std::unordered_set<std::string> temp_ndoes;
     for (const auto &ch : split_str)
     {
-        temp_ndoes.emplace(ch);
+        // 检查节点是否在注册的节点中，不要的全部丢弃
+        if (nodes.find(ch) != nodes.end())
+        {
+            temp_ndoes.emplace(ch);
+        }
     }
     return temp_ndoes;
 }
@@ -63,9 +62,10 @@ std::unordered_set<std::string> dag_scheduler::get_runned()
     auto it = running_nodes.begin();
     while (it != running_nodes.end())
     {
-        if (it->is_closed == true)
+        if (NODE_NOTICE[*it] == true)
         {
-            runned_nodes.emplace(it->name);
+            NODE_NOTICE[*it] = false;
+            runned_nodes.emplace(*it);
             it = running_nodes.erase(it);
         }
         else
@@ -81,7 +81,7 @@ std::unordered_set<std::string> dag_scheduler::get_deps(const std::unordered_set
     std::unordered_set<std::string> temp_name;
     for (const auto &ch : runned_nodes)
     {
-        if (node_deps.find(ch) != node_deps.end())
+        if (node_deps.find(ch) != node_deps.end() && !node_deps[ch].empty())
         {
             std::set_union(temp_name.begin(), temp_name.end(), node_deps[ch].begin(), node_deps[ch].end(), std::insert_iterator(temp_name, temp_name.end()));
         }
@@ -95,6 +95,7 @@ void dag_scheduler::make_deps(const json &total_tasks)
     {
         if (ch["type"] == "process")
         {
+            nodes.emplace(ch["name"]);
             if (!ch["next_name"].empty())
             {
                 for (const auto &ch_ : ch["next_name"])
@@ -103,5 +104,10 @@ void dag_scheduler::make_deps(const json &total_tasks)
                 }
             }
         }
+    }
+    // 检查所有节点的日志集合是否创建
+    for (const auto & ch : nodes)
+    {
+        LOGGER.create_time_collection(ch);
     }
 }

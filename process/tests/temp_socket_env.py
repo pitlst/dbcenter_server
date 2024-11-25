@@ -21,6 +21,6 @@ print("开始发送")
 while True:
     # 信息发送
     info = input()
-    sk.send(bytes(info + ";",encoding='utf-8'))
+    sk.send(bytes(info + "节点执行完成",encoding='utf-8'))
 # 关闭客户端套接字
 sk.close()

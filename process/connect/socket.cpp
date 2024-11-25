@@ -131,8 +131,7 @@ mysocket::mysocket()
     auto data = toml::parse(std::string(PROJECT_PATH) + "../source/config/process_scheduler.toml");
     ip = toml::get<std::string>(data["socket_ip"]);
     port = toml::get<int>(data["socket_port"]);
-    time_out = toml::get<int>(data["sokcet_time_out"]) * 1000;
-
+    time_out = int(toml::get<float>(data["sokcet_time_out"]) * 1000);
     connect();
 }
 
