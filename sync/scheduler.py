@@ -159,43 +159,53 @@ class scheduler:
         '''真正执行节点的地方'''
         with ThreadPoolExecutor() as tpool:
             # 存储所有正在运行的任务
+            total_tasks_name = set()
             total_tasks = []
             while True:
-                run_node = self.get_node_run()
+                run_node = self.get_node_run(total_tasks_name)
                 if len(run_node) == 0:
                     self.LOG.debug("没有新的任务触发执行")
                 else:
                     # 只有在本次获取的任务都执行完成后下一次执行才会开始
                     for ch in run_node:
+                        total_tasks_name.add(ch.name)
                         total_tasks.append(tpool.submit(ch.run))
                     self.LOG.debug("触发以下任务执行:" + ",".join([ch.name for ch in run_node]))
                 # 对于运行任务等待结果，未运行完就更新需要添加的任务
                 if len(total_tasks) != 0:
                     is_done, _ = wait(total_tasks, timeout=MIN_SYNC_INTERVAL)
                     for future in is_done:
-                        self.update_node(future.result())
+                        total_tasks_name = self.update_node(total_tasks_name, future.result())
                         total_tasks.remove(future)
                 else:
                     self.LOG.debug("没有任务运行，等待" + str(WAIT_SYNC_INTERVAL) + "秒")
                     time.sleep(WAIT_SYNC_INTERVAL)
                 
                 
-    def get_node_run(self) -> list[node_base]:
+    def get_node_run(self, total_tasks_name: set[str]) -> list[node_base]:
         '''获取当前需要执行的节点'''
-        run_node: list[node_base] = []
+        run_node: set[node_base] = set()
         time_now = datetime.datetime.now()
         for index in range(len(self.dag_node)):
             # 如果子图正在运行
             if self.dag_node[index][2]:
-                # 检查所有子图节点的need_run标志位，如果是false，证明该节点刚刚运行完，把他的后向依赖拿出来通知运行，然后重置标志位
+                # 检查所有子图节点的need_run标志位，如果是false，证明该节点运行完
                 not_need_run = True
                 for node_ in self.dag_node[index][0]:
-                    if not self.all_node[node_].need_run:
+                    if self.all_node[node_].need_run:
                         not_need_run = False
-                        for node__ in self.dag_node[index][0][node_][1]:
-                            run_node.append(self.all_node[node__])
-                        self.all_node[node_].need_run = True
-                # 如果该子图没有需要新加的节点，那就认为节点运行完成
+                        # 其本身不在正在运行的节点中，并且本身也没有运行
+                        if node_ not in total_tasks_name and self.all_node[node_].need_run:
+                            # 如果这个节点的所有前向依赖全部是false，也就是运行过了
+                            label = True
+                            for node__ in self.dag_node[index][0][node_][0]:
+                                if self.all_node[node__].need_run:
+                                    label = False
+                                    break
+                            if label:
+                                # 添加到需要运行的节点中
+                                run_node.add(self.all_node[node_])
+                # 如果该子图所有节点的need_run标志位都为false，认为该子图已经运行完成
                 if not_need_run:
                     # 计算一下下次触发子图运行的时间
                     temp_second = int(self.dag_node[index][3] / MAX_NODE_FLOW_CAP)
@@ -204,18 +214,22 @@ class scheduler:
                     self.dag_node[index][1] = time_now + datetime.timedelta(seconds=temp_second)
                     self.dag_node[index][2] = False
                     self.dag_node[index][3] = 0
+                    # 遍历所有的节点重置need_run标志位
+                    for node_ in self.dag_node[index][0]:
+                        self.all_node[node_].need_run = True
             # 如果子图不在运行并且时间超过触发要求，开始执行
             elif not self.dag_node[index][2] and self.dag_node[index][1] <= time_now:
                 # 将所有子图节点的前向无依赖节点运行
                 for node_ in self.dag_node[index][0]:
                     if len(self.dag_node[index][0][node_][0]) == 0:
-                        run_node.append(self.all_node[node_]) 
+                        run_node.add(self.all_node[node_])
                 self.dag_node[index][2] = True
         return run_node
     
-    def update_node(self, node_result: tuple[str, int]) -> None:
+    def update_node(self, total_tasks_name: set[str], node_result: tuple[str, int]) -> None:
         '''更新节点状态'''
         name, data_size = node_result
+        total_tasks_name.remove(name)
         # 发送socket通信给process
         self.send_notice(name)
         # 更新子图的数据量
@@ -223,6 +237,7 @@ class scheduler:
             if name in self.dag_node[index][0].keys():
                 self.dag_node[index][3] += data_size
                 break
+        return total_tasks_name
             
     def send_notice(self, msg):
         '''通知处理线程节点完成'''
