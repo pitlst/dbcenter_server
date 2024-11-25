@@ -37,7 +37,7 @@ namespace dbs
     // 单个节点的执行方法获取
     std::function<void(std::string)> get_func();
     // 选择当前实际运算的逻辑
-    void dbs::select_func(const std::string &name);
+    void select_func(const std::string &name);
 }
 
 // 节点是否完成的通知变量的全局引用简写

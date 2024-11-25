@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <iostream>
 #include <iterator>
 
 #include "thread_pool.hpp"
@@ -29,11 +28,9 @@ void dag_scheduler::run()
     {
         auto ipc_ndoe_names = get_notice();
         auto need_run_node_names = get_deps(get_runned());
-        std::cout << need_run_node_names.size() << std::endl;
         std::set_union(ipc_ndoe_names.begin(), ipc_ndoe_names.end(), need_run_node_names.begin(), need_run_node_names.end(), std::insert_iterator(need_run_node_names, need_run_node_names.end()));
         for (const auto &node_name : need_run_node_names)
         {
-            std::cout << "nnode_name" << node_name << std::endl;
             running_nodes.emplace_back(node_name);
             thread_pool::instance().submit(get_func(), node_name);
         }
