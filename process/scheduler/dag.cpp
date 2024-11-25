@@ -5,6 +5,7 @@
 #include "general.hpp"
 #include "dag.hpp"
 #include "socket.hpp"
+#include "logger.hpp"
 
 using namespace dbs;
 

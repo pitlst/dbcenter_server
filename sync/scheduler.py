@@ -4,7 +4,7 @@ import socket
 import json
 import time
 import datetime
-from general.node import node_base, get_node_num, set_node_num
+from general.node import node_base
 from general.node import \
     sql_to_table, \
     table_to_table, \
@@ -17,154 +17,34 @@ from general.node import \
     nosql_to_json, \
     nosql_to_nosql, \
     nosql_to_table
-from general.config import gc
+from general.config import SYNC_CONFIG
 from general.logger import node_logger
-from concurrent.futures import ThreadPoolExecutor, wait, as_completed
+from concurrent.futures import ThreadPoolExecutor, wait
 
-__all_node_type__: list[node_base] = [
-    sql_to_table, 
-    table_to_table, 
-    sql_to_nosql, 
-    table_to_nosql, 
-    excel_to_table, 
-    excel_to_nosql, 
-    table_to_excel, 
-    json_to_nosql, 
-    nosql_to_json, 
-    nosql_to_nosql, 
-    nosql_to_table
-]
-
-'''
-这里主要想实现的一个想法是，对于没有前后依赖的sql同步节点
-在程序触发时根据日志检查上一次的同步数据量
-并根据一个系数来计算这一次触发时该节点是否要执行
-然后通过socket来通知c++进行更新
-对于有前后依赖的sql节点应当放到c++的处理中执行
-
-实际计算同步时间的方法是在节点的定义里，可以重写
-
-在启动服务时为了保证数据的实时性会直接触发全部节点
-导致有一个流量高峰，所有节点的状态和时间间隔会重新同步，所以建议在非业务时间重启
-'''
-
-SOCKET_IP = gc.SYNC_CONFIG["socket_ip"]
-SOCKET_PORT = gc.SYNC_CONFIG["socket_port"]
-MIN_SYNC_INTERVAL = gc.SYNC_CONFIG["min_sync_interval"]
-WAIT_SYNC_INTERVAL = gc.SYNC_CONFIG["wait_sync_interval"]
-POLLING_UPDATE_TIME = gc.SYNC_CONFIG["polling_update_time"]
-NODE_SYNC_MIN_DATASIZE = gc.SYNC_CONFIG["node_sync_min_datasize"]
-MAX_NODE_FLOW_CAP = gc.SYNC_CONFIG["max_node_flow_cap"]
-
-def update_vars():
-    # 更新当前上下文的全局变量
-    global SOCKET_IP, SOCKET_PORT, MIN_SYNC_INTERVAL, WAIT_SYNC_INTERVAL, POLLING_UPDATE_TIME, NODE_SYNC_MIN_DATASIZE, MAX_NODE_FLOW_CAP
-    gc.update()
-    SOCKET_IP = gc.SYNC_CONFIG["socket_ip"]
-    SOCKET_PORT = gc.SYNC_CONFIG["socket_port"]
-    MIN_SYNC_INTERVAL = gc.SYNC_CONFIG["min_sync_interval"]
-    WAIT_SYNC_INTERVAL = gc.SYNC_CONFIG["wait_sync_interval"]
-    POLLING_UPDATE_TIME = gc.SYNC_CONFIG["polling_update_time"]
-    NODE_SYNC_MIN_DATASIZE = gc.SYNC_CONFIG["node_sync_min_datasize"]
-    MAX_NODE_FLOW_CAP = gc.SYNC_CONFIG["max_node_flow_cap"]
+SOCKET_IP = SYNC_CONFIG["socket_ip"]
+SOCKET_PORT = SYNC_CONFIG["socket_port"]
+MIN_SYNC_INTERVAL = SYNC_CONFIG["min_sync_interval"]
+WAIT_SYNC_INTERVAL = SYNC_CONFIG["wait_sync_interval"]
+NODE_SYNC_MIN_DATASIZE = SYNC_CONFIG["node_sync_min_datasize"]
+MAX_NODE_FLOW_CAP = SYNC_CONFIG["max_node_flow_cap"]
 
 TASKS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "source", "config", "tasks.json")
 
 class scheduler:
     '''用于执行数据ETL过程中的抽取，批量执行没有前向依赖的节点'''
     def __init__(self, task_apth: str = TASKS_PATH) -> None:
-        self.nodep_node: dict[str, node_base] = {}
-        self.havedep_node: dict[str, node_base] = {}
-        self.nodep_node_last_time: dict[str, datetime.datetime] = {}
-        self.task_apth = task_apth
         self.LOG = node_logger("scheduler")
+    
+        # 启动socket连接
         try:
             self.soc = socket.socket()
             self.soc.connect((SOCKET_IP, SOCKET_PORT))
         except Exception as me:
             self.LOG.error(traceback.format_exc())
             raise RuntimeError("节点处理部分无法连接")
-        self.load_node()
-
-    def run_node(self) -> None:
-        '''真正执行节点的地方'''
-        with ThreadPoolExecutor() as tpool:
-            # 死循环，不退出
-            # 存储当前正在运行节点的名称
-            is_run_node_tasks = set()
-            # 存储运行任务未来返回的结果
-            total_tasks = []
-            last_load_time = datetime.datetime.now()
-            while True:
-                run_node = self.get_node_run(is_run_node_tasks)
-                if len(run_node) == 0:
-                    # 没任务运行就等10秒，不要让cpu一直卡在检查
-                    self.LOG.debug("没有新的任务触发执行")
-                else:
-                    # 只有在本次获取的任务都执行完成后下一次执行才会开始
-                    for ch in run_node:
-                        total_tasks.append(tpool.submit(ch.run))
-                        is_run_node_tasks.add(ch.name)
-                    self.LOG.debug("触发以下任务执行:" + ",".join([ch.name for ch in run_node]))
-                # 对于运行任务等待结果，未运行完就更新需要添加的任务
-                if len(total_tasks) != 0:
-                    is_done, _ = wait(total_tasks, timeout=MIN_SYNC_INTERVAL)
-                    for future in is_done:
-                        node_result = future.result()
-                        total_tasks.remove(future)
-                        isdone_node_name = str(node_result[0])
-                        is_run_node_tasks.remove(isdone_node_name)
-                        self.send_notice(isdone_node_name)
-                        self.update_node(node_result)
-                else:
-                    self.LOG.debug("没有任务运行，等待" + str(WAIT_SYNC_INTERVAL) + "秒")
-                    time.sleep(WAIT_SYNC_INTERVAL)
-                # 更新节点配置，保证更新的后的task.json被使用
-                if last_load_time + datetime.timedelta(seconds=POLLING_UPDATE_TIME) <= datetime.datetime.now():
-                    # 在更新配置前将所有节点都运行完成
-                    self.LOG.debug("准备更新节点配置，等待所有节点运行完成")
-                    for future in as_completed(total_tasks):
-                        self.send_notice(str(future.result()[0]))
-                    self.load_node()
-                    is_run_node_tasks = set()
-                    total_tasks = []
-                    self.LOG.debug("节点配置更新完成")
-                
-    def get_node_run(self, is_run_node_tasks: set[str]) -> list[node_base]:
-        '''获取当前需要执行的节点'''
-        temp_node = []
-        # 检查无依赖节点的时间是否需要触发，是否应该运行
-        temp_now = datetime.datetime.now()
-        for _node in self.nodep_node_last_time:
-            if _node not in is_run_node_tasks and self.nodep_node_last_time[_node] <= temp_now:
-                temp_node.append(self.nodep_node[_node])
-        # 检查有依赖的节点是否被通知需要运行
-        for _node in self.havedep_node:
-            if _node not in is_run_node_tasks and self.havedep_node[_node].need_run:
-                temp_node.append(self.havedep_node[_node])
-        return temp_node
     
-    def update_node(self, node_result: tuple[str, int]) -> None:
-        '''更新节点状态'''
-        name, data_size = node_result
-        # 没有依赖的节点计算下一次触发时间即可
-        if name in self.nodep_node.keys():
-            if data_size < NODE_SYNC_MIN_DATASIZE:
-                data_size = NODE_SYNC_MIN_DATASIZE
-            self.nodep_node_last_time[name] = datetime.datetime.now() + datetime.timedelta(seconds=data_size / MAX_NODE_FLOW_CAP * get_node_num())
-        # 通知所有依赖他的节点可以跑了
-        for _node in self.havedep_node:
-            if name in self.havedep_node[_node].next_name:
-                self.havedep_node[_node].need_run = True
-
-    def load_node(self)-> None:
-        '''根据配置加载节点'''
-        # 重置节点计数
-        set_node_num(0)
-        # 更新调度器参数配置
-        update_vars()
-        # 读取新的节点配置
-        with open(self.task_apth, "r", encoding="utf-8") as file:
+        # 读取节点配置
+        with open(task_apth, "r", encoding="utf-8") as file:
             node_json = json.load(file)
         # 删除所有的process节点和对process节点的依赖    
         new_json = []
@@ -179,34 +59,170 @@ class scheduler:
                             break
                 ch["next_name"] = next_ch
                 new_json.append(ch)
-        # 重新初始化节点
-        self.nodep_node = {}
-        self.havedep_node = {}
-        for ch in new_json:
-            for __type__ in __all_node_type__:
-                if ch["type"] in __type__.allow_type:
-                    if len(ch["next_name"]) == 0:
-                        self.nodep_node[ch["name"]] = __type__(ch)
-                        self.nodep_node_last_time[ch["name"]] = datetime.datetime.now()
-                    else:
-                        self.havedep_node[ch["name"]] = __type__(ch)
-        self.check_node()
-    
-    def check_node(self):
-        '''检查节点名称是否重复'''
+
+        # 检查节点是否存在重复
         name_set = set()
-        for ch in self.nodep_node:
-            if ch not in name_set:
-                name_set.add(ch)
+        for ch in new_json:
+            if ch["name"] not in name_set:
+                name_set.add(ch["name"])
             else:
-                self.LOG.error("节点名称重复")
-                raise ValueError("节点名称重复")
-        for ch in self.havedep_node:
-            if ch not in name_set:
-                name_set.add(ch)
+                self.LOG.error("节点名称重复" + ch["name"])
+                raise ValueError("节点名称重复" + ch["name"])
+        
+        # 初始化节点
+        self.all_node: dict[str, node_base] = {}
+        for ch in new_json:
+            if ch["type"] in sql_to_table.allow_type:
+                temp_node = sql_to_table(ch)
+            elif ch["type"] in table_to_table.allow_type:
+                temp_node = table_to_table(ch)
+            elif ch["type"] in sql_to_nosql.allow_type:
+                temp_node = sql_to_nosql(ch)
+            elif ch["type"] in table_to_nosql.allow_type:
+                temp_node = table_to_nosql(ch)
+            elif ch["type"] in excel_to_table.allow_type:
+                temp_node = excel_to_table(ch)
+            elif ch["type"] in excel_to_nosql.allow_type:
+                temp_node = excel_to_nosql(ch)
+            elif ch["type"] in table_to_excel.allow_type:
+                temp_node = table_to_excel(ch)
+            elif ch["type"] in json_to_nosql.allow_type:
+                temp_node = json_to_nosql(ch)
+            elif ch["type"] in nosql_to_json.allow_type:
+                temp_node = nosql_to_json(ch)
+            elif ch["type"] in nosql_to_nosql.allow_type:
+                temp_node = nosql_to_nosql(ch)
+            elif ch["type"] in nosql_to_table.allow_type:
+                temp_node = nosql_to_table(ch)
             else:
-                self.LOG.error("节点名称重复")
-                raise ValueError("节点名称重复")
+                raise ValueError("未知的节点类型")
+            self.all_node[temp_node.name] = temp_node
+
+        # 获取倒置的依赖
+        # 内容含义：节点名称，节点的依赖，依赖他的节点
+        node_deps: dict[str, tuple[list[str], list[str]]] = {}
+        for node_ in self.all_node:
+            if node_ not in node_deps.keys():
+                node_deps[node_] = (self.all_node[node_].next_name, [])
+            else:
+                node_deps[node_][0] = self.all_node[node_].next_name
+            for node__ in self.all_node[node_].next_name:
+                node_deps[node__][1].append(node_)
+                
+        # 便利所有节点获取子图，时间触发与调度根据子图来进行
+        '''
+        dag_node 的结构
+        列表
+            列表
+                字典
+                    节点的名称
+                    列表
+                        节点的前向依赖
+                        节点的后向依赖
+                下次运行时间
+                该子图是否正在运行
+                子图的整体数据量
+        '''
+        self.dag_node: list[list[dict[str, list[list[str], list[str]]], datetime.datetime, bool]] = []
+        for node_ in node_deps:
+            # 既没有前向依赖也没有后向依赖，所以这个节点就是单独的子图
+            if len(node_deps[node_][0]) == 0 and len(node_deps[node_][1]) == 0:
+                self.dag_node.append([{node_: node_deps[node_]}, datetime.datetime.now(), False, 0])
+            else:
+                break_label = False
+                # 遍历前向依赖
+                for deps_name in node_deps[node_][0]:
+                    # 遍历现有的子图
+                    for index, dag_node_ in enumerate(self.dag_node):
+                        # 如果前向依赖在子图的节点中
+                        if deps_name in dag_node_[0].keys():
+                            self.dag_node[index][0][node_] = node_deps[node_]
+                            break_label = True
+                            break
+                    if break_label:
+                        break
+                # 遍历后向依赖
+                if not break_label:
+                    for deps_name in node_deps[node_][1]:
+                        for index, dag_node_ in enumerate(self.dag_node):
+                            if deps_name in dag_node_[0].keys():
+                                self.dag_node[index][0][node_] = node_deps[node_]
+                                break_label = True
+                                break
+                        if break_label:
+                            break
+                # 有前后项依赖但是不是图中任何一个，那就新开一个给他
+                if not break_label:
+                    self.dag_node.append([{node_: node_deps[node_]}, datetime.datetime.now(), False, 0])
+            
+    def run_node(self) -> None:
+        '''真正执行节点的地方'''
+        with ThreadPoolExecutor() as tpool:
+            # 存储所有正在运行的任务
+            total_tasks = []
+            while True:
+                run_node = self.get_node_run()
+                if len(run_node) == 0:
+                    self.LOG.debug("没有新的任务触发执行")
+                else:
+                    # 只有在本次获取的任务都执行完成后下一次执行才会开始
+                    for ch in run_node:
+                        total_tasks.append(tpool.submit(ch.run))
+                    self.LOG.debug("触发以下任务执行:" + ",".join([ch.name for ch in run_node]))
+                # 对于运行任务等待结果，未运行完就更新需要添加的任务
+                if len(total_tasks) != 0:
+                    is_done, _ = wait(total_tasks, timeout=MIN_SYNC_INTERVAL)
+                    for future in is_done:
+                        self.update_node(future.result())
+                        total_tasks.remove(future)
+                else:
+                    self.LOG.debug("没有任务运行，等待" + str(WAIT_SYNC_INTERVAL) + "秒")
+                    time.sleep(WAIT_SYNC_INTERVAL)
+                
+                
+    def get_node_run(self) -> list[node_base]:
+        '''获取当前需要执行的节点'''
+        run_node: list[node_base] = []
+        time_now = datetime.datetime.now()
+        for index in range(len(self.dag_node)):
+            # 如果子图正在运行
+            if self.dag_node[index][2]:
+                # 检查所有子图节点的need_run标志位，如果是false，证明该节点刚刚运行完，把他的后向依赖拿出来通知运行，然后重置标志位
+                not_need_run = True
+                for node_ in self.dag_node[index][0]:
+                    if not self.all_node[node_].need_run:
+                        not_need_run = False
+                        for node__ in self.dag_node[index][0][node_][1]:
+                            run_node.append(self.all_node[node__])
+                        self.all_node[node_].need_run = True
+                # 如果该子图没有需要新加的节点，那就认为节点运行完成
+                if not_need_run:
+                    # 计算一下下次触发子图运行的时间
+                    temp_second = int(self.dag_node[index][3] / MAX_NODE_FLOW_CAP)
+                    if temp_second < NODE_SYNC_MIN_DATASIZE:
+                        temp_second = NODE_SYNC_MIN_DATASIZE
+                    self.dag_node[index][1] = time_now + datetime.timedelta(seconds=temp_second)
+                    self.dag_node[index][2] = False
+                    self.dag_node[index][3] = 0
+            # 如果子图不在运行并且时间超过触发要求，开始执行
+            elif not self.dag_node[index][2] and self.dag_node[index][1] <= time_now:
+                # 将所有子图节点的前向无依赖节点运行
+                for node_ in self.dag_node[index][0]:
+                    if len(self.dag_node[index][0][node_][0]) == 0:
+                        run_node.append(self.all_node[node_]) 
+                self.dag_node[index][2] = True
+        return run_node
+    
+    def update_node(self, node_result: tuple[str, int]) -> None:
+        '''更新节点状态'''
+        name, data_size = node_result
+        # 发送socket通信给process
+        self.send_notice(name)
+        # 更新子图的数据量
+        for index in range(len(self.dag_node)):
+            if name in self.dag_node[index][0].keys():
+                self.dag_node[index][3] += data_size
+                break
             
     def send_notice(self, msg):
         '''通知处理线程节点完成'''

@@ -1,7 +1,17 @@
 #include <chrono>
 
 #include "node.hpp"
+#include "logger.hpp"
+
+#include "process/ameliorate.hpp"
+#include "process/business_connection.hpp"
+#include "process/delivery.hpp"
+#include "process/error.hpp"
 #include "process/person.hpp"
+#include "process/project.hpp"
+#include "process/travel.hpp"
+#include "process/visitor.hpp"
+#include "process/worktime.hpp"
 
 using namespace dbs;
 

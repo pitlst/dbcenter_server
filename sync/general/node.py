@@ -12,18 +12,6 @@ from general.connect import database_connect
 from general.logger import node_logger
 from general.connect import db_engine
 
-# 当前服务的所有节点数的计数
-__total_node_num__ = 0
-
-def get_node_num() -> int:
-    # 获取当前服务的所有节点数的计数
-    return __total_node_num__
-
-def set_node_num(input_num: int):
-    # 设置当前服务的所有节点数的计数
-    global __total_node_num__
-    __total_node_num__ = input_num
-
 SQL_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "source", "sql")
 TABLE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "source", "table")
 JS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "source", "mongo_js")
@@ -37,10 +25,6 @@ class node_base(abc.ABC):
     '''
 
     def __init__(self, name: str, next_name: list[str], temp_db: database_connect, type_name: str) -> None:
-        global __total_node_num__
-        # 每调用一次就加一
-        __total_node_num__ += 1
-
         self.name = name
         self.next_name = next_name
         self.type = type_name
@@ -61,7 +45,6 @@ class node_base(abc.ABC):
             t = time.perf_counter()
             self.connect()
             data_size = self.read()
-            self.process()
             self.write()
             t = time.perf_counter() - t
             self.LOG.info("计算耗时为" + str(t) + "s")
@@ -87,9 +70,6 @@ class node_base(abc.ABC):
 
     @abc.abstractmethod
     def release(self):
-        ...
-
-    def process(self) -> None:
         ...
 
 

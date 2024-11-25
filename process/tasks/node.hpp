@@ -11,7 +11,6 @@
 #include <atomic>
 
 #include "general.hpp"
-#include "logger.hpp"
 
 namespace dbs
 {

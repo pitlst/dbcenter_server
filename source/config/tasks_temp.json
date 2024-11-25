@@ -1500,7 +1500,7 @@
             "sql": "tangyu/alignment_file.sql"
         },
         "target": {
-            "connect": "机车数据库",
+            "connect": "数据运用平台-测试库",
             "table": "ods_alignment_file"
         }
     },
@@ -1773,6 +1773,21 @@
         "target": {
             "connect": "BI与数开用数据库",
             "table": "ods_tk_crrc_metro_zbdy"
+        }
+    },
+    {
+        "name": "相关方安全数据库同步",
+        "type": "nosql_to_nosql",
+        "next_name": [],
+        "source": {
+            "connect": "外网访客系统数据库",
+            "database": "heyform",
+            "table": "submissionmodels"
+        },
+        "target": {
+            "connect": "数据处理服务存储",
+            "database": "ods",
+            "table": "submissionmodels"
         }
     }
 ]
