@@ -1,3 +1,5 @@
 conda activate nuitka_make
-cd ../web
-python -m streamlit run home.py
+Set-Location ../web
+while ($true) {
+    python -m streamlit run home.py
+}

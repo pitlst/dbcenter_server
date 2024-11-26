@@ -17,7 +17,7 @@ namespace dbs
     class dag_scheduler
     {
     public:
-        dag_scheduler(const json & total_tasks);
+        dag_scheduler();
         ~dag_scheduler();
         // 真正运行并派发节点的地方
         void run();

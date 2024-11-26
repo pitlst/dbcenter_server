@@ -48,10 +48,10 @@ class node_base(abc.ABC):
             self.write()
             t = time.perf_counter() - t
             self.LOG.info("计算耗时为" + str(t) + "s")
+            self.release()
+            self.LOG.info("已释放资源")
         except Exception as me:
             self.LOG.error(traceback.format_exc())
-        self.release()
-        self.LOG.info("已释放资源")
         self.need_run = False
         self.LOG.info("计算结束")
         return self.name, data_size

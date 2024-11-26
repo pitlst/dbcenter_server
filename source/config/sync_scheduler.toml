@@ -9,4 +9,4 @@ min_sync_interval = 20
 # 无任务时等待时间，单位秒
 wait_sync_interval = 10
 # 节点两次同步的最小间隔，该参数用在计算节点同步数据量的使用
-node_sync_min_datasize = 200
+node_sync_min_datasize = 600

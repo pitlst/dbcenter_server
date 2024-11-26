@@ -1,4 +1,5 @@
 import os
+import numpy as np
 import traceback
 import socket
 import json
@@ -208,9 +209,8 @@ class scheduler:
                 # 如果该子图所有节点的need_run标志位都为false，认为该子图已经运行完成
                 if not_need_run:
                     # 计算一下下次触发子图运行的时间
-                    temp_second = int(self.dag_node[index][3] / MAX_NODE_FLOW_CAP)
-                    if temp_second < NODE_SYNC_MIN_DATASIZE:
-                        temp_second = NODE_SYNC_MIN_DATASIZE
+                    temp_second = np.arctan(np.sqrt(self.dag_node[index][3]) / 20480) / np.pi * 2 * 28600 + NODE_SYNC_MIN_DATASIZE
+                    # temp_second = NODE_SYNC_MIN_DATASIZE + (28600 / (1 + np.exp(-self.dag_node[index][3] / 4000)))
                     self.dag_node[index][1] = time_now + datetime.timedelta(seconds=temp_second)
                     self.dag_node[index][2] = False
                     self.dag_node[index][3] = 0
@@ -244,7 +244,14 @@ class scheduler:
         sebd_msg = msg + "节点执行完成"
         self.LOG.debug(sebd_msg)
         # 用换行符来分割不同次通知
-        self.soc.send(bytes(sebd_msg, encoding='utf-8'))
+        try:
+            self.soc.send(bytes(sebd_msg, encoding='utf-8'))
+        except Exception as me:
+            self.LOG.error(traceback.format_exc())
+            self.soc = socket.socket()
+            self.soc.connect((SOCKET_IP, SOCKET_PORT))
+            self.send_notice(msg)
+            
             
 
 if __name__ == "__main__":

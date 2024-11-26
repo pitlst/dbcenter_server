@@ -1,3 +1,5 @@
 conda activate nuitka_make
-cd ../sync
-python main.py
+Set-Location ../sync
+while ($true) {
+    python scheduler.py
+}

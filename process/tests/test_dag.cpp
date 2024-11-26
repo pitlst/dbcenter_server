@@ -8,11 +8,9 @@ int main()
 {
     try
     {
-        std::ifstream i(std::string(PROJECT_PATH) + "../source/config/tasks_process_test.json");
-        json j;
-        i >> j;
+
         std::cout << "hello" << std::endl;
-        auto dag = dbs::dag_scheduler(j);
+        auto dag = dbs::dag_scheduler();
         dag.run();
     }
     catch(const std::exception& e)
