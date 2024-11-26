@@ -127,14 +127,6 @@ user = "sa"
 password = "Z@hc#8705!$"
 mode = "GM_MT_70"
 
-["金蝶云苍穹-正式库-系统"]
-type = "mysql"
-ip = "10.24.206.138"
-port = 3306
-user = "cosmic"
-password = "Mysql@2022!"
-mode = "crrc_sys"
-
 ["数据运用平台-测试库"]
 type = "mysql"
 ip = "10.24.7.145"

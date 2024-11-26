@@ -35,8 +35,6 @@ class node_base(abc.ABC):
         self.temp_db = temp_db
         # 日志
         self.LOG = node_logger(self.name)
-        # 运行标志位
-        self.need_run = True
 
     def run(self) -> tuple[str, int]:
         self.LOG.info("开始计算")
@@ -52,7 +50,6 @@ class node_base(abc.ABC):
             self.LOG.info("已释放资源")
         except Exception as me:
             self.LOG.error(traceback.format_exc())
-        self.need_run = False
         self.LOG.info("计算结束")
         return self.name, data_size
 

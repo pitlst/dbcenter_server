@@ -15,11 +15,6 @@ dag_scheduler::dag_scheduler()
     auto data = toml::parse(std::string(PROJECT_PATH) + "../source/config/process_scheduler.toml");
     min_sync_interval = toml::get<std::size_t>(data["min_sync_interval"]);
     wait_sync_interval = toml::get<std::size_t>(data["wait_sync_interval"]);
-    // 任务
-    std::ifstream i(std::string(PROJECT_PATH) + "../source/config/tasks_process_test.json");
-    json total_tasks;
-    i >> total_tasks;
-    make_deps(total_tasks);
 }
 
 dag_scheduler::~dag_scheduler()

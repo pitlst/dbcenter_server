@@ -3,6 +3,11 @@
 
 #include <map>
 
+#include "bsoncxx/builder/basic/array.hpp"
+#include "bsoncxx/builder/basic/document.hpp"
+#include "bsoncxx/builder/basic/kvp.hpp"
+#include "bsoncxx/types.hpp"
+
 #include "node.hpp"
 #include "data.hpp"
 
@@ -15,12 +20,11 @@ namespace dbs
         auto m_client_ptr = std::make_unique<mongocxx::pool::entry>(MONGO.m_pool_ptr->acquire());
         auto m_database_ptr = std::make_unique<mongocxx::database>((*m_client_ptr)["ods"]);
         auto collection = (*m_database_ptr)["submissionmodels"];
-
-        for (size_t i = 0; i < count; i++)
+        auto cursor = collection.find({});
+        for (auto &&doc : cursor)
         {
-            /* code */
+            auto temp = bsoncxx::to_json(doc);
         }
-        
     }
 }
 

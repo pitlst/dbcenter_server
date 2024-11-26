@@ -45,7 +45,11 @@ void dbs::select_func(const std::string &name)
     if (name == "人员处理")
     {
         process_person();
-    } 
+    }
+    else if (name == "访客系统处理")
+    {
+        process_visitor();
+    }
     else
     {
         LOGGER.warn("process", "没有对应的节点实现" + name);

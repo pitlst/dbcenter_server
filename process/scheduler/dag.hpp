@@ -29,8 +29,6 @@ namespace dbs
         std::unordered_set<std::string> get_runned();
         // 根据已经运行完成的节点获取下一步需要触发的节点
         std::unordered_set<std::string> get_deps(const std::unordered_set<std::string> & runned_nodes);
-        // 整理并保存节点相关的依赖信息
-        void make_deps(const json & total_tasks);
 
         // 任务轮询也就是数据同步的最小间隔，单位秒
         std::size_t min_sync_interval;
