@@ -56,7 +56,8 @@ def node_logger(name: str, level:int = logging.DEBUG) -> logging.Logger:
             'WARNING': 'yellow',
             'ERROR': 'red',
             'CRITICAL': 'red,bg_white',
-        }
+        },
+        datefmt='## %Y-%m-%d %H:%M:%S'
     )
     console.setFormatter(color_formatter)
     LOG.addHandler(console)

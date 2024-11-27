@@ -97,6 +97,23 @@ set(ALL_SOURCE_FILE
     tasks/node.hpp
     tasks/node.cpp
     tasks/process/person.hpp
+    tasks/process/person.cpp
+    tasks/process/worktime.hpp
+    tasks/process/worktime.cpp
+    tasks/process/visitor.hpp
+    tasks/process/visitor.cpp
+    tasks/process/travel.hpp
+    tasks/process/travel.cpp
+    tasks/process/project.hpp
+    tasks/process/project.cpp
+    tasks/process/error.hpp
+    tasks/process/error.cpp
+    tasks/process/delivery.hpp
+    tasks/process/delivery.cpp
+    tasks/process/business_connection.hpp
+    tasks/process/business_connection.cpp
+    tasks/process/ameliorate.hpp
+    tasks/process/ameliorate.cpp
 )
 add_executable(${PROJECT_NAME} main.cpp ${ALL_SOURCE_FILE})
 target_link_libraries(${PROJECT_NAME} mongo::mongocxx_shared Ws2_32.lib)

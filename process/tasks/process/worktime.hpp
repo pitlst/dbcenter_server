@@ -5,10 +5,7 @@
 
 namespace dbs
 {
-    inline void process_worktime()
-    {
-        
-    }
+    void process_worktime();
 }
 
 #endif
