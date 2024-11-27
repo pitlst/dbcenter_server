@@ -15,6 +15,11 @@ dag_scheduler::dag_scheduler()
     auto data = toml::parse(std::string(PROJECT_PATH) + "../source/config/process_scheduler.toml");
     min_sync_interval = toml::get<std::size_t>(data["min_sync_interval"]);
     wait_sync_interval = toml::get<std::size_t>(data["wait_sync_interval"]);
+    // process任务
+    json process_tasks;
+    std::ifstream i(std::string(PROJECT_PATH) + "../source/config/tasks.json");    
+    i >> process_tasks;
+    make_deps(process_tasks);
 }
 
 dag_scheduler::~dag_scheduler()
@@ -41,7 +46,7 @@ void dag_scheduler::run()
 std::unordered_set<std::string> dag_scheduler::get_notice()
 {
     socket_buffer = MYSOCKET.get();
-    std::vector<std::string> split_str = split_string(socket_buffer, "节点执行完成");
+    std::vector<std::string> split_str = split_string(socket_buffer, ";");
     std::unordered_set<std::string> temp_ndoes;
     for (const auto &ch : split_str)
     {
@@ -85,6 +90,14 @@ std::unordered_set<std::string> dag_scheduler::get_deps(const std::unordered_set
         }
     }
     return temp_name;
+}
+
+void dag_scheduler::send_notice(const std::unordered_set<std::string> & runned_nodes)
+{
+    for (const auto & ch : runned_nodes)
+    {
+        MYSOCKET.send(ch);
+    }
 }
 
 void dag_scheduler::make_deps(const json &total_tasks)

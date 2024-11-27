@@ -29,6 +29,10 @@ namespace dbs
         std::unordered_set<std::string> get_runned();
         // 根据已经运行完成的节点获取下一步需要触发的节点
         std::unordered_set<std::string> get_deps(const std::unordered_set<std::string> & runned_nodes);
+        // 将已经完成的节点发送给python程序
+        void send_notice(const std::unordered_set<std::string> & runned_nodes);
+        // 整理并保存节点相关的依赖信息
+        void make_deps(const json & total_tasks);
 
         // 任务轮询也就是数据同步的最小间隔，单位秒
         std::size_t min_sync_interval;
@@ -36,6 +40,8 @@ namespace dbs
         std::size_t wait_sync_interval;
         // socket通信的未完全接收的节点信息缓存
         std::string socket_buffer;
+
+        
         // 当前正在运行的所有节点的名称
         std::deque<std::string> running_nodes;
         // 所有节点的名称

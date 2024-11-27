@@ -162,16 +162,7 @@
     },
     {
         "name": "测试处理",
-        "next_name": [],
-        "type": "process",
-        "source": {
-            "connect": "外网访客系统数据库",
-            "database": "heyform"
-        },
-        "target": {
-            "connect": "数据处理服务存储",
-            "database": "ods",
-            "table": "submissionmodels"
-        }
+        "next_name": ["传递json"],
+        "type": "process"
     }
 ]
