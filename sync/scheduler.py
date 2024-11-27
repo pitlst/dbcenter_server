@@ -126,14 +126,14 @@ class scheduler:
         # process
         ipc_str = l_socket.recv()
         node_ipc = ipc_str.split(";")
-        process_node = []
+        process_node: list[node_base] = []
         for ch in node_ipc:
             if ch in self.process_node.keys():
                 process_node.append(self.process_node[ch])
         # sync
-        sync_node = []
+        sync_node: list[node_base] = []
         if not self.context["status"]["is_running"]:
-            if datetime.datetime.strptime(self.context["status"]["last_run_time"], "%y-%m-%d %H:%M:%S") <= datetime.datetime.now():
+            if datetime.datetime.strptime(self.context["status"]["last_run_time"], "%y-%d-%m %H:%M:%S") <= datetime.datetime.now():
                 self.context["status"]["is_running"] = True
                 for node_ in self.context["node_deps"]:
                     if len(self.context["node_deps"][node_]) == 0:
@@ -143,30 +143,34 @@ class scheduler:
             for node_ in self.context["node_deps"]:
                 if not self.context["status"]["node"][node_]:
                     all_run_label = False
-                    run_label = True
-                    for node__ in self.context["node_deps"][node_]:
-                        if not self.context["status"]["node"][node__]:
-                            run_label = False
-                            break
-                    if run_label:
-                        sync_node.append(self.sync_node[node_])
+                    if not node_ in self.total_tasks_name:
+                        run_label = True
+                        for node__ in self.context["node_deps"][node_]:
+                            if not self.context["status"]["node"][node__]:
+                                run_label = False
+                                break
+                        if run_label:
+                            sync_node.append(self.sync_node[node_])
             if all_run_label:
                 temp_second = np.arctan(np.sqrt(self.context["status"]["datasize"]) / SYNC_CONFIG["node_sync_k"]) / np.pi * 2 * (SYNC_CONFIG["node_sync_max"] - SYNC_CONFIG["node_sync_min"]) + SYNC_CONFIG["node_sync_min"]
-                self.context["status"]["last_run_time"] = (datetime.datetime.now() + datetime.timedelta(seconds=temp_second)).strftime("%y-%m-%d %H:%M:%S")
+                self.context["status"]["last_run_time"] = (datetime.datetime.now() + datetime.timedelta(seconds=temp_second)).strftime("%y-%d-%m %H:%M:%S")
                 self.context["status"]["datasize"] = 0
                 self.context["status"]["is_running"] = False
                 for node_ in self.context["status"]["node"]:
                     self.context["status"]["node"][node_] = False
         # 保存上下文
         self.save_context()
-        return process_node + sync_node
+        need_run =  process_node + sync_node
+        # 更新正在运行的节点
+        for ch in need_run:
+            self.total_tasks_name.add(ch.name)
+        return need_run
         
     def update_context(self, node_future: concurrent.futures.Future) -> None:
         name, data_size = node_future.result()
         # 在当前运行的节点记录中移除
         self.total_tasks.remove(node_future)
         self.total_tasks_name.remove(name)
-        # 进行一些依赖不是process的节点的操作
         if name in self.sync_node.keys():
             self.context["status"]["node"][name] = True
             self.context["status"]["datasize"] += data_size
@@ -177,7 +181,7 @@ class scheduler:
         if "node_deps" not in self.context or self.context["node_deps"] != self.node_deps:
             self.context["node_deps"] = self.node_deps
             self.context["status"] = {}
-            self.context["status"]["last_run_time"] = datetime.datetime.now().strftime("%y-%m-%d %H:%M:%S")
+            self.context["status"]["last_run_time"] = datetime.datetime.now().strftime("%y-%d-%m %H:%M:%S")
             self.context["status"]["datasize"] = 0
             self.context["status"]["is_running"] = False
             self.context["status"]["node"] = {}
@@ -194,4 +198,3 @@ class scheduler:
 if __name__ == "__main__":
     new_json, process_json = process_tasks()
     scheduler(make_node(new_json), make_node(process_json), make_node_deps(new_json)).run()
-        
