@@ -9,8 +9,7 @@ class momgo_handler(logging.Handler):
     """
     def __init__(self, name: str) -> None:
         logging.Handler.__init__(self)
-        temp_db = db_engine.get_nosql("数据处理服务存储")
-        database = temp_db["logger"]
+        database = db_engine.get_nosql("数据处理服务存储")["logger"]
         time_series_options = {
             "timeField": "timestamp",
             "metaField":"message"
