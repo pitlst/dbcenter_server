@@ -18,13 +18,13 @@ std::string mysocket::get()
     int recvbuflen = sizeof(recvbuf);
 
     // 接收数据
-    iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
+    iResult = ::recv(ClientSocket, recvbuf, recvbuflen, 0);
     if (iResult == SOCKET_ERROR)
     {
         int error = WSAGetLastError();
         if (error == WSAETIMEDOUT)
         {
-            LOGGER.debug("process","socket获取函数超时");
+            LOGGER.debug("process", "socket获取函数超时");
             return std::string(recvbuf);
         }
         else
@@ -35,13 +35,24 @@ std::string mysocket::get()
     }
     else if (iResult == 0)
     {
-        LOGGER.debug("process","连接被客户端关闭，尝试重新连接中");
-        connect();
-        return get();
+        LOGGER.debug("process", "连接被客户端关闭");
+        throw std::logic_error("连接被客户端关闭");
     }
     else
     {
         return std::string(recvbuf);
+    }
+}
+
+void mysocket::send(std::string msg)
+{
+    auto sendbuf = msg.c_str();
+    iResult = ::send(ClientSocket, sendbuf, strlen(sendbuf), 0);
+    if (iResult == SOCKET_ERROR)
+    {
+        close();
+        LOGGER.error("process", "send failed" + std::to_string(WSAGetLastError()));
+        throw std::logic_error("send failed" + std::to_string(WSAGetLastError()));
     }
 }
 

@@ -19,6 +19,9 @@ sk = socket.socket()
 sk.connect(('localhost',10089))
 print("开始发送")
 while True:
+    # 信息接收
+    ret = sk.recv(1024)
+    print(ret.decode('utf-8'))
     # 信息发送
     info = input()
     sk.send(bytes(info + "节点执行完成",encoding='utf-8'))

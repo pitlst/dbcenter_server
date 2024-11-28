@@ -18,6 +18,8 @@ namespace dbs
         static mysocket &instance();
         // 获取socket通信传输的字符串
         std::string get();
+        // 将信息发送给服务
+        void send(std::string msg);
         // 连接socket，阻塞直到联通
         void connect();
         // 断开socket，并清空资源
