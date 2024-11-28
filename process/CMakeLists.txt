@@ -79,51 +79,49 @@ find_package(mongocxx REQUIRED)
 add_compile_definitions(PROJECT_PATH=\"${PROJECT_SOURCE_DIR}/\")
 # 解决msvc的C4996警告
 add_compile_definitions(_CRT_SECURE_NO_WARNINGS=1)
-set(ALL_SOURCE_FILE                 
+# 所有通用组件文件
+set(ALL_UTILS_FILE                 
     utils/general.hpp
     utils/general.cpp
     utils/data.cpp
     utils/data.cpp
-    connect/socket.hpp
-    connect/socket.cpp
-    connect/mongo.hpp
-    connect/mongo.cpp
-    logger/logger.hpp
-    logger/logger.cpp
-    scheduler/dag.hpp
-    scheduler/dag.cpp
-    scheduler/thread_pool.hpp
-    scheduler/thread_pool.cpp
-    tasks/node.hpp
-    tasks/node.cpp
-    tasks/process/person.hpp
-    tasks/process/person.cpp
-    tasks/process/worktime.hpp
-    tasks/process/worktime.cpp
-    tasks/process/visitor.hpp
-    tasks/process/visitor.cpp
-    tasks/process/travel.hpp
-    tasks/process/travel.cpp
-    tasks/process/project.hpp
-    tasks/process/project.cpp
-    tasks/process/error.hpp
-    tasks/process/error.cpp
-    tasks/process/delivery.hpp
-    tasks/process/delivery.cpp
-    tasks/process/business_connection.hpp
-    tasks/process/business_connection.cpp
-    tasks/process/ameliorate.hpp
-    tasks/process/ameliorate.cpp
+    utils/mongo.hpp
+    utils/mongo.cpp
+    utils/logger.hpp
+    utils/logger.cpp
+    utils/thread_pool.hpp
+    utils/thread_pool.cpp
 )
-add_executable(${PROJECT_NAME} main.cpp ${ALL_SOURCE_FILE})
-target_link_libraries(${PROJECT_NAME} mongo::mongocxx_shared Ws2_32.lib)
+# 工时处理
+add_executable(${PROJECT_NAME}_worktime tasks/worktime.cpp ${ALL_UTILS_FILE})
+target_link_libraries(${PROJECT_NAME}_worktime mongo::mongocxx_shared)
+# 访客系统数据
+add_executable(${PROJECT_NAME}_visitor tasks/visitor.cpp ${ALL_UTILS_FILE})
+target_link_libraries(${PROJECT_NAME}_visitor mongo::mongocxx_shared)
+# 差旅成本
+add_executable(${PROJECT_NAME}_travel tasks/travel.cpp ${ALL_UTILS_FILE})
+target_link_libraries(${PROJECT_NAME}_travel mongo::mongocxx_shared)
+# 项目数据
+add_executable(${PROJECT_NAME}_project tasks/project.cpp ${ALL_UTILS_FILE})
+target_link_libraries(${PROJECT_NAME}_project mongo::mongocxx_shared)
+# 人员数据
+add_executable(${PROJECT_NAME}_person tasks/person.cpp ${ALL_UTILS_FILE})
+target_link_libraries(${PROJECT_NAME}_person mongo::mongocxx_shared)
+# 异常数据
+add_executable(${PROJECT_NAME}_error tasks/error.cpp ${ALL_UTILS_FILE})
+target_link_libraries(${PROJECT_NAME}_error mongo::mongocxx_shared)
+# 交车看板整合
+add_executable(${PROJECT_NAME}_delivery tasks/delivery.cpp ${ALL_UTILS_FILE})
+target_link_libraries(${PROJECT_NAME}_delivery mongo::mongocxx_shared)
+# 业联整理
+add_executable(${PROJECT_NAME}_business_connection tasks/business_connection.cpp ${ALL_UTILS_FILE})
+target_link_libraries(${PROJECT_NAME}_business_connection mongo::mongocxx_shared)
+# 改善数据处理
+add_executable(${PROJECT_NAME}_ameliorate tasks/ameliorate.cpp ${ALL_UTILS_FILE})
+target_link_libraries(${PROJECT_NAME}_ameliorate mongo::mongocxx_shared)
+
 foreach(FILE_I ${MONGO_CONCPP_DLLS})
-    add_custom_command(
-        TARGET ${PROJECT_NAME} 
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} 
-        ARGS -E copy_if_different ${FILE_I} "${PROJECT_SOURCE_DIR}/build/Release"
-    )
+    file(COPY ${FILE_I} DESTINATION "${PROJECT_SOURCE_DIR}/build/Release" FOLLOW_SYMLINK_CHAIN)
 endforeach(FILE_I)
 
 #--------------------------------------------------------------------------------------#
@@ -131,73 +129,17 @@ endforeach(FILE_I)
 #--------------------------------------------------------------------------------------#
 # mongo链接测试
 add_executable(test_mongo_connect tests/test_mongo_connect.cpp  ${ALL_SOURCE_FILE})
-target_link_libraries(test_mongo_connect mongo::mongocxx_shared Ws2_32.lib)
-foreach(FILE_I ${MONGO_CONCPP_DLLS})
-    add_custom_command(
-        TARGET test_mongo_connect
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} 
-        ARGS -E copy_if_different ${FILE_I} "${PROJECT_SOURCE_DIR}/build/Release"
-    )
-endforeach(FILE_I)
-
-
+target_link_libraries(test_mongo_connect mongo::mongocxx_shared)
 # logger测试
 add_executable(test_logger tests/test_logger.cpp  ${ALL_SOURCE_FILE})
-target_link_libraries(test_logger mongo::mongocxx_shared Ws2_32.lib)
-foreach(FILE_I ${MONGO_CONCPP_DLLS})
-    add_custom_command(
-        TARGET test_logger
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} 
-        ARGS -E copy_if_different ${FILE_I} "${PROJECT_SOURCE_DIR}/build/Release"
-    )
-endforeach(FILE_I)
-
+target_link_libraries(test_logger mongo::mongocxx_shared)
 # data测试
 add_executable(test_data tests/test_data.cpp  ${ALL_SOURCE_FILE})
-target_link_libraries(test_data mongo::mongocxx_shared Ws2_32.lib)
-foreach(FILE_I ${MONGO_CONCPP_DLLS})
-    add_custom_command(
-        TARGET test_data
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} 
-        ARGS -E copy_if_different ${FILE_I} "${PROJECT_SOURCE_DIR}/build/Release"
-    )
-endforeach(FILE_I)
-
+target_link_libraries(test_data mongo::mongocxx_shared)
 # 线程池测试
 add_executable(test_thread_pool tests/test_thread_pool.cpp  ${ALL_SOURCE_FILE})
-target_link_libraries(test_thread_pool mongo::mongocxx_shared Ws2_32.lib)
-foreach(FILE_I ${MONGO_CONCPP_DLLS})
-    add_custom_command(
-        TARGET test_thread_pool
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} 
-        ARGS -E copy_if_different ${FILE_I} "${PROJECT_SOURCE_DIR}/build/Release"
-    )
-endforeach(FILE_I)
-
+target_link_libraries(test_thread_pool mongo::mongocxx_shared)
 # dag调度器测试
 add_executable(test_dag tests/test_dag.cpp  ${ALL_SOURCE_FILE})
-target_link_libraries(test_dag mongo::mongocxx_shared Ws2_32.lib)
-foreach(FILE_I ${MONGO_CONCPP_DLLS})
-    add_custom_command(
-        TARGET test_dag
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} 
-        ARGS -E copy_if_different ${FILE_I} "${PROJECT_SOURCE_DIR}/build/Release"
-    )
-endforeach(FILE_I)
+target_link_libraries(test_dag mongo::mongocxx_shared)
 
-# socket通信测试
-add_executable(test_socket tests/test_socket.cpp  ${ALL_SOURCE_FILE})
-target_link_libraries(test_socket mongo::mongocxx_shared Ws2_32.lib)
-foreach(FILE_I ${MONGO_CONCPP_DLLS})
-    add_custom_command(
-        TARGET test_socket
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} 
-        ARGS -E copy_if_different ${FILE_I} "${PROJECT_SOURCE_DIR}/build/Release"
-    )
-endforeach(FILE_I)

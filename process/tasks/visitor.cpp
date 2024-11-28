@@ -12,10 +12,8 @@
 
 #include "data.hpp"
 #include "mongo.hpp"
-#include "visitor.hpp"
 
-
-void dbs::process_visitor()
+void process_visitor()
 {
     // 连接数据库获取集合
     auto m_client_ptr = std::make_unique<mongocxx::pool::entry>(MONGO.m_pool_ptr->acquire());
@@ -23,3 +21,13 @@ void dbs::process_visitor()
     auto collection = (*m_database_ptr)["submissionmodels"];
     auto cursor = collection.find({});
 }
+
+int main()
+{
+    
+    return 0;
+}
+
+
+
+
