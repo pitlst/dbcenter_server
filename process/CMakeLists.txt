@@ -72,6 +72,10 @@ set(MONGO_CONCPP_DLLS
 find_package(bsoncxx REQUIRED)
 find_package(mongocxx REQUIRED)
 
+# intelTBB加速库
+set(TBB_DIR "${PROJECT_SOURCE_DIR}/3rd_party/onetbb/lib/cmake/tbb")
+find_package(TBB REQUIRED)
+
 #--------------------------------------------------------------------------------------#
 #   项目编译设置
 #--------------------------------------------------------------------------------------#
@@ -91,34 +95,36 @@ set(ALL_UTILS_FILE
     utils/logger.cpp
     utils/thread_pool.hpp
     utils/thread_pool.cpp
+    utils/wrapper.hpp
+    utils/wrapper.cpp
 )
 # 工时处理
 add_executable(${PROJECT_NAME}_worktime tasks/worktime.cpp ${ALL_UTILS_FILE})
-target_link_libraries(${PROJECT_NAME}_worktime mongo::mongocxx_shared)
+target_link_libraries(${PROJECT_NAME}_worktime mongo::mongocxx_shared TBB::tbb)
 # 访客系统数据
 add_executable(${PROJECT_NAME}_visitor tasks/visitor.cpp ${ALL_UTILS_FILE})
-target_link_libraries(${PROJECT_NAME}_visitor mongo::mongocxx_shared)
+target_link_libraries(${PROJECT_NAME}_visitor mongo::mongocxx_shared TBB::tbb)
 # 差旅成本
 add_executable(${PROJECT_NAME}_travel tasks/travel.cpp ${ALL_UTILS_FILE})
-target_link_libraries(${PROJECT_NAME}_travel mongo::mongocxx_shared)
+target_link_libraries(${PROJECT_NAME}_travel mongo::mongocxx_shared TBB::tbb)
 # 项目数据
 add_executable(${PROJECT_NAME}_project tasks/project.cpp ${ALL_UTILS_FILE})
-target_link_libraries(${PROJECT_NAME}_project mongo::mongocxx_shared)
+target_link_libraries(${PROJECT_NAME}_project mongo::mongocxx_shared TBB::tbb)
 # 人员数据
 add_executable(${PROJECT_NAME}_person tasks/person.cpp ${ALL_UTILS_FILE})
-target_link_libraries(${PROJECT_NAME}_person mongo::mongocxx_shared)
+target_link_libraries(${PROJECT_NAME}_person mongo::mongocxx_shared TBB::tbb)
 # 异常数据
 add_executable(${PROJECT_NAME}_error tasks/error.cpp ${ALL_UTILS_FILE})
-target_link_libraries(${PROJECT_NAME}_error mongo::mongocxx_shared)
+target_link_libraries(${PROJECT_NAME}_error mongo::mongocxx_shared TBB::tbb)
 # 交车看板整合
 add_executable(${PROJECT_NAME}_delivery tasks/delivery.cpp ${ALL_UTILS_FILE})
-target_link_libraries(${PROJECT_NAME}_delivery mongo::mongocxx_shared)
+target_link_libraries(${PROJECT_NAME}_delivery mongo::mongocxx_shared TBB::tbb)
 # 业联整理
 add_executable(${PROJECT_NAME}_business_connection tasks/business_connection.cpp ${ALL_UTILS_FILE})
-target_link_libraries(${PROJECT_NAME}_business_connection mongo::mongocxx_shared)
+target_link_libraries(${PROJECT_NAME}_business_connection mongo::mongocxx_shared TBB::tbb)
 # 改善数据处理
 add_executable(${PROJECT_NAME}_ameliorate tasks/ameliorate.cpp ${ALL_UTILS_FILE})
-target_link_libraries(${PROJECT_NAME}_ameliorate mongo::mongocxx_shared)
+target_link_libraries(${PROJECT_NAME}_ameliorate mongo::mongocxx_shared TBB::tbb)
 
 foreach(FILE_I ${MONGO_CONCPP_DLLS})
     file(COPY ${FILE_I} DESTINATION "${PROJECT_SOURCE_DIR}/build/Release" FOLLOW_SYMLINK_CHAIN)
