@@ -1,8 +1,10 @@
-
+import os
+import toml
 import pymongo
 import sqlalchemy
-from general.config import CONNECT_CONFIG
 from urllib.parse import quote_plus as urlquote
+
+CONNECT_CONFIG = toml.load(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "source", "config", "connect.toml"))
 
 # 继承Exception自定义异常，用于在处理异常时筛选
 class connect_error(Exception):

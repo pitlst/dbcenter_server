@@ -4,7 +4,6 @@ import json
 import concurrent.futures
 from concurrent.futures import ThreadPoolExecutor, wait
 from general.connect import db_engine
-from general.config import SYNC_CONFIG
 from general.logger import node_logger
 from general.node import node_base
 from general.node import \
@@ -114,7 +113,7 @@ if __name__ == "__main__":
             else:
                 LOG.debug("接到信号触发以下任务执行:" + ",".join([ch for ch in run_node]))
                 for ch in run_node:
-                    total_tasks.append(tpool.submit(run_node[ch]))
+                    total_tasks.append(tpool.submit(run_node[ch].run))
             if len(total_tasks) != 0:
                 LOG.debug("等待任务运行10秒")
                 is_done, _ = wait(total_tasks, timeout=10)
