@@ -624,6 +624,19 @@
         }
     },
     {
+        "name": "旧ETL-考勤系统考勤类型同步",
+        "next_name": [],
+        "type": "sql_to_table",
+        "source": {
+            "connect": "考勤系统",
+            "sql": "old_etl/attemdamce_type.sql"
+        },
+        "target": {
+            "connect": "BI与数开用数据库_旧",
+            "table": "ods_attemdamce_type"
+        }
+    },
+    {
         "name": "旧ETL-业联关闭统计同步",
         "next_name": [],
         "type": "sql_to_table",
@@ -647,6 +660,19 @@
         "target": {
             "connect": "BI与数开用数据库",
             "table": "ods_shr_staff"
+        }
+    },
+    {
+        "name": "旧ETL2-考勤人员信息同步",
+        "type": "sql_to_table",
+        "next_name": [],
+        "source": {
+            "connect": "考勤系统",
+            "sql": "old_etl2/kq_staff.sql"
+        },
+        "target": {
+            "connect": "BI与数开用数据库",
+            "table": "ods_kq_staff"
         }
     },
     {
@@ -790,6 +816,45 @@
         "target": {
             "connect": "BI与数开用数据库",
             "table": "ods_abnormal_type"
+        }
+    },
+    {
+        "name": "旧ETL2-考勤节假日同步",
+        "type": "sql_to_table",
+        "next_name": [],
+        "source": {
+            "connect": "考勤系统",
+            "sql": "old_etl2/kq_scheduling_holiday.sql"
+        },
+        "target": {
+            "connect": "BI与数开用数据库",
+            "table": "ods_kq_scheduling_holiday"
+        }
+    },
+    {
+        "name": "旧ETL2-考勤类型同步",
+        "type": "sql_to_table",
+        "next_name": [],
+        "source": {
+            "connect": "考勤系统",
+            "sql": "old_etl2/kq_type.sql"
+        },
+        "target": {
+            "connect": "BI与数开用数据库",
+            "table": "ods_kq_type"
+        }
+    },
+    {
+        "name": "旧ETL2-考勤时间计算后同步",
+        "type": "sql_to_table",
+        "next_name": [],
+        "source": {
+            "connect": "考勤系统",
+            "sql": "old_etl2/kq_time.sql"
+        },
+        "target": {
+            "connect": "BI与数开用数据库",
+            "table": "ods_kq_time"
         }
     },
     {
@@ -1484,7 +1549,7 @@
         }
     },
     {
-        "name": "邓芳用-t_SEC_User",
+        "name": "邓芳用-t_sec_user",
         "type": "table_to_table",
         "next_name": [],
         "source": {

@@ -57,20 +57,14 @@ if __name__ == "__main__":
     if len(temp_coll) == 0:
         not_same = True
     else:
+        coll_node_deps = {}
         for ch in temp_coll:
             ch = ch["node"]
             for ch_ in ch:
-                if ch_["name"] not in NODE_DEPEND:
-                    not_same = True
-                    break
-                if list(ch_["front"]) != list(NODE_DEPEND[ch_["name"]]["front"]):
-                    not_same = True
-                    break
-                if list(ch_["back"]) != list(NODE_DEPEND[ch_["name"]]["back"]):
-                    not_same = True
-                    break
-            if not_same:
-                break
+                coll_node_deps[ch_["name"]] = {}
+                coll_node_deps[ch_["name"]]["front"] = ch_["front"]
+                coll_node_deps[ch_["name"]]["back"] = ch_["back"]
+        not_same = coll_node_deps != NODE_DAG
     if not_same:
         MONGO_CLIENT["public"]["context"].drop()
         all_doc = []
@@ -85,7 +79,7 @@ if __name__ == "__main__":
                 temp_dict_["name"] = ch_
                 temp_dict_["front"] = NODE_DEPEND[ch_]["front"]
                 temp_dict_["back"] = NODE_DEPEND[ch_]["back"]
-                temp_dict_["status"] = "不需要运行"    # 可能有三种状态，不需要运行，需要运行，已经运行完成
+                temp_dict_["status"] = "不需要运行"    # 可能有三种状态，不需要运行，需要运行，正在运行，已经运行完成
                 temp_dict["node"].append(temp_dict_)
             all_doc.append(temp_dict)
         MONGO_CLIENT["public"]["context"].insert_many(all_doc)
