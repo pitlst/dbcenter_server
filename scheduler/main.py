@@ -1,15 +1,11 @@
 import os
 import json
-import toml
-import pymongo
-import logging
 import datetime
-import colorlog
 import numpy as np
-from urllib.parse import quote_plus as urlquote
 
-LOGGER_LEVEL = logging.DEBUG
-LOGGER_NAME = "scheduler"
+from general.connect import MONGO_CLIENT
+from general.logger import LOG
+
 # 节点两次同步变化的系数
 NODE_SYNC_K = 204800
 # 节点两次同步的最小间隔，该参数用在计算节点同步数据量的使用
@@ -17,70 +13,8 @@ NODE_SYNC_MIN = 600
 # 节点两次同步的最大间隔，该参数用在计算节点同步数据量的使用
 NODE_SYNC_MAX = 3600
 
+
 if __name__ == "__main__":
-    # ------------------------------------------连接mongo数据库用于传递上下文配置和日志------------------------------------------
-    CONNECT_CONFIG = toml.load(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "source", "config", "connect.toml"))["数据处理服务存储"]
-    if CONNECT_CONFIG["user"] != "" and CONNECT_CONFIG["password"] != "":
-        url = "mongodb://" + CONNECT_CONFIG["user"] + ":" + urlquote(CONNECT_CONFIG["password"]) + "@" + CONNECT_CONFIG["ip"] + ":" + str(CONNECT_CONFIG["port"])
-    else:
-        url = "mongodb://" + CONNECT_CONFIG["ip"] + ":" + str(CONNECT_CONFIG["port"])
-    MONGO_CLIENT = pymongo.MongoClient(url)
-
-
-    # ------------------------------------------获取日志记录器------------------------------------------
-    class momgo_handler(logging.Handler):
-        def __init__(self) -> None:
-            logging.Handler.__init__(self)
-            database = MONGO_CLIENT["logger"]
-            time_series_options = {
-                "timeField": "timestamp",
-                "metaField": "message"
-            }
-            if LOGGER_NAME not in database.list_collection_names():
-                self.collection = database.create_collection(LOGGER_NAME, timeseries=time_series_options)
-            else:
-                self.collection = database[LOGGER_NAME]
-
-        def emit(self, record) -> None:
-            try:
-                msg = self.format(record)
-                temp_msg = msg.split(":")
-                level = temp_msg[0]
-                msg = ":".join(temp_msg[1:])
-                self.collection.insert_one({
-                    "timestamp": datetime.datetime.now(),
-                    "message": {
-                        "等级": level,
-                        "消息": msg
-                    }
-                })
-            except Exception:
-                self.handleError(record)
-
-    LOG = logging.getLogger(LOGGER_NAME)
-    LOG.setLevel(logging.DEBUG)
-    console = logging.StreamHandler()
-    console.setLevel(LOGGER_LEVEL)
-    console.setFormatter(
-        colorlog.ColoredFormatter(
-            '%(log_color)s%(levelname)s: %(asctime)s %(message)s',
-            log_colors={
-                'DEBUG': 'cyan',
-                'INFO': 'green',
-                'WARNING': 'yellow',
-                'ERROR': 'red',
-                'CRITICAL': 'red,bg_white',
-            },
-            datefmt='## %Y-%m-%d %H:%M:%S'
-        ))
-    LOG.addHandler(console)
-    mongoio = momgo_handler()
-    mongoio.setLevel(LOGGER_LEVEL)
-    formatter = logging.Formatter('%(levelname)s:%(message)s')
-    mongoio.setFormatter(formatter)
-    LOG.addHandler(mongoio)
-
-
     # ------------------------------------------获取节点配置------------------------------------------
     with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "source", "config", "tasks.json"), "r", encoding="utf-8") as file:
         node_json = json.load(file)

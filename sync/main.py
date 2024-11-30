@@ -4,7 +4,6 @@ import json
 import concurrent.futures
 from concurrent.futures import ThreadPoolExecutor, wait
 from general.connect import db_engine
-from general.config import SYNC_CONFIG
 from general.logger import node_logger
 from general.node import node_base
 from general.node import \
