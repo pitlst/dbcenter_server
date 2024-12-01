@@ -16,8 +16,7 @@ NODE_SYNC_MIN = 600
 NODE_SYNC_MAX = 3600
 
 if __name__ == "__main__":
-    
     while True:
-
+        
                             
         
