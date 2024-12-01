@@ -6,7 +6,6 @@
 namespace dbs
 {
 
-    std::function<void()> 
 }
 
 #endif

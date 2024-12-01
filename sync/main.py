@@ -73,29 +73,27 @@ def make_node(new_json: list[dict])-> dict[str, node_base]:
 
 
 mongo_client = db_engine.get_nosql("数据处理服务存储")["public"]
+total_tasks: list[concurrent.futures.Future] = []
+total_tasks_name = set()
 
-def get_run(all_node: dict[str, node_base], temp_coll: list) -> dict[str, node_base]:
+def get_run(all_node: dict[str, node_base], total_tasks_name: set) -> dict[str, node_base]:
     # 获取当前需要运行的节点
     temp_node: list[node_base] = {}
+    temp_coll = mongo_client["context"].find().to_list()
     for dag_node in temp_coll:
         # 如果这个子图在运行
         if dag_node["is_running"]:
             for node_ in dag_node["node"]:
                 # 如果这个节点需要运行
-                if node_["name"] in all_node.keys() and node_["status"] == "需要运行":
+                if node_["name"] in all_node.keys() and node_["status"] == "需要运行" and not node_["name"] in total_tasks_name:
                     temp_node[node_["name"]] = all_node[node_["name"]]
     return temp_node
-
-def update_running_context(name: str, temp_coll: list) -> None:
-    for dag_node in temp_coll:
-        for node_ in dag_node["node"]:
-            if node_["name"] == name:
-                node_["status"] = "正在运行"
-                mongo_client["context"].replace_one({"_id": dag_node["_id"]}, dag_node)
-                return
             
-def update_final_context(node_future: concurrent.futures.Future, temp_coll: list) -> None:
+def update_context_callback(node_future: concurrent.futures.Future) -> None:
     name, data_size = node_future.result()
+    total_tasks.remove(node_future)
+    total_tasks_name.remove(name)
+    temp_coll = mongo_client["context"].find().to_list()
     for dag_node in temp_coll:
         for node_ in dag_node["node"]:
             if node_["name"] == name:
@@ -103,30 +101,22 @@ def update_final_context(node_future: concurrent.futures.Future, temp_coll: list
                 node_["status"] = "已经运行完成"
                 mongo_client["context"].replace_one({"_id": dag_node["_id"]}, dag_node)
                 return
-            
                     
 if __name__ == "__main__":
-    total_tasks = []
     LOG = node_logger("sync")
     all_node = make_node(process_tasks())
-    
     with ThreadPoolExecutor() as tpool:
         while True:
-            temp_coll = mongo_client["context"].find().to_list()
-            run_node = get_run(all_node, temp_coll)
+            run_node = get_run(all_node, total_tasks_name)
             if len(run_node) == 0:
                 LOG.debug("没有新的任务接到触发信号执行")
             else:
                 LOG.debug("接到信号触发以下任务执行:" + ",".join([ch for ch in run_node]))
                 for ch in run_node:
-                    total_tasks.append(tpool.submit(run_node[ch].run))
-                    update_running_context(ch, temp_coll)
-            if len(total_tasks) != 0:
-                LOG.debug("等待任务运行10秒")
-                is_done, _ = wait(total_tasks, timeout=10)
-                for future in is_done:
-                    update_final_context(future, temp_coll)
-                    total_tasks.remove(future)
-            else:
-                LOG.debug("没有任务运行，等待任务运行10秒")
-                time.sleep(10)
+                    task = tpool.submit(run_node[ch].run)
+                    task.add_done_callback(update_context_callback)
+                    total_tasks.append(task)
+                    total_tasks_name.add(ch)
+            LOG.debug("等待任务运行1秒")
+            time.sleep(1)
+                

@@ -1484,7 +1484,7 @@
         }
     },
     {
-        "name": "邓芳用-t_SEC_User",
+        "name": "邓芳用-t_sec_user",
         "type": "table_to_table",
         "next_name": [],
         "source": {

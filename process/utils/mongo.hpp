@@ -34,6 +34,6 @@ namespace dbs
 }
 
 // mongo全局单例连接的简写
-#define MONGO mongo_connect::instance()
+#define MONGO dbs::mongo_connect::instance()
 
 #endif
