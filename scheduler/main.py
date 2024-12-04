@@ -7,9 +7,7 @@ from general.logger import LOG
 from general.config import NODE_DEPEND
 
 if __name__ == "__main__":
-    for node in NODE_DEPEND:
-        if len(NODE_DEPEND[node]) == 0:
-             
-    
+    while True:
+        
                             
         
