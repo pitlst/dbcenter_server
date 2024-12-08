@@ -7,7 +7,7 @@ import datetime
 import colorlog
 from urllib.parse import quote_plus
 
-# ------------------------------------------节点配置------------------------------------------
+# ------------------------------------------任务配置------------------------------------------
 with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "source", "config", "tasks.json"), "r", encoding="utf-8") as file:
     node_json = json.load(file)
 name_set = set()
@@ -16,7 +16,7 @@ for ch in node_json:
         name_set.add(ch["name"])
     else:
         raise ValueError("节点名称重复" + ch["name"])
-# ------------------------------------------节点依赖------------------------------------------
+# ------------------------------------------任务依赖------------------------------------------
 NODE_DEPEND: dict[str, list[str]] = {}
 for ch in node_json:
     NODE_DEPEND[ch["name"]] = ch["next_name"]
@@ -79,16 +79,12 @@ mongoio.setLevel(logging.DEBUG)
 formatter = logging.Formatter('%(levelname)s:%(message)s')
 mongoio.setFormatter(formatter)
 LOG.addHandler(mongoio)
-
 # ------------------------------------------管道配置------------------------------------------
 class pipeline:
     '''管道的抽象，负责发送和维护在mongo中实现的消息队列'''
     def __init__(self) -> None:
         database = MONGO_CLIENT["public"]
-        time_series_options = {
-            "timeField": "timestamp",
-            "metaField": "message"
-        }
+        time_series_options = {"timeField": "timestamp"}
         coll_list = database.list_collection_names()
         if "mq_send" not in coll_list:
             self.coll_send = database.create_collection("mq_send", timeseries=time_series_options)
@@ -102,12 +98,37 @@ class pipeline:
     def send(self, node_name: str) -> None:
         self.coll_send.insert_one({
             "timestamp": datetime.datetime.now(),
-            "message": node_name 
+            "message": node_name,
+            "is_process": False
         })
         
-    def recv(self, node_name: str) -> list:
+    def clean_send_history(self, request_time: datetime.datetime) -> int:
+        '''清除对应时间之前的消息'''
+        return self.coll_send.delete_many({'timestamp': {'$lt': request_time}}).deleted_count
         
-        return self.coll_recv.find({"node_name": node_name}).to_list()
+    def clean_recv_history(self, request_time: datetime.datetime) -> int:
+        '''清除对应时间之前的消息'''
+        return self.coll_recv.delete_many({'timestamp': {'$lt': request_time}}).deleted_count
     
-    def recv_all(self) -> list:
-        return self.coll_recv.find().to_list()
+    def recv(self, node_name: str) -> list:
+        '''获取对应节点的消息'''
+        temp_doc_list = self.coll_recv.find({"node_name": node_name, "is_process":False}).to_list()
+        for tdoc in temp_doc_list:
+            self.coll_recv.update_one({"_id":tdoc["_id"]}, {"is_process":True})
+        return temp_doc_list
+
+    def recv_history(self, node_name: str) -> list:
+        '''获取对应节点的历史消息'''
+        temp_doc = self.coll_recv.find({"node_name": node_name, "is_process":True}).to_list()
+        self.coll_recv.update_one({"_id":temp_doc["_id"]}, {"is_process":True})
+        return temp_doc
+# 全局单例
+PPL = pipeline()
+# ------------------------------------------上下文配置------------------------------------------
+class context:
+    def __init__(self):
+        pass
+    
+    def get_need_run_node(self):
+        ...
+    
