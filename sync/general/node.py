@@ -1,7 +1,7 @@
 import abc
 import os
 import time
-from general.executer import executer
+from general.executer import EXECUTER
 from general.logger import LOG
 
 SQL_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "source", "sql")
@@ -20,11 +20,8 @@ class node_base(abc.ABC):
         self.name = node_define["name"]
         self.next_name = node_define["next_name"]
         self.type = node_define["type"]
-        # 检查解析的节点类型是否正确
-        temp_allow = getattr(self, "allow_type", [])
-        assert self.type in temp_allow, "节点的类型不正确"
-        # 数据库连接
-        self.temp_db = temp_db
+        if 
+
 
     def run(self) -> tuple[str, int]:
         self.LOG.info("开始计算")
