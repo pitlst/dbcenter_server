@@ -13,3 +13,4 @@ openpyxl
 psycopg2
 selenium
 colorlog
+schedule

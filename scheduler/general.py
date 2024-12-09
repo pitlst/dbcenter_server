@@ -8,7 +8,7 @@ import colorlog
 from urllib.parse import quote_plus
 
 # ------------------------------------------任务配置------------------------------------------
-with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "source", "config", "tasks.json"), "r", encoding="utf-8") as file:
+with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "source", "config", "tasks.json"), "r", encoding="utf-8") as file:
     node_json = json.load(file)
 name_set = set()
 for ch in node_json:
@@ -21,7 +21,7 @@ NODE_DEPEND: dict[str, list[str]] = {}
 for ch in node_json:
     NODE_DEPEND[ch["name"]] = ch["next_name"]
 # ------------------------------------------数据库连接配置------------------------------------------
-CONNECT_CONFIG = toml.load(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "source", "config", "connect.toml"))["数据处理服务存储"]
+CONNECT_CONFIG = toml.load(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "source", "config", "connect.toml"))["数据处理服务存储"]
 if CONNECT_CONFIG["user"] != "" and CONNECT_CONFIG["password"] != "":
     url = "mongodb://" + CONNECT_CONFIG["user"] + ":" + quote_plus(CONNECT_CONFIG["password"]) + "@" + CONNECT_CONFIG["ip"] + ":" + str(CONNECT_CONFIG["port"])
 else:
@@ -126,9 +126,48 @@ class pipeline:
 PPL = pipeline()
 # ------------------------------------------上下文配置------------------------------------------
 class context:
-    def __init__(self):
-        pass
+    def __init__(self) -> None:
+        self.tasks_status : dict[str, int] = {}
+        for task in NODE_DEPEND:
+            self.tasks_status[task] = 0 # 0是未运行，1是正在运行，2是已经运行完成
+            
+    def is_final(self) -> bool:
+        is_final = True
+        for ch in self.tasks_status:
+            if self.tasks_status[ch] != 2:
+                is_final = False
+                break
+        return is_final
+        
+    def get_ready_to_run(self) -> list[str]:
+        temp_tasks = []
+        for task in NODE_DEPEND:
+            # 节点没运行的
+            if self.tasks_status[task] == 0:
+                # 没依赖的
+                if len(NODE_DEPEND[task]) == 0:
+                    temp_tasks.append(task)
+                    self.tasks_status[task] = 1
+                else:
+                    # 有依赖但是都运行完了的
+                    dep_total_is_runned = True
+                    for task_ in NODE_DEPEND[task]:
+                        if self.tasks_status[task_] != 2:
+                            dep_total_is_runned = False
+                            break
+                    if dep_total_is_runned:
+                        temp_tasks.append(task)
+                        self.tasks_status[task] = 1
+        return temp_tasks
     
-    def get_need_run_node(self):
-        ...
+    def get_not_finish(self) -> list[str]:
+        temp_tasks = []
+        for task in self.tasks_status:
+            if self.tasks_status[task] == 1:
+                temp_tasks.append(task)
+        return temp_tasks
+        
+    def update(self, task_name: str) -> None:
+        assert task_name in self.tasks_status.keys(), "名称不在注册的节点中"
+        self.tasks_status[task_name] = 2
     
