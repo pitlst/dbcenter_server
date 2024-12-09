@@ -1,7 +1,7 @@
 import time
 import datetime
 import schedule
-from general import MONGO_CLIENT, LOG, NODE_DEPEND, PPL, context
+from general import LOG, PPL, context
 
 def main():
     LOG.debug("定时开始执行")

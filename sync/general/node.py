@@ -1,20 +1,8 @@
 import abc
-import time
-import json
 import os
-import traceback
-import pandas as pd
-# 这个不能删
-import openpyxl
-import pymongo.database
-import sqlalchemy
-import pymongo
-from sys import getsizeof
-from sqlalchemy import text
-import sqlalchemy.connectors
-from general.connect import database_connect
-from general.logger import node_logger
-from general.connect import db_engine
+import time
+from general.executer import executer
+from general.logger import LOG
 
 SQL_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "source", "sql")
 TABLE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "source", "table")
@@ -28,17 +16,15 @@ class node_base(abc.ABC):
     所以这类节点的输入输出都应当是数据库和文件这类io,不提供变量模式的传递
     '''
 
-    def __init__(self, name: str, next_name: list[str], temp_db: database_connect, type_name: str) -> None:
-        self.name = name
-        self.next_name = next_name
-        self.type = type_name
+    def __init__(self, node_define: dict) -> None:
+        self.name = node_define["name"]
+        self.next_name = node_define["next_name"]
+        self.type = node_define["type"]
         # 检查解析的节点类型是否正确
         temp_allow = getattr(self, "allow_type", [])
         assert self.type in temp_allow, "节点的类型不正确"
         # 数据库连接
         self.temp_db = temp_db
-        # 日志
-        self.LOG = node_logger(self.name)
 
     def run(self) -> tuple[str, int]:
         self.LOG.info("开始计算")
@@ -55,10 +41,6 @@ class node_base(abc.ABC):
             self.LOG.error(traceback.format_exc())
         self.LOG.info("计算结束")
         return self.name, data_size
-
-    @abc.abstractmethod
-    def connect(self):
-        ...
 
     @abc.abstractmethod
     def read(self):

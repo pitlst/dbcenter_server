@@ -127,9 +127,12 @@ PPL = pipeline()
 # ------------------------------------------上下文配置------------------------------------------
 class context:
     def __init__(self) -> None:
+        self.coll = MONGO_CLIENT["public"]["context"]
+        self.coll.drop()
         self.tasks_status : dict[str, int] = {}
         for task in NODE_DEPEND:
             self.tasks_status[task] = 0 # 0是未运行，1是正在运行，2是已经运行完成
+            self.coll.insert_one({"name":task, "status":"未运行"})
             
     def is_final(self) -> bool:
         is_final = True
@@ -148,6 +151,7 @@ class context:
                 if len(NODE_DEPEND[task]) == 0:
                     temp_tasks.append(task)
                     self.tasks_status[task] = 1
+                    self.coll.update_one({"name":task}, {'$set': {"status":"正在运行"}})
                 else:
                     # 有依赖但是都运行完了的
                     dep_total_is_runned = True
@@ -158,6 +162,7 @@ class context:
                     if dep_total_is_runned:
                         temp_tasks.append(task)
                         self.tasks_status[task] = 1
+                        self.coll.update_one({"name":task}, {'$set': {"status":"正在运行"}})
         return temp_tasks
     
     def get_not_finish(self) -> list[str]:
@@ -170,4 +175,5 @@ class context:
     def update(self, task_name: str) -> None:
         assert task_name in self.tasks_status.keys(), "名称不在注册的节点中"
         self.tasks_status[task_name] = 2
+        self.coll.update_one({"name":task_name}, {'$set': {"status":"已经运行完成"}})
     
