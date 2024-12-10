@@ -18,7 +18,7 @@ if __name__ == "__main__":
             postprocess_func = trans_table_to_json
         else:
             postprocess_func = None
-        # 过滤自定义的处理
+        # 过滤处理节点
         if task["type"] != "process":
             all_node[task["name"]] = node(task, preprocess_func=preprocess_func, postprocess_func=postprocess_func)
         

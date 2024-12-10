@@ -39,15 +39,11 @@ include_directories(
     ${PROJECT_SOURCE_DIR}
     ${LIBMONGOCXX_INCLUDE_DIR}
     ${LIBBSONCXX_INCLUDE_DIR}
-    ${ODBC_INCLUDE_DIRS}
     3rd_party/nlohmann
     3rd_party/toml11
     utils
-    connect
-    logger
-    process_manage
-    scheduler
-    tasks
+    tasks/visitor
+    tasks/person
 )
 
 # mongo数据库连接
