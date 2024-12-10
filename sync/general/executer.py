@@ -1,6 +1,5 @@
 import os
 import json
-import queue
 import pandas as pd
 import pymongo
 import sqlalchemy as sl
@@ -70,10 +69,10 @@ class executer:
         else:
             return self.read_from_sql("select * from " + __schema + "." + __table_name)
     
-    def read_from_nosql(self, __coll_name: str) -> dict:
+    def read_from_nosql(self, __database_name: str, __coll_name: str) -> dict:
         assert self.db_type == "nosql", "该执行器不支持这个操作"
         try:
-            return self.engine[__coll_name].find().to_list()
+            return self.engine[__database_name][__coll_name].find().to_list()
         except:
             LOG.error(traceback.format_exc())
         
@@ -105,12 +104,12 @@ class executer:
                 LOG.error(traceback.format_exc())
                 connection.rollback()
                 
-    def write_to_nosql(self, __data: dict,  __coll_name: str, is_update: bool = False) -> None:
+    def write_to_nosql(self, __data: list[dict], __database_name: str, __coll_name: str, is_update: bool = False) -> None:
         assert self.db_type == "nosql", "该执行器不支持这个操作"
         try:
             if not is_update:
-                self.engine[__coll_name].drop()
-            self.engine[__coll_name].insert_many(__data)
+                self.engine[__database_name][__coll_name].drop()
+            self.engine[__database_name][__coll_name].insert_many(__data)
         except:
             LOG.error(traceback.format_exc())
         

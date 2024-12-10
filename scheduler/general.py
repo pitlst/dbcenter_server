@@ -84,21 +84,20 @@ class pipeline:
     '''管道的抽象，负责发送和维护在mongo中实现的消息队列'''
     def __init__(self) -> None:
         database = MONGO_CLIENT["public"]
-        time_series_options = {"timeField": "timestamp"}
         coll_list = database.list_collection_names()
         if "mq_send" not in coll_list:
-            self.coll_send = database.create_collection("mq_send", timeseries=time_series_options)
+            self.coll_send = database.create_collection("mq_send")
         else:
             self.coll_send = database["mq_send"]
         if "mq_recv" not in coll_list:
-            self.coll_recv = database.create_collection("mq_recv", timeseries=time_series_options)
+            self.coll_recv = database.create_collection("mq_recv")
         else:
             self.coll_recv = database["mq_recv"]
             
     def send(self, node_name: str) -> None:
         self.coll_send.insert_one({
             "timestamp": datetime.datetime.now(),
-            "message": node_name,
+            "node_name": node_name,
             "is_process": False
         })
         
@@ -114,14 +113,13 @@ class pipeline:
         '''获取对应节点的消息'''
         temp_doc_list = self.coll_recv.find({"node_name": node_name, "is_process":False}).to_list()
         for tdoc in temp_doc_list:
-            self.coll_recv.update_one({"_id":tdoc["_id"]}, {"is_process":True})
+            self.coll_recv.update_one({"_id":tdoc["_id"]}, {"$set": {"is_process":True}})
         return temp_doc_list
 
     def recv_history(self, node_name: str) -> list:
         '''获取对应节点的历史消息'''
-        temp_doc = self.coll_recv.find({"node_name": node_name, "is_process":True}).to_list()
-        self.coll_recv.update_one({"_id":temp_doc["_id"]}, {"is_process":True})
-        return temp_doc
+        return self.coll_recv.find({"node_name": node_name, "is_process":True}).to_list()
+    
 # 全局单例
 PPL = pipeline()
 # ------------------------------------------上下文配置------------------------------------------

@@ -142,3 +142,12 @@ port = 8082
 user = "root"
 password = "WnXPLOS8ch"
 mode = "zj_data"
+
+["文件io"]
+# 一个空的连接节点，用于处理文件io
+type = "empty"
+ip = ""
+port = 0
+user = ""
+password = ""
+mode = ""
