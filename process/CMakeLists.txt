@@ -93,38 +93,27 @@ set(ALL_UTILS_FILE
     utils/mongo.cpp
     utils/logger.hpp
     utils/logger.cpp
+    utils/pipeline.cpp
+    utils/pipeline.cpp
     utils/thread_pool.hpp
     utils/thread_pool.cpp
     utils/wrapper.hpp
     utils/wrapper.cpp
 )
-# 工时处理
-add_executable(${PROJECT_NAME}_worktime tasks/worktime.cpp ${ALL_UTILS_FILE})
-target_link_libraries(${PROJECT_NAME}_worktime mongo::mongocxx_shared TBB::tbb)
+
 # 访客系统数据
-add_executable(${PROJECT_NAME}_visitor tasks/visitor.cpp ${ALL_UTILS_FILE})
+add_executable(${PROJECT_NAME}_visitor 
+    tasks/visitor/visitor.hpp 
+    tasks/visitor/visitor.cpp 
+    tasks/visitor/main.cpp 
+    ${ALL_UTILS_FILE})
 target_link_libraries(${PROJECT_NAME}_visitor mongo::mongocxx_shared TBB::tbb)
-# 差旅成本
-add_executable(${PROJECT_NAME}_travel tasks/travel.cpp ${ALL_UTILS_FILE})
-target_link_libraries(${PROJECT_NAME}_travel mongo::mongocxx_shared TBB::tbb)
-# 项目数据
-add_executable(${PROJECT_NAME}_project tasks/project.cpp ${ALL_UTILS_FILE})
-target_link_libraries(${PROJECT_NAME}_project mongo::mongocxx_shared TBB::tbb)
 # 人员数据
-add_executable(${PROJECT_NAME}_person tasks/person.cpp ${ALL_UTILS_FILE})
+add_executable(${PROJECT_NAME}_person
+    tasks/person/main.cpp 
+    ${ALL_UTILS_FILE})
 target_link_libraries(${PROJECT_NAME}_person mongo::mongocxx_shared TBB::tbb)
-# 异常数据
-add_executable(${PROJECT_NAME}_error tasks/error.cpp ${ALL_UTILS_FILE})
-target_link_libraries(${PROJECT_NAME}_error mongo::mongocxx_shared TBB::tbb)
-# 交车看板整合
-add_executable(${PROJECT_NAME}_delivery tasks/delivery.cpp ${ALL_UTILS_FILE})
-target_link_libraries(${PROJECT_NAME}_delivery mongo::mongocxx_shared TBB::tbb)
-# 业联整理
-add_executable(${PROJECT_NAME}_business_connection tasks/business_connection.cpp ${ALL_UTILS_FILE})
-target_link_libraries(${PROJECT_NAME}_business_connection mongo::mongocxx_shared TBB::tbb)
-# 改善数据处理
-add_executable(${PROJECT_NAME}_ameliorate tasks/ameliorate.cpp ${ALL_UTILS_FILE})
-target_link_libraries(${PROJECT_NAME}_ameliorate mongo::mongocxx_shared TBB::tbb)
+
 
 foreach(FILE_I ${MONGO_CONCPP_DLLS})
     file(COPY ${FILE_I} DESTINATION "${PROJECT_SOURCE_DIR}/build/Release" FOLLOW_SYMLINK_CHAIN)
@@ -145,7 +134,4 @@ target_link_libraries(test_data mongo::mongocxx_shared)
 # 线程池测试
 add_executable(test_thread_pool tests/test_thread_pool.cpp  ${ALL_SOURCE_FILE})
 target_link_libraries(test_thread_pool mongo::mongocxx_shared)
-# dag调度器测试
-add_executable(test_dag tests/test_dag.cpp  ${ALL_SOURCE_FILE})
-target_link_libraries(test_dag mongo::mongocxx_shared)
 
