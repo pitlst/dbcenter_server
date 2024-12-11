@@ -1,7 +1,22 @@
 [
     {
+        "name": "相关方安全数据库同步",
+        "type": "nosql_to_nosql",
+        "next_name": [],
+        "source": {
+            "connect": "外网访客系统数据库",
+            "database": "heyform",
+            "table": "submissionmodels"
+        },
+        "target": {
+            "connect": "数据处理服务存储",
+            "database": "ods",
+            "table": "submissionmodels"
+        }
+    },
+    {
         "name":"相关方填报数据处理",
         "type":"process",
-        "next_name": []
+        "next_name": ["相关方安全数据库同步"]
     }
 ]

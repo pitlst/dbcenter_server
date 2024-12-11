@@ -199,22 +199,24 @@ void main_logic()
         tbb::parallel_for(tbb::blocked_range<size_t>((size_t)0, form_results.size()), data_process);
         // ----------写入数据库----------
         LOGGER.info(MY_NAME, "写入处理数据");
+        auto m_coll = MONGO.get_coll("dm", "visitor_submit");
+        auto m_coll_a = MONGO.get_coll("dm", "visitor_submit_accompany");
+        auto m_coll_t = MONGO.get_coll("dm", "visitor_submit_tutelage");
         if(!visitor_submit.empty())
         {
-            auto m_coll = MONGO.get_coll("dm", "visitor_submit");
+            m_coll.drop();
             m_coll.insert_many(visitor_submit);
             if(!visitor_submit_accompany.empty())
             {
-                auto m_coll_a = MONGO.get_coll("dm", "visitor_submit_accompany");
+                m_coll_a.drop();
                 m_coll_a.insert_many(visitor_submit_accompany);
             }
             if(!visitor_submit_tutelage.empty())
             {
-                auto m_coll_t = MONGO.get_coll("dm", "visitor_submit_tutelage");
+                m_coll_t.drop();
                 m_coll_t.insert_many(visitor_submit_tutelage);
             }
         }
-        std::cout << "hello" << std::endl;
     }
     catch (const std::exception &e)
     {
