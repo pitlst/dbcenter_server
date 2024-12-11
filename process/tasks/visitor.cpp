@@ -1,4 +1,6 @@
 #include <iostream>
+#include <thread>
+#include <chrono>
 
 #include "bsoncxx/builder/basic/array.hpp"
 #include "bsoncxx/builder/basic/document.hpp"
@@ -14,7 +16,9 @@
 #include "logger.hpp"
 #include "pipeline.hpp"
 
-int main()
+#define MY_NAME "相关方填报数据处理"
+
+void main_logic()
 {
     try
     {
@@ -30,6 +34,7 @@ int main()
             }
             return results;
         };
+        LOGGER.info(MY_NAME, "读取数据");
         auto form_results = read_data("ods", "submissionmodels");
         // ----------组织成二维表格的形式----------
 
@@ -190,8 +195,10 @@ int main()
             }
         };
         // 利用tbb加速
+        LOGGER.info(MY_NAME, "并行处理数据");
         tbb::parallel_for(tbb::blocked_range<size_t>((size_t)0, form_results.size()), data_process);
         // ----------写入数据库----------
+        LOGGER.info(MY_NAME, "写入处理数据");
         if(!visitor_submit.empty())
         {
             auto m_coll = MONGO.get_coll("dm", "visitor_submit");
@@ -213,5 +220,23 @@ int main()
     {
         std::cerr << e.what() << '\n';
     }
+}
+
+
+int main()
+{
+    using namespace std::chrono_literals;
+    auto temp_pipe = dbs::pipeline(MY_NAME);
+    while (true)
+    {
+        if(temp_pipe.recv())
+        {
+            LOGGER.debug(MY_NAME, "接到触发信号，开始执行");
+            main_logic();
+        }
+        temp_pipe.send();
+        LOGGER.debug(MY_NAME, "未接到信号，等待5秒");
+        std::this_thread::sleep_for(5000ms);
+    }    
     return 0;
 }
