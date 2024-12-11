@@ -99,8 +99,6 @@ set(ALL_UTILS_FILE
     utils/logger.cpp
     utils/pipeline.cpp
     utils/pipeline.cpp
-    utils/thread_pool.hpp
-    utils/thread_pool.cpp
 )
 
 # 访客系统数据
