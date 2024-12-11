@@ -96,18 +96,8 @@ set(ALL_UTILS_FILE
 )
 
 # 访客系统数据
-add_executable(${PROJECT_NAME}_visitor 
-    tasks/visitor/visitor.hpp 
-    tasks/visitor/visitor.cpp 
-    tasks/visitor/main.cpp 
-    ${ALL_UTILS_FILE})
+add_executable(${PROJECT_NAME}_visitor tasks/visitor.cpp ${ALL_UTILS_FILE})
 target_link_libraries(${PROJECT_NAME}_visitor mongo::mongocxx_shared TBB::tbb)
-# 人员数据
-add_executable(${PROJECT_NAME}_person
-    tasks/person/main.cpp 
-    ${ALL_UTILS_FILE})
-target_link_libraries(${PROJECT_NAME}_person mongo::mongocxx_shared TBB::tbb)
-
 
 foreach(FILE_I ${MONGO_CONCPP_DLLS})
     file(COPY ${FILE_I} DESTINATION "${PROJECT_SOURCE_DIR}/build/Release" FOLLOW_SYMLINK_CHAIN)
