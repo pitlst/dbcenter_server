@@ -23,6 +23,8 @@ namespace dbs
         static mongo_connect &instance();
         // 获取数据库
         mongocxx::database &get_db(const std::string &db_name);
+        // 获取集合
+        mongocxx::collection get_coll(const std::string &db_name, const std::string &coll_name);
 
     private:
         // 禁止外部构造与析构

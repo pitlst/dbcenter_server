@@ -70,6 +70,14 @@ find_package(mongocxx REQUIRED)
 
 # intelTBB加速库
 set(TBB_DIR "${PROJECT_SOURCE_DIR}/3rd_party/onetbb/lib/cmake/tbb")
+set(TBB_DLLS
+    ${TBB_DIR}/../../../redist/intel64/vc14/tbb12.dll
+    ${TBB_DIR}/../../../redist/intel64/vc14/tbbbind_2_0.dll
+    ${TBB_DIR}/../../../redist/intel64/vc14/tbbbind_2_5.dll
+    ${TBB_DIR}/../../../redist/intel64/vc14/tbbbind.dll
+    ${TBB_DIR}/../../../redist/intel64/vc14/tbbmalloc_proxy.dll
+    ${TBB_DIR}/../../../redist/intel64/vc14/tbbmalloc.dll
+)
 find_package(TBB REQUIRED)
 
 #--------------------------------------------------------------------------------------#
@@ -100,6 +108,9 @@ add_executable(${PROJECT_NAME}_visitor tasks/visitor.cpp ${ALL_UTILS_FILE})
 target_link_libraries(${PROJECT_NAME}_visitor mongo::mongocxx_shared TBB::tbb)
 
 foreach(FILE_I ${MONGO_CONCPP_DLLS})
+    file(COPY ${FILE_I} DESTINATION "${PROJECT_SOURCE_DIR}/build/Release" FOLLOW_SYMLINK_CHAIN)
+endforeach(FILE_I)
+foreach(FILE_I ${TBB_DLLS})
     file(COPY ${FILE_I} DESTINATION "${PROJECT_SOURCE_DIR}/build/Release" FOLLOW_SYMLINK_CHAIN)
 endforeach(FILE_I)
 

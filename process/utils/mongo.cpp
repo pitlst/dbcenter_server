@@ -41,3 +41,24 @@ mongocxx::database &mongo_connect::get_db(const std::string & db_name)
     }
     return m_data[db_name];
 }
+
+mongocxx::collection mongo_connect::get_coll(const std::string &db_name, const std::string &coll_name)
+{
+    auto m_db = get_db(db_name);
+    auto collections = m_db.list_collections();
+    bool is_exist = false;
+    for (const auto &coll : collections)
+    {
+        if (coll["name"].get_string().value == coll_name)
+        {
+            is_exist = true;
+            break;
+        }
+    }
+    if (!is_exist)
+    {
+        // 创建集合
+        m_db.create_collection(coll_name);
+    }
+    return m_db[coll_name];
+}
