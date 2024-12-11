@@ -3,6 +3,7 @@
 
 #include <string>
 #include <memory>
+#include <map>
 
 #include "mongocxx/client.hpp"
 #include "mongocxx/instance.hpp"
@@ -20,16 +21,20 @@ namespace dbs
     public:
         // 获取单实例对象
         static mongo_connect &instance();
-        // 数据库连接池单例
-        std::unique_ptr<mongocxx::pool> m_pool_ptr = nullptr;
+        // 获取数据库
+        mongocxx::database &get_db(const std::string &db_name);
 
     private:
         // 禁止外部构造与析构
         mongo_connect();
         ~mongo_connect();
 
-        // 数据库驱动单例
+        // 数据库驱动
         mongocxx::instance m_instance;
+        // 数据库连接
+        std::unique_ptr<mongocxx::client> m_client_ptr = nullptr;
+        // 所有获取过的数据库对象的保存，用于保证生命周期
+        std::map<std::string, mongocxx::database> m_data;
     };
 }
 

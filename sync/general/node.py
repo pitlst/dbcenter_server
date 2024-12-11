@@ -57,25 +57,25 @@ class node:
             else:
                 temp_table, temp_schema = self.node["source"]["table"], self.node["source"]["schema"]
             temp_data = EXECUTER[self.node["source"]["connect"]].read_from_table(temp_table, temp_schema)
-        elif self.type == ["excel_to_table", "excel_to_nosql", "excel_to_csv", "excel_to_json"]:
+        elif self.type in ["excel_to_table", "excel_to_nosql", "excel_to_csv", "excel_to_json"]:
             if not self.preprocess_func is None:
                 temp_path, temp_sheet = self.preprocess_func(self.node["source"]["path"], self.node["source"]["sheet"])
             else:
                 temp_path, temp_sheet = self.node["source"]["path"], self.node["source"]["sheet"]
             temp_data = EXECUTER[self.node["source"]["connect"]].read_from_excel(temp_path, temp_sheet)
-        elif self.type == ["csv_to_table", "csv_to_nosql", "csv_to_excel", "csv_to_json"]:
+        elif self.type in ["csv_to_table", "csv_to_nosql", "csv_to_excel", "csv_to_json"]:
             if not self.preprocess_func is None:
                 temp_path = self.preprocess_func(self.node["source"]["path"])
             else:
                 temp_path = self.node["source"]["path"]
             temp_data = EXECUTER[self.node["source"]["connect"]].read_from_csv(temp_path)
-        elif self.type == ["nosql_to_nosql", "nosql_to_json"]:
+        elif self.type in ["nosql_to_nosql", "nosql_to_json"]:
             if not self.preprocess_func is None:
                 temp_database, temp_table = self.preprocess_func(self.node["source"]["database"], self.node["source"]["table"])
             else:
                 temp_database, temp_table = self.node["source"]["database"], self.node["source"]["table"]
             temp_data = EXECUTER[self.node["source"]["connect"]].read_from_nosql(temp_database, temp_table)
-        elif self.type == ["json_to_nosql"]:
+        elif self.type in ["json_to_nosql"]:
             if not self.preprocess_func is None:
                 temp_path = self.preprocess_func(self.node["source"]["path"])
             else:
@@ -84,7 +84,6 @@ class node:
         return temp_data
     
     def write(self, temp_data):
-        temp_data = None
         if self.type in ["sql_to_table", "table_to_table", "excel_to_table", "csv_to_table"]:
             if "schema" in self.node["target"].keys():
                 EXECUTER[self.node["target"]["connect"]].write_to_table(temp_data, self.node["target"]["table"], self.node["target"]["schema"])

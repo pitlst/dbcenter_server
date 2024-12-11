@@ -25,14 +25,13 @@ namespace dbs{
     private:
         // 禁止外部构造与析构
         logger();
-        ~logger();
+        ~logger() = default;
         // 获取当前时间的字符串
         static std::string get_time_str(const std::chrono::system_clock::time_point & input_time);
 
         // 数据库客户端
         const std::string db_name = "logger";
-        std::unique_ptr<mongocxx::pool::entry> m_client_ptr;
-        std::unique_ptr<mongocxx::database> m_database_ptr;
+        mongocxx::database m_database = MONGO.get_db(db_name);
     };
 }
 

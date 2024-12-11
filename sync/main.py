@@ -6,8 +6,6 @@ from callback_func import compose, read_file, trans_table_to_json
 if __name__ == "__main__":
     all_node: dict[str, node] = {}
     for task in TASKS_CONFIG:
-        # 特殊的依赖注入
-        # 普遍的依赖注入
         # 前处理注入
         if task["type"] in ["sql_to_table", "sql_to_excel", "sql_to_csv", "sql_to_nosql", "sql_to_json", "json_to_nosql"]:
             preprocess_func = read_file
@@ -18,6 +16,9 @@ if __name__ == "__main__":
             postprocess_func = trans_table_to_json
         else:
             postprocess_func = None
+        
+        '''在这里添加自定义的依赖注入'''    
+            
         # 过滤处理节点
         if task["type"] != "process":
             all_node[task["name"]] = node(task, preprocess_func=preprocess_func, postprocess_func=postprocess_func)

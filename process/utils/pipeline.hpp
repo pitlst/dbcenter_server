@@ -1,5 +1,5 @@
-#ifndef DBS_LOGGER_INCLUDE
-#define DBS_LOGGER_INCLUDE
+#ifndef DBS_PIPELINE_INCLUDE
+#define DBS_PIPELINE_INCLUDE
 
 #include <memory>
 #include <string>
@@ -8,6 +8,7 @@
 
 namespace dbs
 {
+    // 管道类，用于维护一个消息队列
     class pipeline
     {
     public:
@@ -19,10 +20,15 @@ namespace dbs
         // 发送消息
         void send();
     private:
+        const std::string m_db_name = "public"; 
+        const std::string m_send_name = "mq_send";
+        const std::string m_recv_name = "mq_recv";
+        // 需要监控的节点名称
         std::string m_name;
-        std::unique_ptr<mongocxx::pool::entry> m_client_ptr;
-        std::unique_ptr<mongocxx::collection> m_send_coll_ptr;
-        std::unique_ptr<mongocxx::collection> m_recv_coll_ptr;
+        // 数据库客户端
+        mongocxx::database m_database = MONGO.get_db(m_db_name);
+        std::unique_ptr<mongocxx::collection> m_send_coll_ptr = nullptr;
+        std::unique_ptr<mongocxx::collection> m_recv_coll_ptr = nullptr;
     };
 }
 

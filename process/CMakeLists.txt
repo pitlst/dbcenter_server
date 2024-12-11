@@ -93,8 +93,6 @@ set(ALL_UTILS_FILE
     utils/pipeline.cpp
     utils/thread_pool.hpp
     utils/thread_pool.cpp
-    utils/wrapper.hpp
-    utils/wrapper.cpp
 )
 
 # 访客系统数据

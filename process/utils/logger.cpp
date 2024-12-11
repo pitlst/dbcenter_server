@@ -46,7 +46,7 @@ void logger::emit(const std::string &level, const std::string &name, const std::
 {
     auto now = std::chrono::system_clock::now();
     // 插入数据库
-    auto collection = (*m_database_ptr)[name];
+    auto collection = m_database[name];
     using bsoncxx::builder::basic::kvp;
     using bsoncxx::builder::basic::make_document;
     collection.insert_one(
@@ -65,24 +65,13 @@ logger::logger()
     std::ios::sync_with_stdio(0);
     std::cin.tie(0);
     std::cout.tie(0);
-    // 连接数据库
-    m_client_ptr = std::make_unique<mongocxx::pool::entry>(MONGO.m_pool_ptr->acquire());
-    m_database_ptr = std::make_unique<mongocxx::database>((*m_client_ptr)[db_name]);
-}
-
-logger::~logger()
-{
-    m_database_ptr.release();
-    m_database_ptr = nullptr;
-    m_client_ptr.release();
-    m_client_ptr = nullptr;
 }
 
 void logger::create_time_collection(const std::string &name)
 {
     // 检查集合是否创建
     bool is_exist = false;
-    auto collections = m_database_ptr->list_collections();
+    auto collections = m_database.list_collections();
     for (const auto &coll : collections)
     {
         if (coll["name"].get_string().value == name)
@@ -101,7 +90,7 @@ void logger::create_time_collection(const std::string &name)
                 make_document(
                     kvp("timeField", "timestamp"),
                     kvp("metaField", "message"))));
-        m_database_ptr->create_collection(name, ts_info.view());
+        m_database.create_collection(name, ts_info.view());
     }
 }
 
