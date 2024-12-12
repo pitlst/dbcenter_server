@@ -1,6 +1,7 @@
 #include <iostream>
 #include <thread>
 #include <chrono>
+#include <algorithm>
 
 #include "bsoncxx/builder/basic/array.hpp"
 #include "bsoncxx/builder/basic/document.hpp"
@@ -35,7 +36,25 @@ void main_logic()
             return results;
         };
         LOGGER.info(MY_NAME, "读取数据");
-        auto form_results = read_data("ods", "submissionmodels");
+        auto submissionmodels_ = read_data("ods", "submissionmodels");
+        auto visitor_submit_ = read_data("dm", "visitor_submit");
+        std::vector<nlohmann::json> submit_id;
+        for (const auto & ch : visitor_submit_)
+        {
+            submit_id.emplace_back(ch["fid"]);
+        }
+        std::vector<nlohmann::json> form_results;
+        for(const auto & ch : submissionmodels_)
+        {
+            auto result = std::find(submit_id.begin(), submit_id.end(), ch["_id"]);
+            if(result != submit_id.end())
+            {
+                form_results.emplace_back(ch);
+            }   
+        }
+        std::vector<bsoncxx::document::value> visitor_submit;
+        std::vector<bsoncxx::document::value> visitor_submit_accompany;
+        std::vector<bsoncxx::document::value> visitor_submit_tutelage;
         // ----------组织成二维表格的形式----------
 
         // 获取单选中的值
@@ -65,9 +84,6 @@ void main_logic()
             throw std::logic_error("解析时未找到值");
         };
         // 处理集合中单个文档的数据
-        std::vector<bsoncxx::document::value> visitor_submit;
-        std::vector<bsoncxx::document::value> visitor_submit_accompany;
-        std::vector<bsoncxx::document::value> visitor_submit_tutelage;
         auto data_process = [&](const tbb::blocked_range<size_t> &range)
         {
             for (size_t index = range.begin(); index != range.end(); ++index)
@@ -235,8 +251,8 @@ int main()
         {
             LOGGER.debug(MY_NAME, "接到触发信号，开始执行");
             main_logic();
+            temp_pipe.send();
         }
-        temp_pipe.send();
         LOGGER.debug(MY_NAME, "未接到信号，等待5秒");
         std::this_thread::sleep_for(5000ms);
     }    

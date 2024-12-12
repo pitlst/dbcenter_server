@@ -13,7 +13,7 @@ class momgo_handler(logging.Handler):
             "metaField": "message"
         }
         if "sync" not in database.list_collection_names():
-            self.collection = database.create_collection("sync", timeseries=time_series_options)
+            self.collection = database.create_collection("sync", timeseries=time_series_options, expireAfterSeconds=604800)
         else:
             self.collection = database["sync"]
 

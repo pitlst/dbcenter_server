@@ -27,7 +27,7 @@ def main():
     
 def clean_mq():
     # 每天清除30天前的消息
-    LOG.info("触发清除")
+    LOG.info("触发清除消息队列")
     requeat_day = datetime.datetime.now() - datetime.timedelta(days=30)
     deleted_count = PPL.clean_send_history(requeat_day)
     LOG.info("清除了" + str(deleted_count) + "条发送记录")

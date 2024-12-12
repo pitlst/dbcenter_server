@@ -1,4 +1,3 @@
-#include <iostream>
 #include <chrono>
 #include <sstream>
 
@@ -10,6 +9,10 @@
 #include "bsoncxx/builder/basic/document.hpp"
 #include "bsoncxx/builder/basic/kvp.hpp"
 #include "bsoncxx/types.hpp"
+
+#include "fmt/core.h"
+#include "fmt/chrono.h"
+#include "fmt/color.h"
 
 #include "logger.hpp"
 
@@ -56,7 +59,10 @@ void logger::emit(const std::string &level, const std::string &name, const std::
                                kvp("等级", level),
                                kvp("消息", msg)))));
     // 命令行输出
-    std::cout << "[" << level << "]" << get_time_str(now) << ": " << msg << std::endl;
+    fmt::print(
+        fmt::emphasis::bold | fg(fmt::color::cyan),
+        fmt::runtime("[{}]: {:%Y-%m-%d %H:%M:%S}: {}"), level, fmt::localtime(std::chrono::system_clock::to_time_t(now)), msg
+    );
 }
 
 logger::logger()
@@ -89,7 +95,9 @@ void logger::create_time_collection(const std::string &name)
             kvp("timeseries",
                 make_document(
                     kvp("timeField", "timestamp"),
-                    kvp("metaField", "message"))));
+                    kvp("metaField", "message"))),
+            kvp("expireAfterSeconds", 604800)
+        );
         m_database.create_collection(name, ts_info.view());
     }
 }

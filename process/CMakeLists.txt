@@ -80,6 +80,10 @@ set(TBB_DLLS
 )
 find_package(TBB REQUIRED)
 
+# fmt打印时格式化
+set(fmt_DIR "${PROJECT_SOURCE_DIR}/3rd_party/fmt/lib/cmake/fmt")
+find_package(fmt REQUIRED)
+
 #--------------------------------------------------------------------------------------#
 #   项目编译设置
 #--------------------------------------------------------------------------------------#
@@ -103,7 +107,7 @@ set(ALL_UTILS_FILE
 
 # 访客系统数据
 add_executable(${PROJECT_NAME}_visitor tasks/visitor.cpp ${ALL_UTILS_FILE})
-target_link_libraries(${PROJECT_NAME}_visitor mongo::mongocxx_shared TBB::tbb)
+target_link_libraries(${PROJECT_NAME}_visitor mongo::mongocxx_shared TBB::tbb fmt::fmt)
 
 foreach(FILE_I ${MONGO_CONCPP_DLLS})
     file(COPY ${FILE_I} DESTINATION "${PROJECT_SOURCE_DIR}/build/Release" FOLLOW_SYMLINK_CHAIN)
