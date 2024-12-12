@@ -14,7 +14,7 @@ if __name__ == "__main__":
         # 后处理注入
         if task["type"] in ["sql_to_nosql", "table_to_nosql", "excel_to_nosql", "csv_to_nosql"]:
             postprocess_func = trans_table_to_json
-        elif task["type"] in ["nosql_to_tabel", "nosql_to_tabel", "nosql_to_excel", "nosql_to_csv"]:
+        elif task["type"] in ["nosql_to_table", "nosql_to_excel", "nosql_to_csv"]:
             postprocess_func = trans_json_to_table
         else:
             postprocess_func = None
@@ -29,12 +29,10 @@ if __name__ == "__main__":
         while True:
             run_list = []
             for task in all_node:
-                LOG.info("检查" + task + "是否该运行")
                 is_request = PPL.recv(task)
                 if len(is_request) != 0:
+                    LOG.debug(task + "触发运行")
                     run_list.append(tpool.submit(all_node[task].run))
-                else:
-                    LOG.debug(task + "不需要运行")
             if len(run_list) != 0:
                 for ch in as_completed(run_list):
                     PPL.send(ch.result())
