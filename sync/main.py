@@ -1,7 +1,7 @@
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from general import TASKS_CONFIG, LOG, node, PPL
-from callback_func import compose, read_file, trans_table_to_json
+from callback_func import compose, read_file, trans_table_to_json, trans_json_to_table
 
 if __name__ == "__main__":
     all_node: dict[str, node] = {}
@@ -14,6 +14,8 @@ if __name__ == "__main__":
         # 后处理注入
         if task["type"] in ["sql_to_nosql", "table_to_nosql", "excel_to_nosql", "csv_to_nosql"]:
             postprocess_func = trans_table_to_json
+        elif task["type"] in ["nosql_to_tabel", "nosql_to_tabel", "nosql_to_excel", "nosql_to_csv"]:
+            postprocess_func = trans_json_to_table
         else:
             postprocess_func = None
         

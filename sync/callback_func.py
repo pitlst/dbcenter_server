@@ -8,6 +8,10 @@ def read_file(file_path: str) -> str:
 def trans_table_to_json(__data: pd.DataFrame) -> dict:
     '''将表格转换成字典'''
     return __data.to_dict(orient='records')
+
+def trans_json_to_table(__data: dict) -> pd.DataFrame:
+    '''将字典转换成表格'''
+    return pd.json_normalize(__data)
     
 def compose(f, g):
     '''拼接函数'''

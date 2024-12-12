@@ -59,9 +59,30 @@ void logger::emit(const std::string &level, const std::string &name, const std::
                                kvp("等级", level),
                                kvp("消息", msg)))));
     // 命令行输出
+    fmt::text_style fmt_color;
+    if(level == "DEBUG")
+    {
+        fmt_color = fmt::emphasis::bold | fg(fmt::color::cyan);
+    }   
+    else if(level == "INFO")
+    {
+        fmt_color = fmt::emphasis::bold | fg(fmt::color::green);
+    }
+    else if(level == "WARNNING")
+    {
+        fmt_color = fmt::emphasis::bold | fg(fmt::color::yellow);
+    }
+    else if(level == "ERROR")
+    {
+        fmt_color = fmt::emphasis::bold | fg(fmt::color::red);
+    }
+    
     fmt::print(
-        fmt::emphasis::bold | fg(fmt::color::cyan),
-        fmt::runtime("[{}]: {:%Y-%m-%d %H:%M:%S}: {}"), level, fmt::localtime(std::chrono::system_clock::to_time_t(now)), msg
+        fmt_color,
+        fmt::runtime("[{}]: {:%Y-%m-%d %H:%M:%S}: {}\n"), 
+        level, 
+        fmt::localtime(std::chrono::system_clock::to_time_t(now)), 
+        msg
     );
 }
 

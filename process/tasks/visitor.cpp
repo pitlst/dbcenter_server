@@ -36,22 +36,7 @@ void main_logic()
             return results;
         };
         LOGGER.info(MY_NAME, "读取数据");
-        auto submissionmodels_ = read_data("ods", "submissionmodels");
-        auto visitor_submit_ = read_data("dm", "visitor_submit");
-        std::vector<nlohmann::json> submit_id;
-        for (const auto & ch : visitor_submit_)
-        {
-            submit_id.emplace_back(ch["fid"]);
-        }
-        std::vector<nlohmann::json> form_results;
-        for(const auto & ch : submissionmodels_)
-        {
-            auto result = std::find(submit_id.begin(), submit_id.end(), ch["_id"]);
-            if(result != submit_id.end())
-            {
-                form_results.emplace_back(ch);
-            }   
-        }
+        auto form_results = read_data("ods", "submissionmodels");
         std::vector<bsoncxx::document::value> visitor_submit;
         std::vector<bsoncxx::document::value> visitor_submit_accompany;
         std::vector<bsoncxx::document::value> visitor_submit_tutelage;
@@ -164,7 +149,7 @@ void main_logic()
                                     }
                                     temp[temp_label] = ch["value"][index][ch__.key()];
                                 }
-                                tutelage_json.emplace_back(temp);
+                                accompany_json.emplace_back(temp);
                                 index++;
                             }
                         }
