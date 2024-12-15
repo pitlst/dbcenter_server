@@ -109,6 +109,10 @@ set(ALL_UTILS_FILE
 add_executable(${PROJECT_NAME}_visitor tasks/visitor.cpp ${ALL_UTILS_FILE})
 target_link_libraries(${PROJECT_NAME}_visitor mongo::mongocxx_shared TBB::tbb fmt::fmt)
 
+# 设计变更成本统计
+add_executable(${PROJECT_NAME}_design_cost tasks/design_cost.cpp ${ALL_UTILS_FILE})
+target_link_libraries(${PROJECT_NAME}_design_cost mongo::mongocxx_shared TBB::tbb fmt::fmt)
+
 foreach(FILE_I ${MONGO_CONCPP_DLLS})
     file(COPY ${FILE_I} DESTINATION "${PROJECT_SOURCE_DIR}/build/Release" FOLLOW_SYMLINK_CHAIN)
 endforeach(FILE_I)

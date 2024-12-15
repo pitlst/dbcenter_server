@@ -23,19 +23,19 @@ class executer:
                 if temp["type"] == "oracle":
                     self.db_type = "sql"
                     connect_str = "oracle+cx_oracle://" + temp["user"] + ":" + quote_plus(temp["password"]) + "@" + temp["ip"] + ":" + str(temp["port"]) + "/?service_name=" + temp["mode"]
-                    self.engine = sl.create_engine(connect_str, pool_size=20)
+                    self.engine = sl.create_engine(connect_str, poolclass=sl.NullPool)
                 elif temp["type"] == "sqlserver":
                     self.db_type = "sql"
                     connect_str = "mssql+pyodbc://" + temp["user"] + ":" + quote_plus(temp["password"]) + "@" + temp["ip"] + ":" + str(temp["port"]) + "/" + temp["mode"] + "?driver=ODBC+Driver+17+for+SQL+Server"
-                    self.engine = sl.create_engine(connect_str, pool_size=20)
+                    self.engine = sl.create_engine(connect_str, poolclass=sl.NullPool)
                 elif temp["type"] == "mysql":
                     self.db_type = "sql"
                     connect_str = "mysql+mysqldb://" + temp["user"] + ":" + quote_plus(temp["password"]) + "@" + temp["ip"] + ":" + str(temp["port"]) + "/" + temp["mode"]
-                    self.engine = sl.create_engine(connect_str, pool_size=20)
+                    self.engine = sl.create_engine(connect_str, poolclass=sl.NullPool)
                 elif temp["type"] == "pgsql":
                     self.db_type = "sql"
                     connect_str = "postgresql://" + temp["user"] + ":" + quote_plus(temp["password"]) + "@" + temp["ip"] + ":" + str(temp["port"]) + "/" + temp["mode"]
-                    self.engine = sl.create_engine(connect_str, pool_size=20)
+                    self.engine = sl.create_engine(connect_str, poolclass=sl.NullPool)
                 elif temp["type"] == "mongo":
                     self.db_type = "nosql"
                     if temp["user"] != "" and temp["password"] != "":

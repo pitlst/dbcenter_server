@@ -36,12 +36,27 @@ void main_logic()
             return results;
         };
         LOGGER.info(MY_NAME, "读取数据");
-        auto form_results = read_data("ods", "submissionmodels");
+        auto ods_results = read_data("ods", "submissionmodels");
+        auto dm_results = read_data("dm", "visitor_submit");
+        // ----------检查数据是否更新----------
+        std::vector<nlohmann::json> old_source_id;
+        for (const auto & ch : dm_results)
+        {
+            old_source_id.emplace_back(ch["source_id"]);
+        }
+        std::vector<nlohmann::json> form_results;
+        for (const auto & ch : ods_results)
+        {
+            auto find_it = std::find(old_source_id.begin(), old_source_id.end(), ch["_id"]);
+            if (find_it == old_source_id.end())
+            {
+                form_results.emplace_back(ch);
+            }
+        } 
         std::vector<bsoncxx::document::value> visitor_submit;
         std::vector<bsoncxx::document::value> visitor_submit_accompany;
         std::vector<bsoncxx::document::value> visitor_submit_tutelage;
         // ----------组织成二维表格的形式----------
-
         // 获取单选中的值
         auto get_swich_label = [](const nlohmann::json &input_json)
         {
@@ -78,7 +93,7 @@ void main_logic()
                 std::vector<nlohmann::json> accompany_json;
                 std::vector<nlohmann::json> tutelage_json;
                 results_json["提交日期"] = input_json["updatedAt"];
-                results_json["fid"] = input_json["_id"];
+                results_json["source_id"] = input_json["_id"];
                 for (const auto &ch : input_json["answers"])
                 {
                     if (ch["title"] == "请输入您的姓名")
@@ -134,7 +149,7 @@ void main_logic()
                             for (const auto &ch_ : ch["value"])
                             {
                                 nlohmann::json temp;
-                                temp["fid"] = input_json["_id"];
+                                temp["source_id"] = input_json["_id"];
                                 for (const auto &ch__ : ch_.items())
                                 {
                                     auto temp_id = ch__.key();
@@ -162,7 +177,7 @@ void main_logic()
                             for (const auto &ch_ : ch["value"])
                             {
                                 nlohmann::json temp;
-                                temp["fid"] = input_json["_id"];
+                                temp["source_id"] = input_json["_id"];
                                 for (const auto &ch__ : ch_.items())
                                 {
                                     auto temp_id = ch__.key();
@@ -191,32 +206,36 @@ void main_logic()
                 }
                 for (const auto &ch : tutelage_json)
                 {
-                    visitor_submit_accompany.emplace_back(bsoncxx::from_json(ch.dump()));
+                    visitor_submit_tutelage.emplace_back(bsoncxx::from_json(ch.dump()));
                 }
             }
         };
         // 利用tbb加速
-        LOGGER.info(MY_NAME, "并行处理数据");
-        tbb::parallel_for(tbb::blocked_range<size_t>((size_t)0, form_results.size()), data_process);
-        // ----------写入数据库----------
-        LOGGER.info(MY_NAME, "写入处理数据");
-        auto m_coll = MONGO.get_coll("dm", "visitor_submit");
-        auto m_coll_a = MONGO.get_coll("dm", "visitor_submit_accompany");
-        auto m_coll_t = MONGO.get_coll("dm", "visitor_submit_tutelage");
-        if(!visitor_submit.empty())
+        if(!form_results.empty())
         {
-            m_coll.drop();
-            m_coll.insert_many(visitor_submit);
-            if(!visitor_submit_accompany.empty())
+            LOGGER.info(MY_NAME, "并行处理数据");
+            tbb::parallel_for(tbb::blocked_range<size_t>((size_t)0, form_results.size()), data_process);
+            // ----------写入数据库----------
+            LOGGER.info(MY_NAME, "写入处理数据");
+            auto m_coll = MONGO.get_coll("dm", "visitor_submit");
+            auto m_coll_a = MONGO.get_coll("dm", "visitor_submit_accompany");
+            auto m_coll_t = MONGO.get_coll("dm", "visitor_submit_tutelage");
+            if(!visitor_submit.empty())
             {
-                m_coll_a.drop();
-                m_coll_a.insert_many(visitor_submit_accompany);
+                m_coll.insert_many(visitor_submit);
+                if(!visitor_submit_accompany.empty())
+                {
+                    m_coll_a.insert_many(visitor_submit_accompany);
+                }
+                if(!visitor_submit_tutelage.empty())
+                {
+                    m_coll_t.insert_many(visitor_submit_tutelage);
+                }
             }
-            if(!visitor_submit_tutelage.empty())
-            {
-                m_coll_t.drop();
-                m_coll_t.insert_many(visitor_submit_tutelage);
-            }
+        }
+        else
+        {
+            LOGGER.info(MY_NAME, "无数据更新");
         }
     }
     catch (const std::exception &e)

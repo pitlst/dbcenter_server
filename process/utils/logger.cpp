@@ -49,7 +49,7 @@ void logger::emit(const std::string &level, const std::string &name, const std::
 {
     auto now = std::chrono::system_clock::now();
     // 插入数据库
-    auto collection = m_database[name];
+    auto collection = create_time_collection(name);
     using bsoncxx::builder::basic::kvp;
     using bsoncxx::builder::basic::make_document;
     collection.insert_one(
@@ -57,24 +57,28 @@ void logger::emit(const std::string &level, const std::string &name, const std::
             kvp("timestamp", bsoncxx::types::b_date{now}),
             kvp("message", make_document(
                                kvp("等级", level),
-                               kvp("消息", msg)))));
+                               kvp("消息", msg)
+                            )
+                )
+        )
+    );
     // 命令行输出
     fmt::text_style fmt_color;
     if(level == "DEBUG")
     {
-        fmt_color = fmt::emphasis::bold | fg(fmt::color::cyan);
+        fmt_color = fg(fmt::color::cyan);
     }   
     else if(level == "INFO")
     {
-        fmt_color = fmt::emphasis::bold | fg(fmt::color::green);
+        fmt_color = fg(fmt::color::green);
     }
     else if(level == "WARNNING")
     {
-        fmt_color = fmt::emphasis::bold | fg(fmt::color::yellow);
+        fmt_color = fg(fmt::color::yellow);
     }
     else if(level == "ERROR")
     {
-        fmt_color = fmt::emphasis::bold | fg(fmt::color::red);
+        fmt_color = fg(fmt::color::red);
     }
     
     fmt::print(
@@ -94,11 +98,12 @@ logger::logger()
     std::cout.tie(0);
 }
 
-void logger::create_time_collection(const std::string &name)
+mongocxx::collection logger::create_time_collection(const std::string &name)
 {
     // 检查集合是否创建
     bool is_exist = false;
     auto collections = m_database.list_collections();
+    mongocxx::collection temp;
     for (const auto &coll : collections)
     {
         if (coll["name"].get_string().value == name)
@@ -116,19 +121,16 @@ void logger::create_time_collection(const std::string &name)
             kvp("timeseries",
                 make_document(
                     kvp("timeField", "timestamp"),
-                    kvp("metaField", "message"))),
+                    kvp("metaField", "message")
+                )
+            ),
             kvp("expireAfterSeconds", 604800)
         );
-        m_database.create_collection(name, ts_info.view());
+        temp = m_database.create_collection(name, ts_info.view());
     }
-}
-
-std::string logger::get_time_str(const std::chrono::system_clock::time_point &input_time)
-{
-    std::stringstream ss;
-    std::time_t tt = std::chrono::system_clock::to_time_t(input_time);
-    // 使用本地时区
-    std::tm tm = *std::localtime(&tt);
-    ss << std::put_time(&tm, "%Y-%m-%d %H:%M:%S");
-    return ss.str();
+    else
+    {
+        temp = m_database[name];
+    }
+    return temp;
 }
