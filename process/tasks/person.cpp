@@ -17,7 +17,7 @@
 #include "logger.hpp"
 #include "pipeline.hpp"
 
-#define MY_NAME "设计变更成本统计"
+#define MY_NAME "人员基础数据统计"
 
 void main_logic()
 {
@@ -38,7 +38,7 @@ void main_logic()
     }
     catch (const std::exception &e)
     {
-        std::cerr << e.what() << '\n';
+        LOGGER.error(MY_NAME, e.what());
     }
 }
 

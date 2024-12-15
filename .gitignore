@@ -11,6 +11,7 @@ process/CTestTestfile.cmake
 process/_deps
 process/CMakeUserPresets.json
 process/build
+build
 .vscode
 process/3rd_party/**
 !process/3rd_party/占位文件，存放第三方文件

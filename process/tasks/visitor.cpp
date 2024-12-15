@@ -17,7 +17,7 @@
 #include "logger.hpp"
 #include "pipeline.hpp"
 
-#define MY_NAME "相关方填报数据处理"
+#define MY_NAME "外网访客系统数据处理"
 
 void main_logic()
 {
@@ -53,9 +53,9 @@ void main_logic()
                 form_results.emplace_back(ch);
             }
         } 
-        std::vector<bsoncxx::document::value> visitor_submit;
-        std::vector<bsoncxx::document::value> visitor_submit_accompany;
-        std::vector<bsoncxx::document::value> visitor_submit_tutelage;
+        tbb::concurrent_vector<bsoncxx::document::value> visitor_submit;
+        tbb::concurrent_vector<bsoncxx::document::value> visitor_submit_accompany;
+        tbb::concurrent_vector<bsoncxx::document::value> visitor_submit_tutelage;
         // ----------组织成二维表格的形式----------
         // 获取单选中的值
         auto get_swich_label = [](const nlohmann::json &input_json)
@@ -240,7 +240,7 @@ void main_logic()
     }
     catch (const std::exception &e)
     {
-        std::cerr << e.what() << '\n';
+        LOGGER.error(MY_NAME, e.what());
     }
 }
 
@@ -257,8 +257,11 @@ int main()
             main_logic();
             temp_pipe.send();
         }
-        LOGGER.debug(MY_NAME, "未接到信号，等待5秒");
-        std::this_thread::sleep_for(5000ms);
+        else
+        {
+            LOGGER.debug(MY_NAME, "未接到信号，等待5秒");
+            std::this_thread::sleep_for(5000ms);
+        }
     }    
     return 0;
 }

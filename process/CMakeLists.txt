@@ -105,13 +105,17 @@ set(ALL_UTILS_FILE
     utils/pipeline.cpp
 )
 
-# 访客系统数据
+# 外网访客系统数据处理
 add_executable(${PROJECT_NAME}_visitor tasks/visitor.cpp ${ALL_UTILS_FILE})
 target_link_libraries(${PROJECT_NAME}_visitor mongo::mongocxx_shared TBB::tbb fmt::fmt)
 
-# 设计变更成本统计
-add_executable(${PROJECT_NAME}_design_cost tasks/design_cost.cpp ${ALL_UTILS_FILE})
-target_link_libraries(${PROJECT_NAME}_design_cost mongo::mongocxx_shared TBB::tbb fmt::fmt)
+# 业联系统数据处理-拼接
+add_executable(${PROJECT_NAME}_bc_join tasks/business_connection/join.cpp ${ALL_UTILS_FILE})
+target_link_libraries(${PROJECT_NAME}_bc_join mongo::mongocxx_shared TBB::tbb fmt::fmt)
+
+# 人员基础数据统计
+add_executable(${PROJECT_NAME}_person tasks/person.cpp ${ALL_UTILS_FILE})
+target_link_libraries(${PROJECT_NAME}_person mongo::mongocxx_shared TBB::tbb fmt::fmt)
 
 foreach(FILE_I ${MONGO_CONCPP_DLLS})
     file(COPY ${FILE_I} DESTINATION "${PROJECT_SOURCE_DIR}/build/Release" FOLLOW_SYMLINK_CHAIN)

@@ -1,0 +1,77 @@
+[
+    {
+        "name": "相关方安全数据库同步",
+        "type": "nosql_to_nosql",
+        "next_name": [],
+        "source": {
+            "connect": "外网访客系统数据库",
+            "database": "heyform",
+            "table": "submissionmodels"
+        },
+        "target": {
+            "connect": "数据处理服务存储",
+            "database": "ods",
+            "table": "submissionmodels"
+        }
+    },
+    {
+        "name":"相关方填报数据处理",
+        "type":"process",
+        "next_name": ["相关方安全数据库同步"]
+    },
+    {
+        "name": "相关方安全结果同步_主表",
+        "type": "nosql_to_table",
+        "next_name": ["相关方填报数据处理"],
+        "source": {
+            "connect": "数据处理服务存储",
+            "database": "dm",
+            "table": "visitor_submit"
+        },
+        "target": {
+            "connect": "数据运用平台-测试库",
+            "table": "dm_visitor_submit"
+        }
+    },
+    {
+        "name": "相关方安全结果同步_同行人",
+        "type": "nosql_to_table",
+        "next_name": ["相关方填报数据处理"],
+        "source": {
+            "connect": "数据处理服务存储",
+            "database": "dm",
+            "table": "visitor_submit_accompany"
+        },
+        "target": {
+            "connect": "数据运用平台-测试库",
+            "table": "dm_visitor_submit_accompany"
+        }
+    },
+    {
+        "name": "相关方安全结果同步_监护人",
+        "type": "nosql_to_table",
+        "next_name": ["相关方填报数据处理"],
+        "source": {
+            "connect": "数据处理服务存储",
+            "database": "dm",
+            "table": "visitor_submit_tutelage"
+        },
+        "target": {
+            "connect": "数据运用平台-测试库",
+            "table": "dm_visitor_submit_tutelage"
+        }
+    },
+    {
+        "name": "唐渝用-alignment_file",
+        "type": "sql_to_table",
+        "next_name": [],
+        "source": {
+            "connect": "MES",
+            "sql": "tangyu/alignment_file.sql"
+        },
+        "target": {
+            "connect": "数据运用平台-测试库",
+            "table": "ods_alignment_file"
+        }
+    }
+]
