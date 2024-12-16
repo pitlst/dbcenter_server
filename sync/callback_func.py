@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np 
 
 def read_file(file_path: str) -> str:
     '''根据路径读取文件'''
@@ -7,7 +8,7 @@ def read_file(file_path: str) -> str:
     
 def trans_table_to_json(__data: pd.DataFrame) -> dict:
     '''将表格转换成字典'''
-    __data.replace({pd.NaT: None}, inplace=True)
+    __data.replace({pd.NaT: None, np.nan: None}, inplace=True)
     return __data.to_dict(orient='records')
 
 def trans_json_to_table(__data: dict) -> pd.DataFrame:

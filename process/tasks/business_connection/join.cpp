@@ -59,7 +59,7 @@ void logic_class_group()
                 form_results.emplace_back(bsoncxx::from_json(results_json.dump()));
             }
         };
-        if(!ods_bc_class_group.empty())
+        if (!ods_bc_class_group.empty())
         {
             LOGGER.info(MY_NAME, "并行处理数据");
             tbb::parallel_for(tbb::blocked_range<size_t>((size_t)0, ods_bc_class_group.size()), data_process);
@@ -135,7 +135,7 @@ void logic_technological_process()
                 form_results.emplace_back(bsoncxx::from_json(results_json.dump()));
             }
         };
-        if(!ods_bc_technological_process.empty())
+        if (!ods_bc_technological_process.empty())
         {
             LOGGER.info(MY_NAME, "并行处理数据");
             tbb::parallel_for(tbb::blocked_range<size_t>((size_t)0, ods_bc_technological_process.size()), data_process);
@@ -205,7 +205,7 @@ void logic_business_connection()
                 form_results.emplace_back(bsoncxx::from_json(results_json.dump()));
             }
         };
-        if(!ods_bc_business_connection.empty())
+        if (!ods_bc_business_connection.empty())
         {
             LOGGER.info(MY_NAME, "并行处理数据");
             tbb::parallel_for(tbb::blocked_range<size_t>((size_t)0, ods_bc_business_connection.size()), data_process);
@@ -269,7 +269,7 @@ void logic_design_change()
                 form_results.emplace_back(bsoncxx::from_json(results_json.dump()));
             }
         };
-        if(!ods_bc_design_change.empty())
+        if (!ods_bc_design_change.empty())
         {
             LOGGER.info(MY_NAME, "并行处理数据");
             tbb::parallel_for(tbb::blocked_range<size_t>((size_t)0, ods_bc_design_change.size()), data_process);
@@ -372,7 +372,7 @@ void logic_shop_execution()
                     {
                         nlohmann::json ch_copy = ch;
                         ch_copy["执行班组"] = nlohmann::json::array();
-                        for (const auto & ch_ : ods_bc_shop_execution_task_item_point_unit)
+                        for (const auto &ch_ : ods_bc_shop_execution_task_item_point_unit)
                         {
                             if (ch_["对应单据id"] == ch_copy["id"])
                             {
@@ -391,7 +391,7 @@ void logic_shop_execution()
                     {
                         nlohmann::json ch_copy = ch;
                         ch_copy["领料班组"] = nlohmann::json::array();
-                        for (const auto & ch_ : ods_bc_shop_execution_reworked_material_unit)
+                        for (const auto &ch_ : ods_bc_shop_execution_reworked_material_unit)
                         {
                             if (ch_["对应单据id"] == ch_copy["id"])
                             {
@@ -406,7 +406,7 @@ void logic_shop_execution()
                 form_results.emplace_back(bsoncxx::from_json(results_json.dump()));
             }
         };
-        if(!ods_bc_shop_execution.empty())
+        if (!ods_bc_shop_execution.empty())
         {
             LOGGER.info(MY_NAME, "并行处理数据");
             tbb::parallel_for(tbb::blocked_range<size_t>((size_t)0, ods_bc_shop_execution.size()), data_process);
@@ -429,9 +429,122 @@ void logic_shop_execution()
     }
 }
 
-void logic_design_change()
+void logic_design_change_execution()
 {
+    try
+    {
+        LOGGER.info(MY_NAME, "读取设计变更执行数据");
+        auto read_data = [](const std::string &db_name, const std::string &coll_name)
+        {
+            auto results_cursor = MONGO.get_db(db_name)[coll_name].find({});
+            std::vector<nlohmann::json> results;
+            for (auto &&ch : results_cursor)
+            {
+                nlohmann::json m_json = nlohmann::json::parse(bsoncxx::to_json(ch));
+                results.emplace_back(m_json);
+            }
+            return results;
+        };
+        auto ods_bc_design_change_execution = read_data("ods", "bc_design_change_execution");
+        auto ods_bc_design_change_execution_audit = read_data("ods", "bc_design_change_execution_audit");
+        auto ods_bc_design_change_execution_handle = read_data("ods", "bc_design_change_execution_handle");
+        auto ods_bc_design_change_execution_change_content = read_data("ods", "bc_design_change_execution_change_content");
+        auto ods_bc_design_change_execution_main_delivery_unit = read_data("ods", "bc_design_change_execution_main_delivery_unit");
+        auto ods_bc_design_change_execution_copy_delivery_unit = read_data("ods", "bc_design_change_execution_copy_delivery_unit");
+        auto ods_bc_design_change_execution_document_change = read_data("ods", "bc_design_change_execution_document_change");
+        auto ods_bc_design_change_execution_document_change_unit = read_data("ods", "bc_design_change_execution_document_change_unit");
+        auto ods_bc_design_change_execution_material_change = read_data("ods", "bc_design_change_execution_material_change");
+        auto ods_bc_design_change_execution_reworked_material = read_data("ods", "bc_design_change_execution_reworked_material");
+        auto ods_bc_design_change_execution_reworked_material_unit = read_data("ods", "bc_design_change_execution_reworked_material_unit");
 
+        tbb::concurrent_vector<bsoncxx::document::value> form_results;
+        auto data_process = [&](const tbb::blocked_range<size_t> &range)
+        {
+            for (size_t index = range.begin(); index != range.end(); ++index)
+            {
+                nlohmann::json results_json = ods_bc_design_change_execution[index];
+                results_json.erase("_id");
+                results_json["审核人分录"] = nlohmann::json::array();
+                for (const auto &ch : ods_bc_design_change_execution_audit)
+                {
+                    if (ch["id"] == results_json["id"])
+                    {
+                        nlohmann::json ch_copy = ch;
+                        ch_copy.erase("_id");
+                        ch_copy.erase("id");
+                        results_json["审核人分录"].emplace_back(ch_copy);
+                    }
+                }
+                results_json["经办人分录"] = nlohmann::json::array();
+                for (const auto &ch : ods_bc_design_change_execution_handle)
+                {
+                    if (ch["id"] == results_json["id"])
+                    {
+                        nlohmann::json ch_copy = ch;
+                        ch_copy.erase("_id");
+                        ch_copy.erase("id");
+                        results_json["经办人分录"].emplace_back(ch_copy);
+                    }
+                }
+                results_json["主送单位"] = nlohmann::json::array();
+                for (const auto &ch : ods_bc_design_change_execution_main_delivery_unit)
+                {
+                    if (ch["对应单据id"] == results_json["id"])
+                    {
+                        results_json["主送单位"].emplace_back(ch["对应基础资料id"]);
+                    }
+                }
+                results_json["抄送单位"] = nlohmann::json::array();
+                for (const auto &ch : ods_bc_design_change_execution_copy_delivery_unit)
+                {
+                    if (ch["对应单据id"] == results_json["id"])
+                    {
+                        results_json["抄送单位"].emplace_back(ch["对应基础资料id"]);
+                    }
+                }
+                results_json["返工物料"] = nlohmann::json::array();
+                for (const auto &ch : ods_bc_design_change_execution_reworked_material)
+                {
+                    if (ch["id"] == results_json["id"])
+                    {
+                        nlohmann::json ch_copy = ch;
+                        ch_copy["领料班组"] = nlohmann::json::array();
+                        for (const auto &ch_ : ods_bc_design_change_execution_reworked_material_unit)
+                        {
+                            if (ch_["对应单据id"] == ch_copy["id"])
+                            {
+                                ch_copy["领料班组"].emplace_back(ch_["对应基础资料id"]);
+                            }
+                        }
+                        ch_copy.erase("_id");
+                        ch_copy.erase("id");
+                        results_json["返工物料"].emplace_back(ch_copy);
+                    }
+                }
+                form_results.emplace_back(bsoncxx::from_json(results_json.dump()));
+            }
+        };
+        if (!ods_bc_design_change_execution.empty())
+        {
+            LOGGER.info(MY_NAME, "并行处理数据");
+            tbb::parallel_for(tbb::blocked_range<size_t>((size_t)0, ods_bc_design_change_execution.size()), data_process);
+            LOGGER.info(MY_NAME, "写入处理数据");
+            auto m_coll = MONGO.get_coll("dwd", "业联-设计变更执行");
+            if (!form_results.empty())
+            {
+                m_coll.drop();
+                m_coll.insert_many(form_results);
+            }
+        }
+        else
+        {
+            LOGGER.warn(MY_NAME, "源数据为空，不更新数据");
+        }
+    }
+    catch (const std::exception &e)
+    {
+        LOGGER.error(MY_NAME, e.what());
+    }
 }
 
 int main()
@@ -440,7 +553,7 @@ int main()
     auto temp_pipe = dbs::pipeline(MY_NAME);
     while (true)
     {
-        if(temp_pipe.recv())
+        if (temp_pipe.recv())
         {
             LOGGER.debug(MY_NAME, "接到触发信号，开始执行");
             logic_class_group();
@@ -448,6 +561,7 @@ int main()
             logic_business_connection();
             logic_design_change();
             logic_shop_execution();
+            logic_design_change_execution();
             temp_pipe.send();
         }
         else
@@ -455,6 +569,6 @@ int main()
             LOGGER.debug(MY_NAME, "未接到信号，等待5秒");
             std::this_thread::sleep_for(5000ms);
         }
-    }    
+    }
     return 0;
 }
