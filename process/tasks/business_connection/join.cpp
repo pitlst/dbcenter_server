@@ -318,9 +318,7 @@ void logic_shop_execution()
         auto ods_bc_shop_execution_reworked_material_unit = read_data("ods", "bc_shop_execution_reworked_material_unit");
         auto ods_bc_shop_execution_task_item_point = read_data("ods", "bc_shop_execution_task_item_point");
         auto ods_bc_shop_execution_task_item_point_unit = read_data("ods", "bc_shop_execution_task_item_point_unit");
-        auto ods_bc_shop_exeecution_material_preparation_technology = read_data("ods", "bc_shop_exeecution_material_preparation_technology");
-        auto ods_bc_shop_exeecution_material_preparation_technology_unit_class = read_data("ods", "bc_shop_exeecution_material_preparation_technology_unit_class");
-        auto ods_bc_shop_exeecution_material_preparation_technology_unit_process = read_data("ods", "bc_shop_exeecution_material_preparation_technology_unit_process");
+        // 城轨事业部的业联暂时不关注备料工艺
 
         tbb::concurrent_vector<bsoncxx::document::value> form_results;
         auto data_process = [&](const tbb::blocked_range<size_t> &range)
@@ -367,6 +365,44 @@ void logic_shop_execution()
                         results_json["抄送单位"].emplace_back(ch["对应基础资料id"]);
                     }
                 }
+                results_json["任务项点"] = nlohmann::json::array();
+                for (const auto &ch : ods_bc_shop_execution_task_item_point)
+                {
+                    if (ch["id"] == results_json["id"])
+                    {
+                        nlohmann::json ch_copy = ch;
+                        ch_copy["执行班组"] = nlohmann::json::array();
+                        for (const auto & ch_ : ods_bc_shop_execution_task_item_point_unit)
+                        {
+                            if (ch_["对应单据id"] == ch_copy["id"])
+                            {
+                                ch_copy["执行班组"].emplace_back(ch_["对应基础资料id"]);
+                            }
+                        }
+                        ch_copy.erase("_id");
+                        ch_copy.erase("id");
+                        results_json["任务项点"].emplace_back(ch_copy);
+                    }
+                }
+                results_json["返工物料"] = nlohmann::json::array();
+                for (const auto &ch : ods_bc_shop_execution_reworked_material)
+                {
+                    if (ch["id"] == results_json["id"])
+                    {
+                        nlohmann::json ch_copy = ch;
+                        ch_copy["领料班组"] = nlohmann::json::array();
+                        for (const auto & ch_ : ods_bc_shop_execution_reworked_material_unit)
+                        {
+                            if (ch_["对应单据id"] == ch_copy["id"])
+                            {
+                                ch_copy["领料班组"].emplace_back(ch_["对应基础资料id"]);
+                            }
+                        }
+                        ch_copy.erase("_id");
+                        ch_copy.erase("id");
+                        results_json["返工物料"].emplace_back(ch_copy);
+                    }
+                }
                 form_results.emplace_back(bsoncxx::from_json(results_json.dump()));
             }
         };
@@ -375,7 +411,7 @@ void logic_shop_execution()
             LOGGER.info(MY_NAME, "并行处理数据");
             tbb::parallel_for(tbb::blocked_range<size_t>((size_t)0, ods_bc_shop_execution.size()), data_process);
             LOGGER.info(MY_NAME, "写入处理数据");
-            auto m_coll = MONGO.get_coll("dwd", "业联-设计变更");
+            auto m_coll = MONGO.get_coll("dwd", "业联-车间执行单");
             if (!form_results.empty())
             {
                 m_coll.drop();
@@ -393,6 +429,11 @@ void logic_shop_execution()
     }
 }
 
+void logic_design_change()
+{
+
+}
+
 int main()
 {
     using namespace std::chrono_literals;
@@ -406,6 +447,7 @@ int main()
             logic_technological_process();
             logic_business_connection();
             logic_design_change();
+            logic_shop_execution();
             temp_pipe.send();
         }
         else

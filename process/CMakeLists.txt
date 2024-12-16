@@ -113,6 +113,10 @@ target_link_libraries(${PROJECT_NAME}_visitor mongo::mongocxx_shared TBB::tbb fm
 add_executable(${PROJECT_NAME}_bc_join tasks/business_connection/join.cpp ${ALL_UTILS_FILE})
 target_link_libraries(${PROJECT_NAME}_bc_join mongo::mongocxx_shared TBB::tbb fmt::fmt)
 
+# 业联系统数据处理-拼接
+add_executable(${PROJECT_NAME}_bc_process tasks/business_connection/process.cpp ${ALL_UTILS_FILE})
+target_link_libraries(${PROJECT_NAME}_bc_process mongo::mongocxx_shared TBB::tbb fmt::fmt)
+
 # 人员基础数据统计
 add_executable(${PROJECT_NAME}_person tasks/person.cpp ${ALL_UTILS_FILE})
 target_link_libraries(${PROJECT_NAME}_person mongo::mongocxx_shared TBB::tbb fmt::fmt)
@@ -128,15 +132,12 @@ endforeach(FILE_I)
 #   测试执行测试
 #--------------------------------------------------------------------------------------#
 # mongo链接测试
-add_executable(test_mongo_connect tests/test_mongo_connect.cpp  ${ALL_SOURCE_FILE})
-target_link_libraries(test_mongo_connect mongo::mongocxx_shared)
+add_executable(test_mongo_connect tests/test_mongo_connect.cpp  ${ALL_UTILS_FILE})
+target_link_libraries(test_mongo_connect mongo::mongocxx_shared fmt::fmt)
 # logger测试
-add_executable(test_logger tests/test_logger.cpp  ${ALL_SOURCE_FILE})
-target_link_libraries(test_logger mongo::mongocxx_shared)
+add_executable(test_logger tests/test_logger.cpp  ${ALL_UTILS_FILE})
+target_link_libraries(test_logger mongo::mongocxx_shared fmt::fmt)
 # data测试
-add_executable(test_data tests/test_data.cpp  ${ALL_SOURCE_FILE})
-target_link_libraries(test_data mongo::mongocxx_shared)
-# 线程池测试
-add_executable(test_thread_pool tests/test_thread_pool.cpp  ${ALL_SOURCE_FILE})
-target_link_libraries(test_thread_pool mongo::mongocxx_shared)
+add_executable(test_data tests/test_data.cpp  ${ALL_UTILS_FILE})
+target_link_libraries(test_data mongo::mongocxx_shared fmt::fmt)
 
