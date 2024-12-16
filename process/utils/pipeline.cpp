@@ -13,7 +13,7 @@ pipeline::pipeline(const std::string &node_name) : m_name(node_name)
     // 检查集合是否创建
     bool recv_is_exist = false;
     bool send_is_exist = false;
-    for (const auto &coll : m_database.list_collections())
+    for (const auto &coll : this->m_database.list_collections())
     {
         recv_is_exist = recv_is_exist || coll["name"].get_string().value == m_send_name;
         send_is_exist = send_is_exist || coll["name"].get_string().value == m_recv_name;
@@ -27,14 +27,14 @@ pipeline::pipeline(const std::string &node_name) : m_name(node_name)
         throw std::logic_error("消息队列对应的数据库未创建");
     }
     // 获取集合
-    m_send_coll_ptr = std::make_unique<mongocxx::collection>(m_database[m_send_name]);
-    m_recv_coll_ptr = std::make_unique<mongocxx::collection>(m_database[m_recv_name]);
+    this->m_send_coll_ptr = std::make_unique<mongocxx::collection>(this->m_database[m_send_name]);
+    this->m_recv_coll_ptr = std::make_unique<mongocxx::collection>(this->m_database[m_recv_name]);
 }
 
 bool pipeline::recv()
 {
     bool has_value = false;
-    auto cursor = m_send_coll_ptr->find(
+    auto cursor = this->m_send_coll_ptr->find(
         make_document(
             kvp("node_name", m_name),
             kvp("is_process", false)
@@ -43,7 +43,7 @@ bool pipeline::recv()
     has_value = cursor.begin() != cursor.end();   
     if (has_value)
     {
-        m_send_coll_ptr->update_many(
+        this->m_send_coll_ptr->update_many(
             make_document(kvp("node_name", m_name)),
             make_document(kvp("$set", make_document(kvp("is_process", true))))
         );
@@ -54,7 +54,7 @@ bool pipeline::recv()
 void pipeline::send()
 {
     auto now = std::chrono::system_clock::now();
-    m_recv_coll_ptr->insert_one(
+    this->m_recv_coll_ptr->insert_one(
         make_document(
             kvp("timestamp", bsoncxx::types::b_date{now}),
             kvp("node_name", m_name),

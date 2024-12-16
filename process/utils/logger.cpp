@@ -27,29 +27,29 @@ logger &logger::instance()
 // 不同等级日志
 void logger::debug(const std::string &name, const std::string &msg)
 {
-    return emit("DEBUG", name, msg);
+    return this->emit("DEBUG", name, msg);
 }
 
 void logger::info(const std::string &name, const std::string &msg)
 {
-    return emit("INFO", name, msg);
+    return this->emit("INFO", name, msg);
 }
 
 void logger::warn(const std::string &name, const std::string &msg)
 {
-    return emit("WARNNING", name, msg);
+    return this->emit("WARNNING", name, msg);
 }
 
 void logger::error(const std::string &name, const std::string &msg)
 {
-    return emit("ERROR", name, msg);
+    return this->emit("ERROR", name, msg);
 }
 
 void logger::emit(const std::string &level, const std::string &name, const std::string &msg)
 {
     auto now = std::chrono::system_clock::now();
     // 插入数据库
-    auto collection = create_time_collection(name);
+    auto collection = this->create_time_collection(name);
     using bsoncxx::builder::basic::kvp;
     using bsoncxx::builder::basic::make_document;
     collection.insert_one(

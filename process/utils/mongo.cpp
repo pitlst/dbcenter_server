@@ -17,8 +17,8 @@ mongo_connect::mongo_connect()
     auto ip = toml::get<std::string>(data["ip"]);
     auto port = std::to_string(toml::get<int>(data["port"]));
     mongocxx::uri url("mongodb://" + ip + ":" + port + "/");
-    m_client_ptr = std::make_unique<mongocxx::client>(url);
-    if(m_client_ptr == nullptr)
+    this->m_client_ptr = std::make_unique<mongocxx::client>(url);
+    if(this->m_client_ptr == nullptr)
     {
         std::string temp_err = "获取mongo数据库连接失败，连接池指针为空";
         std::cerr << temp_err << '\n';
@@ -28,23 +28,23 @@ mongo_connect::mongo_connect()
 
 mongo_connect::~mongo_connect()
 {
-    m_data.clear();
-    m_client_ptr.release();
-    m_client_ptr = nullptr;    
+    this->m_data.clear();
+    this->m_client_ptr.release();
+    this->m_client_ptr = nullptr;    
 }
 
 mongocxx::database &mongo_connect::get_db(const std::string & db_name)
 {
-    if (m_data.find(db_name) == m_data.end())
+    if (this->m_data.find(db_name) == this->m_data.end())
     {
-        m_data.emplace(db_name, (*m_client_ptr)[db_name]);
+        this->m_data.emplace(db_name, (*(this->m_client_ptr))[db_name]);
     }
-    return m_data[db_name];
+    return this->m_data[db_name];
 }
 
 mongocxx::collection mongo_connect::get_coll(const std::string &db_name, const std::string &coll_name)
 {
-    auto m_db = get_db(db_name);
+    auto m_db = this->get_db(db_name);
     auto collections = m_db.list_collections();
     bool is_exist = false;
     for (const auto &coll : collections)
