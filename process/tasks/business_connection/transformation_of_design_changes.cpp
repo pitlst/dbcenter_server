@@ -17,7 +17,7 @@
 #include "logger.hpp"
 #include "pipeline.hpp"
 
-#define MY_NAME "业联系统数据处理-计算"
+#define MY_NAME "业联系统数据处理-设计变更转化统计"
 
 void main_logic()
 {
@@ -35,6 +35,9 @@ void main_logic()
             }
             return results;
         };
+        LOGGER.info(MY_NAME, "读取数据");
+        auto ods_bc_class_group = read_data("dwd", "bc_class_group");
+
     }
     catch (const std::exception &e)
     {

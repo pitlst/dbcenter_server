@@ -114,8 +114,8 @@ add_executable(${PROJECT_NAME}_bc_join tasks/business_connection/join.cpp ${ALL_
 target_link_libraries(${PROJECT_NAME}_bc_join mongo::mongocxx_shared TBB::tbb fmt::fmt)
 
 # 业联系统数据处理-拼接
-add_executable(${PROJECT_NAME}_bc_process tasks/business_connection/process.cpp ${ALL_UTILS_FILE})
-target_link_libraries(${PROJECT_NAME}_bc_process mongo::mongocxx_shared TBB::tbb fmt::fmt)
+add_executable(${PROJECT_NAME}_bc_transformation_of_design_changes tasks/business_connection/transformation_of_design_changes.cpp ${ALL_UTILS_FILE})
+target_link_libraries(${PROJECT_NAME}_bc_transformation_of_design_changes mongo::mongocxx_shared TBB::tbb fmt::fmt)
 
 # 人员基础数据统计
 add_executable(${PROJECT_NAME}_person tasks/person.cpp ${ALL_UTILS_FILE})

@@ -502,23 +502,64 @@ void logic_design_change_execution()
                         results_json["抄送单位"].emplace_back(ch["对应基础资料id"]);
                     }
                 }
-                results_json["返工物料"] = nlohmann::json::array();
+                results_json["变更内容"] = nlohmann::json::array();
+                for (const auto &ch : ods_bc_design_change_execution_change_content)
+                {
+                    if (ch["id"] == results_json["id"])
+                    {
+                        nlohmann::json ch_copy = ch;
+                        ch_copy.erase("_id");
+                        ch_copy.erase("id");
+                        results_json["变更内容"].emplace_back(ch_copy);
+                    }
+                }
+                results_json["返工工艺"] = nlohmann::json::array();
                 for (const auto &ch : ods_bc_design_change_execution_reworked_material)
                 {
                     if (ch["id"] == results_json["id"])
                     {
                         nlohmann::json ch_copy = ch;
-                        ch_copy["领料班组"] = nlohmann::json::array();
+                        ch_copy["执行班组"] = nlohmann::json::array();
                         for (const auto &ch_ : ods_bc_design_change_execution_reworked_material_unit)
                         {
                             if (ch_["对应单据id"] == ch_copy["id"])
                             {
-                                ch_copy["领料班组"].emplace_back(ch_["对应基础资料id"]);
+                                ch_copy["执行班组"].emplace_back(ch_["对应基础资料id"]);
                             }
                         }
                         ch_copy.erase("_id");
                         ch_copy.erase("id");
-                        results_json["返工物料"].emplace_back(ch_copy);
+                        results_json["返工工艺"].emplace_back(ch_copy);
+                    }
+                }
+                results_json["物料变更"] = nlohmann::json::array();
+                for (const auto &ch : ods_bc_design_change_execution_material_change)
+                {
+                    if (ch["id"] == results_json["id"])
+                    {
+                        nlohmann::json ch_copy = ch;
+                        ch_copy.erase("_id");
+                        ch_copy.erase("id");
+                        results_json["物料变更"].emplace_back(ch_copy);
+                    }
+                }
+                results_json["文件变更"] = nlohmann::json::array();
+                for (const auto &ch : ods_bc_design_change_execution_document_change)
+                {
+                    if (ch["id"] == results_json["id"])
+                    {
+                        nlohmann::json ch_copy = ch;
+                        ch_copy["发布班组"] = nlohmann::json::array();
+                        for (const auto &ch_ : ods_bc_design_change_execution_document_change_unit)
+                        {
+                            if (ch_["对应单据id"] == ch_copy["id"])
+                            {
+                                ch_copy["执行班组"].emplace_back(ch_["对应基础资料id"]);
+                            }
+                        }
+                        ch_copy.erase("_id");
+                        ch_copy.erase("id");
+                        results_json["文件变更"].emplace_back(ch_copy);
                     }
                 }
                 form_results.emplace_back(bsoncxx::from_json(results_json.dump()));
