@@ -1,6 +1,10 @@
-#include "mongocxx/uri.hpp"
-
 #include "mongo.hpp"
+
+#include "bsoncxx/builder/basic/array.hpp"
+#include "bsoncxx/builder/basic/document.hpp"
+#include "bsoncxx/builder/basic/kvp.hpp"
+#include "bsoncxx/types.hpp"
+#include "bsoncxx/json.hpp"
 
 using namespace dbs;
 
@@ -17,8 +21,8 @@ mongo_connect::mongo_connect()
     auto ip = toml::get<std::string>(data["ip"]);
     auto port = std::to_string(toml::get<int>(data["port"]));
     mongocxx::uri url("mongodb://" + ip + ":" + port + "/");
-    this->m_client_ptr = std::make_unique<mongocxx::client>(url);
-    if(this->m_client_ptr == nullptr)
+    this->m_pool_ptr = std::make_unique<mongocxx::pool>(url);
+    if (this->m_pool_ptr == nullptr)
     {
         std::string temp_err = "获取mongo数据库连接失败，连接池指针为空";
         std::cerr << temp_err << '\n';
@@ -28,37 +32,28 @@ mongo_connect::mongo_connect()
 
 mongo_connect::~mongo_connect()
 {
-    this->m_data.clear();
-    this->m_client_ptr.release();
-    this->m_client_ptr = nullptr;    
+    this->m_pool_ptr.release();
+    this->m_pool_ptr = nullptr;
 }
 
-mongocxx::database &mongo_connect::get_db(const std::string & db_name)
+mongocxx::v_noabi::pool::entry mongo_connect::inithread_client()
 {
-    if (this->m_data.find(db_name) == this->m_data.end())
-    {
-        this->m_data.emplace(db_name, (*(this->m_client_ptr))[db_name]);
-    }
-    return this->m_data[db_name];
+    return m_pool_ptr->acquire();
 }
 
-mongocxx::collection mongo_connect::get_coll(const std::string &db_name, const std::string &coll_name)
+mongocxx::collection mongo_connect::get_coll(mongocxx::v_noabi::pool::entry &client_, const std::string &db_name, const std::string &coll_name) const
 {
-    auto m_db = this->get_db(db_name);
-    auto collections = m_db.list_collections();
-    bool is_exist = false;
-    for (const auto &coll : collections)
+    return client_[db_name][coll_name];
+}
+
+std::vector<nlohmann::json> mongo_connect::get_coll_data(mongocxx::v_noabi::pool::entry &client_, const std::string &db_name, const std::string &coll_name) const
+{
+    auto results_cursor = this->get_coll(client_, db_name, coll_name).find({});
+    std::vector<nlohmann::json> results;
+    for (auto &&ch : results_cursor)
     {
-        if (coll["name"].get_string().value == coll_name)
-        {
-            is_exist = true;
-            break;
-        }
+        nlohmann::json m_json = nlohmann::json::parse(bsoncxx::to_json(ch));
+        results.emplace_back(m_json);
     }
-    if (!is_exist)
-    {
-        // 创建集合
-        m_db.create_collection(coll_name);
-    }
-    return m_db[coll_name];
+    return results;
 }

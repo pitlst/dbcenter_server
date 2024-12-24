@@ -105,3 +105,11 @@ std::vector<std::string> dbs::split_string(const std::string &str, const std::st
 
     return tokens;
 }
+
+std::string dbs::get_thread_id()
+{
+    std::stringstream ss;
+    std::thread::id id = std::this_thread::get_id();
+    ss << std::hash<std::thread::id>()(id);
+    return ss.str();
+}   

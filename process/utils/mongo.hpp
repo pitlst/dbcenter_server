@@ -4,6 +4,7 @@
 #include <string>
 #include <memory>
 #include <map>
+#include <thread>
 
 #include "mongocxx/client.hpp"
 #include "mongocxx/instance.hpp"
@@ -11,6 +12,9 @@
 #include "mongocxx/uri.hpp"
 
 #include "toml.hpp"
+#include "json.hpp"
+
+#include "general.hpp"
 
 namespace dbs
 {
@@ -21,11 +25,13 @@ namespace dbs
     public:
         // 获取单实例对象
         static mongo_connect &instance();
-        // 获取数据库
-        mongocxx::database &get_db(const std::string &db_name);
+        // 在对应线程初始化以获取连接
+        mongocxx::v_noabi::pool::entry inithread_client();
+
         // 获取集合
-        mongocxx::collection get_coll(const std::string &db_name, const std::string &coll_name);
-        // 将集合转换为
+        mongocxx::collection get_coll(mongocxx::v_noabi::pool::entry & client_, const std::string &db_name, const std::string &coll_name) const;
+        // 获取集合的数据
+        std::vector<nlohmann::json> get_coll_data(mongocxx::v_noabi::pool::entry & client_, const std::string &db_name, const std::string &coll_name) const;
 
     private:
         // 禁止外部构造与析构
@@ -34,10 +40,8 @@ namespace dbs
 
         // 数据库驱动
         mongocxx::instance m_instance;
-        // 数据库连接
-        std::unique_ptr<mongocxx::client> m_client_ptr = nullptr;
-        // 所有获取过的数据库对象的保存，用于保证生命周期
-        std::map<std::string, mongocxx::database> m_data;
+        // 数据库连接池
+        std::unique_ptr<mongocxx::pool> m_pool_ptr = nullptr;
     };
 }
 

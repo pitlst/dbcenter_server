@@ -24,19 +24,8 @@ void logic_class_group()
     {
         LOGGER.info(MY_NAME, "读取班组数据");
         // ----------从数据库读取数据----------
-        auto read_data = [](const std::string &db_name, const std::string &coll_name)
-        {
-            auto results_cursor = MONGO.get_db(db_name)[coll_name].find({});
-            std::vector<nlohmann::json> results;
-            for (auto &&ch : results_cursor)
-            {
-                nlohmann::json m_json = nlohmann::json::parse(bsoncxx::to_json(ch));
-                results.emplace_back(m_json);
-            }
-            return results;
-        };
-        auto ods_bc_class_group = read_data("ods", "bc_class_group");
-        auto ods_bc_class_group_entry = read_data("ods", "bc_class_group_entry");
+        auto ods_bc_class_group = MONGO.get_coll_data("ods", "bc_class_group");
+        auto ods_bc_class_group_entry = MONGO.get_coll_data("ods", "bc_class_group_entry");
         // 因为金蝶云苍穹的id在内容变更后不会更改，所以无法做增量计算，每一次都只能全量复写
         tbb::concurrent_vector<bsoncxx::document::value> form_results;
         auto data_process = [&](const tbb::blocked_range<size_t> &range)
@@ -88,20 +77,9 @@ void logic_technological_process()
     {
         LOGGER.info(MY_NAME, "读取工艺流程数据");
         // ----------从数据库读取数据----------
-        auto read_data = [](const std::string &db_name, const std::string &coll_name)
-        {
-            auto results_cursor = MONGO.get_db(db_name)[coll_name].find({});
-            std::vector<nlohmann::json> results;
-            for (auto &&ch : results_cursor)
-            {
-                nlohmann::json m_json = nlohmann::json::parse(bsoncxx::to_json(ch));
-                results.emplace_back(m_json);
-            }
-            return results;
-        };
-        auto ods_bc_technological_process = read_data("ods", "bc_technological_process");
-        auto ods_bc_technological_process_change = read_data("ods", "bc_technological_process_change");
-        auto ods_bc_technological_process_flow = read_data("ods", "bc_technological_process_flow");
+        auto ods_bc_technological_process = MONGO.get_coll_data("ods", "bc_technological_process");
+        auto ods_bc_technological_process_change = MONGO.get_coll_data("ods", "bc_technological_process_change");
+        auto ods_bc_technological_process_flow = MONGO.get_coll_data("ods", "bc_technological_process_flow");
 
         tbb::concurrent_vector<bsoncxx::document::value> form_results;
         auto data_process = [&](const tbb::blocked_range<size_t> &range)
@@ -164,20 +142,9 @@ void logic_business_connection()
     {
         LOGGER.info(MY_NAME, "读取业务联系数据");
         // ----------从数据库读取数据----------
-        auto read_data = [](const std::string &db_name, const std::string &coll_name)
-        {
-            auto results_cursor = MONGO.get_db(db_name)[coll_name].find({});
-            std::vector<nlohmann::json> results;
-            for (auto &&ch : results_cursor)
-            {
-                nlohmann::json m_json = nlohmann::json::parse(bsoncxx::to_json(ch));
-                results.emplace_back(m_json);
-            }
-            return results;
-        };
-        auto ods_bc_business_connection = read_data("ods", "bc_business_connection");
-        auto ods_bc_business_connection_main_delivery_unit = read_data("ods", "bc_business_connection_main_delivery_unit");
-        auto ods_bc_business_connection_copy_delivery_unit = read_data("ods", "bc_business_connection_copy_delivery_unit");
+        auto ods_bc_business_connection = MONGO.get_coll_data("ods", "bc_business_connection");
+        auto ods_bc_business_connection_main_delivery_unit = MONGO.get_coll_data("ods", "bc_business_connection_main_delivery_unit");
+        auto ods_bc_business_connection_copy_delivery_unit = MONGO.get_coll_data("ods", "bc_business_connection_copy_delivery_unit");
 
         tbb::concurrent_vector<bsoncxx::document::value> form_results;
         auto data_process = [&](const tbb::blocked_range<size_t> &range)
@@ -234,19 +201,8 @@ void logic_design_change()
     {
         LOGGER.info(MY_NAME, "读取设计变更数据");
         // ----------从数据库读取数据----------
-        auto read_data = [](const std::string &db_name, const std::string &coll_name)
-        {
-            auto results_cursor = MONGO.get_db(db_name)[coll_name].find({});
-            std::vector<nlohmann::json> results;
-            for (auto &&ch : results_cursor)
-            {
-                nlohmann::json m_json = nlohmann::json::parse(bsoncxx::to_json(ch));
-                results.emplace_back(m_json);
-            }
-            return results;
-        };
-        auto ods_bc_design_change = read_data("ods", "bc_design_change");
-        auto ods_bc_design_change_entry = read_data("ods", "bc_design_change_entry");
+        auto ods_bc_design_change = MONGO.get_coll_data("ods", "bc_design_change");
+        auto ods_bc_design_change_entry = MONGO.get_coll_data("ods", "bc_design_change_entry");
 
         tbb::concurrent_vector<bsoncxx::document::value> form_results;
         auto data_process = [&](const tbb::blocked_range<size_t> &range)
@@ -298,26 +254,15 @@ void logic_shop_execution()
     {
         LOGGER.info(MY_NAME, "读取车间执行数据");
         // ----------从数据库读取数据----------
-        auto read_data = [](const std::string &db_name, const std::string &coll_name)
-        {
-            auto results_cursor = MONGO.get_db(db_name)[coll_name].find({});
-            std::vector<nlohmann::json> results;
-            for (auto &&ch : results_cursor)
-            {
-                nlohmann::json m_json = nlohmann::json::parse(bsoncxx::to_json(ch));
-                results.emplace_back(m_json);
-            }
-            return results;
-        };
-        auto ods_bc_shop_execution = read_data("ods", "bc_shop_execution");
-        auto ods_bc_shop_execution_audit = read_data("ods", "bc_shop_execution_audit");
-        auto ods_bc_shop_execution_handle = read_data("ods", "bc_shop_execution_handle");
-        auto ods_bc_shop_execution_copy_delivery_unit = read_data("ods", "bc_shop_execution_copy_delivery_unit");
-        auto ods_bc_shop_execution_main_delivery_unit = read_data("ods", "bc_shop_execution_main_delivery_unit");
-        auto ods_bc_shop_execution_reworked_material = read_data("ods", "bc_shop_execution_reworked_material");
-        auto ods_bc_shop_execution_reworked_material_unit = read_data("ods", "bc_shop_execution_reworked_material_unit");
-        auto ods_bc_shop_execution_task_item_point = read_data("ods", "bc_shop_execution_task_item_point");
-        auto ods_bc_shop_execution_task_item_point_unit = read_data("ods", "bc_shop_execution_task_item_point_unit");
+        auto ods_bc_shop_execution = MONGO.get_coll_data("ods", "bc_shop_execution");
+        auto ods_bc_shop_execution_audit = MONGO.get_coll_data("ods", "bc_shop_execution_audit");
+        auto ods_bc_shop_execution_handle = MONGO.get_coll_data("ods", "bc_shop_execution_handle");
+        auto ods_bc_shop_execution_copy_delivery_unit = MONGO.get_coll_data("ods", "bc_shop_execution_copy_delivery_unit");
+        auto ods_bc_shop_execution_main_delivery_unit = MONGO.get_coll_data("ods", "bc_shop_execution_main_delivery_unit");
+        auto ods_bc_shop_execution_reworked_material = MONGO.get_coll_data("ods", "bc_shop_execution_reworked_material");
+        auto ods_bc_shop_execution_reworked_material_unit = MONGO.get_coll_data("ods", "bc_shop_execution_reworked_material_unit");
+        auto ods_bc_shop_execution_task_item_point = MONGO.get_coll_data("ods", "bc_shop_execution_task_item_point");
+        auto ods_bc_shop_execution_task_item_point_unit = MONGO.get_coll_data("ods", "bc_shop_execution_task_item_point_unit");
         // 城轨事业部的业联暂时不关注备料工艺
 
         tbb::concurrent_vector<bsoncxx::document::value> form_results;
@@ -434,28 +379,17 @@ void logic_design_change_execution()
     try
     {
         LOGGER.info(MY_NAME, "读取设计变更执行数据");
-        auto read_data = [](const std::string &db_name, const std::string &coll_name)
-        {
-            auto results_cursor = MONGO.get_db(db_name)[coll_name].find({});
-            std::vector<nlohmann::json> results;
-            for (auto &&ch : results_cursor)
-            {
-                nlohmann::json m_json = nlohmann::json::parse(bsoncxx::to_json(ch));
-                results.emplace_back(m_json);
-            }
-            return results;
-        };
-        auto ods_bc_design_change_execution = read_data("ods", "bc_design_change_execution");
-        auto ods_bc_design_change_execution_audit = read_data("ods", "bc_design_change_execution_audit");
-        auto ods_bc_design_change_execution_handle = read_data("ods", "bc_design_change_execution_handle");
-        auto ods_bc_design_change_execution_change_content = read_data("ods", "bc_design_change_execution_change_content");
-        auto ods_bc_design_change_execution_main_delivery_unit = read_data("ods", "bc_design_change_execution_main_delivery_unit");
-        auto ods_bc_design_change_execution_copy_delivery_unit = read_data("ods", "bc_design_change_execution_copy_delivery_unit");
-        auto ods_bc_design_change_execution_document_change = read_data("ods", "bc_design_change_execution_document_change");
-        auto ods_bc_design_change_execution_document_change_unit = read_data("ods", "bc_design_change_execution_document_change_unit");
-        auto ods_bc_design_change_execution_material_change = read_data("ods", "bc_design_change_execution_material_change");
-        auto ods_bc_design_change_execution_reworked_material = read_data("ods", "bc_design_change_execution_reworked_material");
-        auto ods_bc_design_change_execution_reworked_material_unit = read_data("ods", "bc_design_change_execution_reworked_material_unit");
+        auto ods_bc_design_change_execution = MONGO.get_coll_data("ods", "bc_design_change_execution");
+        auto ods_bc_design_change_execution_audit = MONGO.get_coll_data("ods", "bc_design_change_execution_audit");
+        auto ods_bc_design_change_execution_handle = MONGO.get_coll_data("ods", "bc_design_change_execution_handle");
+        auto ods_bc_design_change_execution_change_content = MONGO.get_coll_data("ods", "bc_design_change_execution_change_content");
+        auto ods_bc_design_change_execution_main_delivery_unit = MONGO.get_coll_data("ods", "bc_design_change_execution_main_delivery_unit");
+        auto ods_bc_design_change_execution_copy_delivery_unit = MONGO.get_coll_data("ods", "bc_design_change_execution_copy_delivery_unit");
+        auto ods_bc_design_change_execution_document_change = MONGO.get_coll_data("ods", "bc_design_change_execution_document_change");
+        auto ods_bc_design_change_execution_document_change_unit = MONGO.get_coll_data("ods", "bc_design_change_execution_document_change_unit");
+        auto ods_bc_design_change_execution_material_change = MONGO.get_coll_data("ods", "bc_design_change_execution_material_change");
+        auto ods_bc_design_change_execution_reworked_material = MONGO.get_coll_data("ods", "bc_design_change_execution_reworked_material");
+        auto ods_bc_design_change_execution_reworked_material_unit = MONGO.get_coll_data("ods", "bc_design_change_execution_reworked_material_unit");
 
         tbb::concurrent_vector<bsoncxx::document::value> form_results;
         auto data_process = [&](const tbb::blocked_range<size_t> &range)
@@ -597,12 +531,15 @@ int main()
         if (temp_pipe.recv())
         {
             LOGGER.debug(MY_NAME, "接到触发信号，开始执行");
-            logic_class_group();
-            logic_technological_process();
-            logic_business_connection();
-            logic_design_change();
-            logic_shop_execution();
-            logic_design_change_execution();
+            tbb::parallel_invoke(
+                logic_class_group,
+                logic_technological_process
+                // logic_business_connection,
+                // logic_design_change,
+                // logic_shop_execution,
+                // logic_design_change_execution
+            );
+            // logic_class_group();
             temp_pipe.send();
         }
         else

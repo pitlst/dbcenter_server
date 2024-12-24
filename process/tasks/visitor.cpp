@@ -23,21 +23,10 @@ void main_logic()
 {
     try
     {
-        // ----------从数据库读取数据----------
-        auto read_data = [](const std::string &db_name, const std::string &coll_name)
-        {
-            auto results_cursor = MONGO.get_db(db_name)[coll_name].find({});
-            std::vector<nlohmann::json> results;
-            for (auto &&ch : results_cursor)
-            {
-                nlohmann::json m_json = nlohmann::json::parse(bsoncxx::to_json(ch));
-                results.emplace_back(m_json);
-            }
-            return results;
-        };
         LOGGER.info(MY_NAME, "读取数据");
-        auto ods_results = read_data("ods", "submissionmodels");
-        auto dm_results = read_data("dm", "visitor_submit");
+        // ----------从数据库读取数据----------
+        auto ods_results = MONGO.get_coll_data("ods", "submissionmodels");
+        auto dm_results = MONGO.get_coll_data("dm", "visitor_submit");
         // ----------检查数据是否更新----------
         std::vector<nlohmann::json> old_source_id;
         for (const auto & ch : dm_results)

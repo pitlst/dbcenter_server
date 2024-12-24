@@ -24,17 +24,6 @@ void main_logic()
     try
     {
         // ----------从数据库读取数据----------
-        auto read_data = [](const std::string &db_name, const std::string &coll_name)
-        {
-            auto results_cursor = MONGO.get_db(db_name)[coll_name].find({});
-            std::vector<nlohmann::json> results;
-            for (auto &&ch : results_cursor)
-            {
-                nlohmann::json m_json = nlohmann::json::parse(bsoncxx::to_json(ch));
-                results.emplace_back(m_json);
-            }
-            return results;
-        };
     }
     catch (const std::exception &e)
     {

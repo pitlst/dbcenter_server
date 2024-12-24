@@ -2,11 +2,12 @@ import os
 import time
 import subprocess
 
-
 if __name__ == "__main__":
     results = []
     PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
-    # 先启动调度器
+    # 启动web服务
+    
+    # 启动调度器
     scheduler_path = os.path.join(PROJECT_PATH, "scheduler")
     results.append(subprocess.Popen(['python', os.path.join(scheduler_path, "main.py")], 
                                     cwd=scheduler_path, 
@@ -15,7 +16,7 @@ if __name__ == "__main__":
                                     )
                 )
     time.sleep(1)
-    # 再启动同步器
+    # 启动同步器
     sync_path = os.path.join(PROJECT_PATH, "sync")
     results.append(subprocess.Popen(['python', os.path.join(sync_path, "main.py")], 
                                     cwd=sync_path, 
@@ -24,7 +25,7 @@ if __name__ == "__main__":
                                     )
                 )
     time.sleep(1)
-    # 最后启动各个定制的处理器
+    # 启动各个定制的处理器
     # 访客系统
     visitor_path = os.path.join(PROJECT_PATH, "process", "build", "Release")
     results.append(subprocess.Popen([os.path.join(visitor_path, "dbcenter_server_visitor.exe")], 
@@ -33,4 +34,9 @@ if __name__ == "__main__":
                                     creationflags=subprocess.CREATE_NEW_CONSOLE if os.name == 'nt' else 0
                                     )
                 )
+    # 设计变更统计
+    
+    
+    
+    
     
