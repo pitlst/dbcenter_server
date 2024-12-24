@@ -1,6 +1,10 @@
-#include "mongocxx/uri.hpp"
-
 #include "mongo.hpp"
+
+#include "bsoncxx/builder/basic/array.hpp"
+#include "bsoncxx/builder/basic/document.hpp"
+#include "bsoncxx/builder/basic/kvp.hpp"
+#include "bsoncxx/types.hpp"
+#include "bsoncxx/json.hpp"
 
 using namespace dbs;
 
@@ -18,7 +22,7 @@ mongo_connect::mongo_connect()
     auto port = std::to_string(toml::get<int>(data["port"]));
     mongocxx::uri url("mongodb://" + ip + ":" + port + "/");
     this->m_client_ptr = std::make_unique<mongocxx::client>(url);
-    if(this->m_client_ptr == nullptr)
+    if (this->m_client_ptr == nullptr)
     {
         std::string temp_err = "获取mongo数据库连接失败，连接池指针为空";
         std::cerr << temp_err << '\n';
@@ -30,10 +34,10 @@ mongo_connect::~mongo_connect()
 {
     this->m_data.clear();
     this->m_client_ptr.release();
-    this->m_client_ptr = nullptr;    
+    this->m_client_ptr = nullptr;
 }
 
-mongocxx::database &mongo_connect::get_db(const std::string & db_name)
+mongocxx::database &mongo_connect::get_db(const std::string &db_name)
 {
     if (this->m_data.find(db_name) == this->m_data.end())
     {
@@ -61,4 +65,16 @@ mongocxx::collection mongo_connect::get_coll(const std::string &db_name, const s
         m_db.create_collection(coll_name);
     }
     return m_db[coll_name];
+}
+
+std::vector<nlohmann::json> mongo_connect::get_coll_data(const std::string &db_name, const std::string &coll_name)
+{
+    auto results_cursor = this->get_db(db_name)[coll_name].find({});
+    std::vector<nlohmann::json> results;
+    for (auto &&ch : results_cursor)
+    {
+        nlohmann::json m_json = nlohmann::json::parse(bsoncxx::to_json(ch));
+        results.emplace_back(m_json);
+    }
+    return results;
 }

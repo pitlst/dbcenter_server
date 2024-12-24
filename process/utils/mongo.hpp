@@ -10,6 +10,7 @@
 #include "mongocxx/pool.hpp"
 #include "mongocxx/uri.hpp"
 
+#include "json.hpp"
 #include "toml.hpp"
 
 namespace dbs
@@ -25,7 +26,8 @@ namespace dbs
         mongocxx::database &get_db(const std::string &db_name);
         // 获取集合
         mongocxx::collection get_coll(const std::string &db_name, const std::string &coll_name);
-        // 将集合转换为
+        // 获取集合的值
+        std::vector<nlohmann::json> get_coll_data(const std::string &db_name, const std::string &coll_name);
 
     private:
         // 禁止外部构造与析构
