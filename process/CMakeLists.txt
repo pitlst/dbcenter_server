@@ -84,9 +84,6 @@ find_package(TBB REQUIRED)
 set(fmt_DIR "${PROJECT_SOURCE_DIR}/3rd_party/fmt/lib/cmake/fmt")
 find_package(fmt REQUIRED)
 
-#--------------------------------------------------------------------------------------#
-#   项目编译设置
-#--------------------------------------------------------------------------------------#
 # 把项目目录定义成宏传递给程序
 add_compile_definitions(PROJECT_PATH=\"${PROJECT_SOURCE_DIR}/\")
 # 解决msvc的C4996警告
@@ -105,29 +102,6 @@ set(ALL_UTILS_FILE
     utils/pipeline.cpp
 )
 
-# 外网访客系统数据处理
-add_executable(${PROJECT_NAME}_visitor tasks/visitor.cpp ${ALL_UTILS_FILE})
-target_link_libraries(${PROJECT_NAME}_visitor mongo::mongocxx_shared TBB::tbb fmt::fmt)
-
-# 业联系统数据处理-拼接
-add_executable(${PROJECT_NAME}_bc_join tasks/business_connection/join.cpp ${ALL_UTILS_FILE})
-target_link_libraries(${PROJECT_NAME}_bc_join mongo::mongocxx_shared TBB::tbb fmt::fmt)
-
-# 业联系统数据处理-拼接
-add_executable(${PROJECT_NAME}_bc_transformation_of_design_changes tasks/business_connection/transformation_of_design_changes.cpp ${ALL_UTILS_FILE})
-target_link_libraries(${PROJECT_NAME}_bc_transformation_of_design_changes mongo::mongocxx_shared TBB::tbb fmt::fmt)
-
-# 人员基础数据统计
-add_executable(${PROJECT_NAME}_person tasks/person.cpp ${ALL_UTILS_FILE})
-target_link_libraries(${PROJECT_NAME}_person mongo::mongocxx_shared TBB::tbb fmt::fmt)
-
-foreach(FILE_I ${MONGO_CONCPP_DLLS})
-    file(COPY ${FILE_I} DESTINATION "${PROJECT_SOURCE_DIR}/build/Release" FOLLOW_SYMLINK_CHAIN)
-endforeach(FILE_I)
-foreach(FILE_I ${TBB_DLLS})
-    file(COPY ${FILE_I} DESTINATION "${PROJECT_SOURCE_DIR}/build/Release" FOLLOW_SYMLINK_CHAIN)
-endforeach(FILE_I)
-
 #--------------------------------------------------------------------------------------#
 #   测试执行测试
 #--------------------------------------------------------------------------------------#
@@ -140,4 +114,38 @@ target_link_libraries(test_logger mongo::mongocxx_shared fmt::fmt)
 # data测试
 add_executable(test_data tests/test_data.cpp  ${ALL_UTILS_FILE})
 target_link_libraries(test_data mongo::mongocxx_shared fmt::fmt)
+
+#--------------------------------------------------------------------------------------#
+#   项目编译设置
+#--------------------------------------------------------------------------------------#
+
+# 外网访客系统数据处理
+add_executable(${PROJECT_NAME}_visitor tasks/visitor/visitor.cpp ${ALL_UTILS_FILE})
+target_link_libraries(${PROJECT_NAME}_visitor mongo::mongocxx_shared TBB::tbb fmt::fmt)
+
+# 人员基础数据统计
+add_executable(${PROJECT_NAME}_person tasks/person/person.cpp ${ALL_UTILS_FILE})
+target_link_libraries(${PROJECT_NAME}_person mongo::mongocxx_shared TBB::tbb fmt::fmt)
+
+# 业联系统数据处理-拼接
+add_executable(${PROJECT_NAME}_bc_join_business_connection tasks/business_connection/join/business_connection.cpp ${ALL_UTILS_FILE})
+target_link_libraries(${PROJECT_NAME}_bc_join_business_connection mongo::mongocxx_shared TBB::tbb fmt::fmt)
+
+add_executable(${PROJECT_NAME}_bc_join_class_group tasks/business_connection/join/class_group.cpp ${ALL_UTILS_FILE})
+target_link_libraries(${PROJECT_NAME}_bc_join_class_group mongo::mongocxx_shared TBB::tbb fmt::fmt)
+
+# 业联系统数据处理-设计变更转化统计
+add_executable(${PROJECT_NAME}_bc_process_transformation_of_design_changes tasks/business_connection/process/transformation_of_design_changes.cpp ${ALL_UTILS_FILE})
+target_link_libraries(${PROJECT_NAME}_bc_process_transformation_of_design_changes mongo::mongocxx_shared TBB::tbb fmt::fmt)
+
+
+
+foreach(FILE_I ${MONGO_CONCPP_DLLS})
+    file(COPY ${FILE_I} DESTINATION "${PROJECT_SOURCE_DIR}/build/Release" FOLLOW_SYMLINK_CHAIN)
+endforeach(FILE_I)
+foreach(FILE_I ${TBB_DLLS})
+    file(COPY ${FILE_I} DESTINATION "${PROJECT_SOURCE_DIR}/build/Release" FOLLOW_SYMLINK_CHAIN)
+endforeach(FILE_I)
+
+
 

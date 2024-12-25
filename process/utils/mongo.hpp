@@ -11,6 +11,7 @@
 #include "mongocxx/pool.hpp"
 #include "mongocxx/uri.hpp"
 
+#include "json.hpp"
 #include "toml.hpp"
 #include "json.hpp"
 
@@ -29,9 +30,9 @@ namespace dbs
         mongocxx::v_noabi::pool::entry inithread_client();
 
         // 获取集合
-        mongocxx::collection get_coll(mongocxx::v_noabi::pool::entry & client_, const std::string &db_name, const std::string &coll_name) const;
-        // 获取集合的数据
-        std::vector<nlohmann::json> get_coll_data(mongocxx::v_noabi::pool::entry & client_, const std::string &db_name, const std::string &coll_name) const;
+        mongocxx::collection get_coll(const std::string &db_name, const std::string &coll_name);
+        // 获取集合的值
+        std::vector<nlohmann::json> get_coll_data(const std::string &db_name, const std::string &coll_name);
 
     private:
         // 禁止外部构造与析构
