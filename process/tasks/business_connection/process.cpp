@@ -26,17 +26,12 @@ void main_logic()
         auto client = MONGO.init_client();
         // ----------从数据库读取数据----------
         LOGGER.info(MY_NAME, "读取数据");
-        auto dwd_bc_class_group = MONGO.get_coll_data(client, "dwd", "bc_class_group");
-        auto dwd_bc_class_group = MONGO.get_coll_data(client, "dwd", "bc_class_group");
-        auto dwd_bc_class_group = MONGO.get_coll_data(client, "dwd", "bc_class_group");
-        auto dwd_bc_class_group = MONGO.get_coll_data(client, "dwd", "bc_class_group");
-        auto dwd_bc_class_group = MONGO.get_coll_data(client, "dwd", "bc_class_group");
-        auto dwd_bc_class_group = MONGO.get_coll_data(client, "dwd", "bc_class_group");
+        auto dwd_bc_design_change = MONGO.get_coll_data(client, "dwd", "业联-设计变更");
+        auto dwd_bc_technological_process = MONGO.get_coll_data(client, "dwd", "业联-工艺流程");
+        auto dwd_bc_design_change_execution = MONGO.get_coll_data(client, "dwd", "业联-设计变更执行");
+        auto dwd_bc_close = MONGO.get_coll_data(client, "ods", "bc_business_connection_close");
 
-        if (!dwd_bc_class_group.empty() && !dwd_bc_class_group.empty() && !dwd_bc_class_group.empty())
-        {
-            LOGGER.info(MY_NAME, "处理获得设计变更-工艺流程-设计变更执行的关系");
-        }
+        
     }
     catch (const std::exception &e)
     {
