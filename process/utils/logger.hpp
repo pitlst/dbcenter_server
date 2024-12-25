@@ -2,7 +2,11 @@
 #define DBS_LOGGER_INCLUDE
 
 #include <memory>
+#include <functional>
 #include <string>
+#include <array>
+
+#include "tbb/tbb.h"
 
 #include "mongo.hpp"
 
@@ -20,8 +24,8 @@ namespace dbs{
         void warn(const std::string & name, const std::string & msg);
         void error(const std::string & name, const std::string & msg);
         // 真正打印与输出的地方
-        void run();
         void emit(const std::string & level, const std::string & name, const std::string & msg);
+        std::function<void()> get_run_func();
         // 创建日志的时间序列集合，因为日志几乎不会删除，只会按条插入，所以适合于日志
         mongocxx::collection create_time_collection(const std::string & name);
 
@@ -30,11 +34,11 @@ namespace dbs{
         logger();
         ~logger() = default;
 
-        // 写入与输出队列
-
+        // 消息队列
+        tbb::concurrent_queue<std::array<std::string, 3>> m_queue;
         // 数据库客户端
         const std::string db_name = "logger";
-        mongocxx::v_noabi::pool::entry m_client = MONGO.inithread_client();
+        mongocxx::pool::entry m_client = MONGO.init_client();
         mongocxx::database m_database = m_client[db_name];
     };
 }

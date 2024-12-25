@@ -25,8 +25,8 @@ namespace dbs
         const std::string m_recv_name = "mq_recv";
         // 需要监控的节点名称
         std::string m_name;
-        // 数据库客户端
-        mongocxx::database m_database = MONGO.get_db(m_db_name);
+        // 数据库集合
+        std::unique_ptr<mongocxx::pool::entry> m_client_ptr = nullptr;
         std::unique_ptr<mongocxx::collection> m_send_coll_ptr = nullptr;
         std::unique_ptr<mongocxx::collection> m_recv_coll_ptr = nullptr;
     };

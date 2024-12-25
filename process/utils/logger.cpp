@@ -27,22 +27,22 @@ logger &logger::instance()
 // 不同等级日志
 void logger::debug(const std::string &name, const std::string &msg)
 {
-    return this->emit("DEBUG", name, msg);
+    this->m_queue.push({"DEBUG", name, msg});
 }
 
 void logger::info(const std::string &name, const std::string &msg)
 {
-    return this->emit("INFO", name, msg);
+    this->m_queue.push({"INFO", name, msg});
 }
 
 void logger::warn(const std::string &name, const std::string &msg)
 {
-    return this->emit("WARNNING", name, msg);
+    this->m_queue.push({"WARNNING", name, msg});
 }
 
 void logger::error(const std::string &name, const std::string &msg)
 {
-    return this->emit("ERROR", name, msg);
+    this->m_queue.push({"ERROR", name, msg});
 }
 
 void logger::emit(const std::string &level, const std::string &name, const std::string &msg)
@@ -90,6 +90,22 @@ void logger::emit(const std::string &level, const std::string &name, const std::
     );
 }
 
+std::function<void()> logger::get_run_func()
+{
+    auto run = [&]()
+    {
+        std::array<std::string, 3> temp;
+        while (true)
+        {
+            if (this->m_queue.try_pop(temp))
+            {
+                this->emit(temp[0], temp[1], temp[2]);
+            }
+        }
+    };
+    return run;
+}
+
 logger::logger()
 {
     // 取消c与c++共用的输出缓冲区
@@ -102,7 +118,7 @@ mongocxx::collection logger::create_time_collection(const std::string &name)
 {
     // 检查集合是否创建
     bool is_exist = false;
-    auto collections = m_database.list_collections();
+    auto collections = this->m_database.list_collections();
     mongocxx::collection temp;
     for (const auto &coll : collections)
     {
@@ -126,11 +142,11 @@ mongocxx::collection logger::create_time_collection(const std::string &name)
             ),
             kvp("expireAfterSeconds", 604800)
         );
-        temp = m_database.create_collection(name, ts_info.view());
+        temp = this->m_database.create_collection(name, ts_info.view());
     }
     else
     {
-        temp = m_database[name];
+        temp = this->m_database[name];
     }
     return temp;
 }

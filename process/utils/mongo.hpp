@@ -27,12 +27,11 @@ namespace dbs
         // 获取单实例对象
         static mongo_connect &instance();
         // 在对应线程初始化以获取连接
-        mongocxx::v_noabi::pool::entry inithread_client();
-
+        mongocxx::pool::entry init_client();
         // 获取集合
-        mongocxx::collection get_coll(const std::string &db_name, const std::string &coll_name);
+        mongocxx::collection get_coll(mongocxx::pool::entry & client_, const std::string &db_name, const std::string &coll_name) const;
         // 获取集合的值
-        std::vector<nlohmann::json> get_coll_data(const std::string &db_name, const std::string &coll_name);
+        std::vector<nlohmann::json> get_coll_data(mongocxx::pool::entry & client_, const std::string &db_name, const std::string &coll_name) const;
 
     private:
         // 禁止外部构造与析构
@@ -41,7 +40,7 @@ namespace dbs
 
         // 数据库驱动
         mongocxx::instance m_instance;
-        // 数据库连接池
+        // 数据库连接
         std::unique_ptr<mongocxx::pool> m_pool_ptr = nullptr;
     };
 }

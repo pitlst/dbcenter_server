@@ -102,6 +102,14 @@ set(ALL_UTILS_FILE
     utils/pipeline.cpp
 )
 
+# 粘贴必要的动态链接库
+foreach(FILE_I ${MONGO_CONCPP_DLLS})
+    file(COPY ${FILE_I} DESTINATION "${PROJECT_SOURCE_DIR}/build/Release" FOLLOW_SYMLINK_CHAIN)
+endforeach(FILE_I)
+foreach(FILE_I ${TBB_DLLS})
+    file(COPY ${FILE_I} DESTINATION "${PROJECT_SOURCE_DIR}/build/Release" FOLLOW_SYMLINK_CHAIN)
+endforeach(FILE_I)
+
 #--------------------------------------------------------------------------------------#
 #   测试执行测试
 #--------------------------------------------------------------------------------------#
@@ -120,32 +128,28 @@ target_link_libraries(test_data mongo::mongocxx_shared fmt::fmt)
 #--------------------------------------------------------------------------------------#
 
 # 外网访客系统数据处理
-add_executable(${PROJECT_NAME}_visitor tasks/visitor/visitor.cpp ${ALL_UTILS_FILE})
+set(VISITOR_DIRS "tasks/visitor")
+add_executable(${PROJECT_NAME}_visitor ${VISITOR_DIRS}/visitor.cpp ${ALL_UTILS_FILE})
 target_link_libraries(${PROJECT_NAME}_visitor mongo::mongocxx_shared TBB::tbb fmt::fmt)
 
 # 人员基础数据统计
-add_executable(${PROJECT_NAME}_person tasks/person/person.cpp ${ALL_UTILS_FILE})
+set(PERSON_DIRS "tasks/person")
+add_executable(${PROJECT_NAME}_person ${PERSON_DIRS}/person.cpp ${ALL_UTILS_FILE})
 target_link_libraries(${PROJECT_NAME}_person mongo::mongocxx_shared TBB::tbb fmt::fmt)
 
-# 业联系统数据处理-拼接
-add_executable(${PROJECT_NAME}_bc_join_business_connection tasks/business_connection/join/business_connection.cpp ${ALL_UTILS_FILE})
-target_link_libraries(${PROJECT_NAME}_bc_join_business_connection mongo::mongocxx_shared TBB::tbb fmt::fmt)
+# 业联系统数据处理
+# 拼接
+set(BC_DIRS "tasks/business_connection")
+add_executable(${PROJECT_NAME}_bc_join ${BC_DIRS}/join.cpp ${ALL_UTILS_FILE})
+target_link_libraries(${PROJECT_NAME}_bc_join mongo::mongocxx_shared TBB::tbb fmt::fmt)
 
-add_executable(${PROJECT_NAME}_bc_join_class_group tasks/business_connection/join/class_group.cpp ${ALL_UTILS_FILE})
-target_link_libraries(${PROJECT_NAME}_bc_join_class_group mongo::mongocxx_shared TBB::tbb fmt::fmt)
-
-# 业联系统数据处理-设计变更转化统计
-add_executable(${PROJECT_NAME}_bc_process_transformation_of_design_changes tasks/business_connection/process/transformation_of_design_changes.cpp ${ALL_UTILS_FILE})
-target_link_libraries(${PROJECT_NAME}_bc_process_transformation_of_design_changes mongo::mongocxx_shared TBB::tbb fmt::fmt)
-
+# 设计变更转化统计
+add_executable(${PROJECT_NAME}_bc_transformation_of_design_changes ${BC_DIRS}/transformation_of_design_changes.cpp ${ALL_UTILS_FILE})
+target_link_libraries(${PROJECT_NAME}_bc_transformation_of_design_changes mongo::mongocxx_shared TBB::tbb fmt::fmt)
 
 
-foreach(FILE_I ${MONGO_CONCPP_DLLS})
-    file(COPY ${FILE_I} DESTINATION "${PROJECT_SOURCE_DIR}/build/Release" FOLLOW_SYMLINK_CHAIN)
-endforeach(FILE_I)
-foreach(FILE_I ${TBB_DLLS})
-    file(COPY ${FILE_I} DESTINATION "${PROJECT_SOURCE_DIR}/build/Release" FOLLOW_SYMLINK_CHAIN)
-endforeach(FILE_I)
+
+
 
 
 
