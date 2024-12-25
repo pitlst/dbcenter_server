@@ -1,7 +1,5 @@
-<script setup>
-import SankeyDiagram from '@/components/SankeyDiagram.vue';
-</script>
-
 <template>
-    <SankeyDiagram></SankeyDiagram>
+    <div>
+        <h1>This is an DesignChange page</h1>
+    </div>
 </template>
