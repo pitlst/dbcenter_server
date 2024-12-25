@@ -11,6 +11,7 @@
 #include "json.hpp"
 
 #include "tbb/tbb.h"
+#include "tbb/scalable_allocator.h"
 
 #include "mongo.hpp"
 #include "logger.hpp"
@@ -28,7 +29,7 @@ void logic_class_group()
         auto ods_bc_class_group = MONGO.get_coll_data(client, "ods", "bc_class_group");
         auto ods_bc_class_group_entry = MONGO.get_coll_data(client, "ods", "bc_class_group_entry");
         // 因为金蝶云苍穹的id在内容变更后不会更改，所以无法做增量计算，每一次都只能全量复写
-        tbb::concurrent_vector<bsoncxx::document::value> form_results;
+        tbb::concurrent_vector<bsoncxx::document::value, tbb::scalable_allocator<bsoncxx::document::value>> form_results;
         auto data_process = [&](const tbb::blocked_range<size_t> &range)
         {
             for (size_t index = range.begin(); index != range.end(); ++index)
@@ -75,7 +76,7 @@ void logic_class_group()
 void logic_technological_process()
 {
     try
-    {
+    { 
         auto client = MONGO.init_client();
         LOGGER.info(MY_NAME, "读取工艺流程数据");
         // ----------从数据库读取数据----------
@@ -83,7 +84,7 @@ void logic_technological_process()
         auto ods_bc_technological_process_change = MONGO.get_coll_data(client, "ods", "bc_technological_process_change");
         auto ods_bc_technological_process_flow = MONGO.get_coll_data(client, "ods", "bc_technological_process_flow");
 
-        tbb::concurrent_vector<bsoncxx::document::value> form_results;
+        tbb::concurrent_vector<bsoncxx::document::value, tbb::scalable_allocator<bsoncxx::document::value>> form_results;
         auto data_process = [&](const tbb::blocked_range<size_t> &range)
         {
             for (size_t index = range.begin(); index != range.end(); ++index)
@@ -149,7 +150,7 @@ void logic_business_connection()
         auto ods_bc_business_connection_main_delivery_unit = MONGO.get_coll_data(client, "ods", "bc_business_connection_main_delivery_unit");
         auto ods_bc_business_connection_copy_delivery_unit = MONGO.get_coll_data(client, "ods", "bc_business_connection_copy_delivery_unit");
 
-        tbb::concurrent_vector<bsoncxx::document::value> form_results;
+        tbb::concurrent_vector<bsoncxx::document::value, tbb::scalable_allocator<bsoncxx::document::value>> form_results;
         auto data_process = [&](const tbb::blocked_range<size_t> &range)
         {
             for (size_t index = range.begin(); index != range.end(); ++index)
@@ -208,7 +209,7 @@ void logic_design_change()
         auto ods_bc_design_change = MONGO.get_coll_data(client, "ods", "bc_design_change");
         auto ods_bc_design_change_entry = MONGO.get_coll_data(client, "ods", "bc_design_change_entry");
 
-        tbb::concurrent_vector<bsoncxx::document::value> form_results;
+        tbb::concurrent_vector<bsoncxx::document::value, tbb::scalable_allocator<bsoncxx::document::value>> form_results;
         auto data_process = [&](const tbb::blocked_range<size_t> &range)
         {
             for (size_t index = range.begin(); index != range.end(); ++index)
@@ -270,7 +271,7 @@ void logic_shop_execution()
         auto ods_bc_shop_execution_task_item_point_unit = MONGO.get_coll_data(client, "ods", "bc_shop_execution_task_item_point_unit");
         // 城轨事业部的业联暂时不关注备料工艺
 
-        tbb::concurrent_vector<bsoncxx::document::value> form_results;
+        tbb::concurrent_vector<bsoncxx::document::value, tbb::scalable_allocator<bsoncxx::document::value>> form_results;
         auto data_process = [&](const tbb::blocked_range<size_t> &range)
         {
             for (size_t index = range.begin(); index != range.end(); ++index)
@@ -397,7 +398,7 @@ void logic_design_change_execution()
         auto ods_bc_design_change_execution_reworked_material = MONGO.get_coll_data(client, "ods", "bc_design_change_execution_reworked_material");
         auto ods_bc_design_change_execution_reworked_material_unit = MONGO.get_coll_data(client, "ods", "bc_design_change_execution_reworked_material_unit");
 
-        tbb::concurrent_vector<bsoncxx::document::value> form_results;
+        tbb::concurrent_vector<bsoncxx::document::value, tbb::scalable_allocator<bsoncxx::document::value>> form_results;
         auto data_process = [&](const tbb::blocked_range<size_t> &range)
         {
             for (size_t index = range.begin(); index != range.end(); ++index)
@@ -533,12 +534,14 @@ int main()
     using namespace std::chrono_literals;
     auto temp_pipe = dbs::pipeline(MY_NAME);
     std::thread logger_server(LOGGER.get_run_func());
+    LOGGER.debug(MY_NAME, "并发日志服务已启动");
     tbb::task_group tg;
     while (true)
     {
         if (temp_pipe.recv())
         {
             LOGGER.debug(MY_NAME, "接到触发信号，开始执行");
+            auto before = std::chrono::steady_clock::now();
             tg.run(logic_class_group);
             tg.run(logic_technological_process);
             tg.run(logic_business_connection);
@@ -547,6 +550,9 @@ int main()
             tg.run(logic_design_change_execution);
             tg.wait();
             temp_pipe.send();
+            auto after = std::chrono::steady_clock::now();
+            double duration_second = std::chrono::duration<double, std::milli>(after - before).count() / 1000;
+            LOGGER.debug(MY_NAME, "执行完成，共计耗时" + std::to_string(duration_second) + "秒");
         }
         else
         {

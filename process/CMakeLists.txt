@@ -141,11 +141,11 @@ target_link_libraries(${PROJECT_NAME}_person mongo::mongocxx_shared TBB::tbb fmt
 # 拼接
 set(BC_DIRS "tasks/business_connection")
 add_executable(${PROJECT_NAME}_bc_join ${BC_DIRS}/join.cpp ${ALL_UTILS_FILE})
-target_link_libraries(${PROJECT_NAME}_bc_join mongo::mongocxx_shared TBB::tbb fmt::fmt)
+target_link_libraries(${PROJECT_NAME}_bc_join mongo::mongocxx_shared TBB::tbb TBB::tbbmalloc fmt::fmt)
 
-# 设计变更转化统计
-add_executable(${PROJECT_NAME}_bc_transformation_of_design_changes ${BC_DIRS}/transformation_of_design_changes.cpp ${ALL_UTILS_FILE})
-target_link_libraries(${PROJECT_NAME}_bc_transformation_of_design_changes mongo::mongocxx_shared TBB::tbb fmt::fmt)
+# 处理
+add_executable(${PROJECT_NAME}_bc_process ${BC_DIRS}/process.cpp ${ALL_UTILS_FILE})
+target_link_libraries(${PROJECT_NAME}_bc_process mongo::mongocxx_shared TBB::tbb fmt::fmt)
 
 
 

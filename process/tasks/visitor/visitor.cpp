@@ -24,9 +24,10 @@ void main_logic()
     try
     {
         LOGGER.info(MY_NAME, "读取数据");
+        auto client = MONGO.init_client();
         // ----------从数据库读取数据----------
-        auto ods_results = MONGO.get_coll_data("ods", "submissionmodels");
-        auto dm_results = MONGO.get_coll_data("dm", "visitor_submit");
+        auto ods_results = MONGO.get_coll_data(client, "ods", "submissionmodels");
+        auto dm_results = MONGO.get_coll_data(client, "dm", "visitor_submit");
         // ----------检查数据是否更新----------
         std::vector<nlohmann::json> old_source_id;
         for (const auto & ch : dm_results)
@@ -206,9 +207,9 @@ void main_logic()
             tbb::parallel_for(tbb::blocked_range<size_t>((size_t)0, form_results.size()), data_process);
             // ----------写入数据库----------
             LOGGER.info(MY_NAME, "写入处理数据");
-            auto m_coll = MONGO.get_coll("dm", "visitor_submit");
-            auto m_coll_a = MONGO.get_coll("dm", "visitor_submit_accompany");
-            auto m_coll_t = MONGO.get_coll("dm", "visitor_submit_tutelage");
+            auto m_coll = MONGO.get_coll(client, "dm", "visitor_submit");
+            auto m_coll_a = MONGO.get_coll(client, "dm", "visitor_submit_accompany");
+            auto m_coll_t = MONGO.get_coll(client, "dm", "visitor_submit_tutelage");
             if(!visitor_submit.empty())
             {
                 m_coll.insert_many(visitor_submit);
@@ -238,13 +239,19 @@ int main()
 {
     using namespace std::chrono_literals;
     auto temp_pipe = dbs::pipeline(MY_NAME);
+    std::thread logger_server(LOGGER.get_run_func());
+    LOGGER.debug(MY_NAME, "并发日志服务已启动");
     while (true)
     {
         if(temp_pipe.recv())
         {
             LOGGER.debug(MY_NAME, "接到触发信号，开始执行");
+            auto before = std::chrono::steady_clock::now();
             main_logic();
             temp_pipe.send();
+            auto after = std::chrono::steady_clock::now();
+            double duration_second = std::chrono::duration<double, std::milli>(after - before).count() / 1000;
+            LOGGER.debug(MY_NAME, "执行完成，共计耗时" + std::to_string(duration_second) + "秒");
         }
         else
         {
