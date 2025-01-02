@@ -9,6 +9,7 @@
 #include <any>
 #include <vector>
 
+
 #include "json.hpp"
 
 namespace dbs
@@ -21,6 +22,12 @@ namespace dbs
     std::string gbk_to_utf8(const std::string &input_str);
     // 切割字符串，并将最后一个分割好的字符串单独包装
     std::vector<std::string> split_string(const std::string &str, const std::string &delimiter);
+    // 删除指定字串
+    std::string remove_substring(const std::string &str, const std::string &toRemove);
+    // 删除回车
+    std::string remove_newline(const std::string &str);
+    // 判断字符是否为英文字符
+    bool is_english_char(char ch);
     // 获取线程的id
     std::string get_thread_id();
 

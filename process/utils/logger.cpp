@@ -66,19 +66,19 @@ void logger::emit(const std::string &level, const std::string &name, const std::
     fmt::text_style fmt_color;
     if(level == "DEBUG")
     {
-        fmt_color = fg(fmt::color::cyan);
+        fmt_color = fmt::emphasis::bold | fg(fmt::terminal_color::cyan);
     }   
     else if(level == "INFO")
     {
-        fmt_color = fg(fmt::color::green);
+        fmt_color = fmt::emphasis::bold | fg(fmt::terminal_color::green);
     }
     else if(level == "WARNNING")
     {
-        fmt_color = fg(fmt::color::yellow);
+        fmt_color = fmt::emphasis::bold | fg(fmt::terminal_color::yellow);
     }
     else if(level == "ERROR")
     {
-        fmt_color = fg(fmt::color::red);
+        fmt_color = fmt::emphasis::bold | fg(fmt::terminal_color::red);
     }
     
     fmt::print(

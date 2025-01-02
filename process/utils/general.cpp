@@ -2,6 +2,7 @@
 #include <sstream>
 #include <iostream>
 #include <fstream>
+#include <cctype>
 
 #include <windows.h>
 
@@ -95,15 +96,66 @@ std::string dbs::gbk_to_utf8(const std::string &input_str)
 std::vector<std::string> dbs::split_string(const std::string &str, const std::string &delimiter)
 {
     std::vector<std::string> tokens;
-    std::string token;
-    std::istringstream tokenStream(str);
+    size_t start = 0;
+    size_t end = 0;
 
-    while (std::getline(tokenStream, token, delimiter[0]))
+    while ((end = str.find(delimiter, start)) != std::string::npos)
     {
-        tokens.push_back(token);
+        if (start < end)
+        {
+            // 将分隔符之间的子字符串添加到向量中
+            tokens.push_back(str.substr(start, end - start));
+        }
+        start = end + delimiter.length();
+    }
+
+    if (start < str.length())
+    {
+        tokens.push_back(str.substr(start));
     }
 
     return tokens;
+}
+
+std::string dbs::remove_substring(const std::string &str, const std::string &toRemove)
+{
+    std::string result;
+    std::string temp_str = str;
+    size_t pos = temp_str.find(toRemove);
+
+    // 循环直到字符串末尾
+    while (pos != std::string::npos)
+    {
+        // 将找到的子字符串之前的部分添加到结果中
+        result.append(temp_str, 0, pos);
+        // 移动到找到的子字符串之后的位置
+        temp_str = temp_str.substr(pos + toRemove.length());
+        // 重置pos，以便在新的子字符串中搜索
+        pos = temp_str.find(toRemove);
+    }
+    // 添加剩余的部分
+    result.append(temp_str);
+    return result;
+}
+
+std::string dbs::remove_newline(const std::string &str)
+{
+    std::string result;
+    result.reserve(str.size()); // 预分配空间以提高效率
+    for (char ch : str)
+    {
+        if (ch != '\n')
+        {
+            result.push_back(ch); // 如果不是回车字符，则添加到结果字符串中
+        }
+    }
+    return result;
+}
+
+bool dbs::is_english_char(char ch)
+{
+    // 使用 isalpha 函数判断字符是否为英文字母
+    return std::isalpha(static_cast<unsigned char>(ch));
 }
 
 std::string dbs::get_thread_id()
@@ -112,4 +164,4 @@ std::string dbs::get_thread_id()
     std::thread::id id = std::this_thread::get_id();
     ss << std::hash<std::thread::id>()(id);
     return ss.str();
-}   
+}
