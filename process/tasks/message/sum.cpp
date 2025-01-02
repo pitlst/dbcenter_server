@@ -34,7 +34,7 @@ void main_logic()
         auto dwd_results = MONGO.get_coll_data(client, "dwd", "薪酬信息");
         // 薪酬数据组织
         // 0是工号，1是姓名，2是年月, 实领金额在队列中
-        using tbb_pay = std::tuple<std::string, std::string, std::string, tbb::concurrent_queue<double, tbb::scalable_allocator<double>>, double>;
+        using tbb_pay = std::tuple<std::string, std::string, std::string, tbb::concurrent_queue<double>, double>;
         tbb::concurrent_vector<tbb_pay, tbb::scalable_allocator<tbb_pay>> employee_compensation;
         auto data_process = [&](const tbb::blocked_range<size_t> &range)
         {
