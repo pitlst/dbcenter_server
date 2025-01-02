@@ -34,8 +34,8 @@ void main_logic()
         auto dwd_results = MONGO.get_coll_data(client, "dwd", "薪酬信息");
         // 薪酬数据组织
         // 0是工号，1是姓名，2是年月, 实领金额在队列中
-        using tbb_pay = std::tuple<std::string, std::string, std::string, tbb::concurrent_queue<double>, double>;
-        tbb::concurrent_vector<tbb_pay> employee_compensation;
+        using tbb_pay = std::tuple<std::string, std::string, std::string, tbb::concurrent_queue<double, tbb::scalable_allocator<double>>, double>;
+        tbb::concurrent_vector<tbb_pay, tbb::scalable_allocator<tbb_pay>> employee_compensation;
         auto data_process = [&](const tbb::blocked_range<size_t> &range)
         {
             for (size_t index = range.begin(); index != range.end(); ++index)
@@ -103,18 +103,6 @@ void main_logic()
             LOGGER.info(MY_NAME, "并行处理数据-获取唯一的人与年月");
             tbb::parallel_for(tbb::blocked_range<size_t>((size_t)0, dwd_results.size()), data_process);
             LOGGER.info(MY_NAME, "并行处理数据-计算月工资之和");
-            // for (auto & ch : employee_compensation)
-            // {
-            //     // LOGGER.debug(MY_NAME, "工号：" + std::get<0>(ch) + "，姓名：" + std::get<1>(ch) + "，年月：" + std::get<2>(ch));
-            //     while (!std::get<3>(ch).empty())
-            //     {
-            //         double temp_double;
-            //         if (std::get<3>(ch).try_pop(temp_double))
-            //         {
-            //             LOGGER.debug(MY_NAME, "工号：" + std::get<0>(ch) + "，姓名：" + std::get<1>(ch) + "，年月：" + std::get<2>(ch) + "实领：" + std::to_string(temp_double));
-            //         }
-            //     }
-            // }
             tbb::parallel_for(tbb::blocked_range<size_t>((size_t)0, employee_compensation.size()), data_sum);
             LOGGER.info(MY_NAME, "并行处理数据-转换格式");
             tbb::parallel_for(tbb::blocked_range<size_t>((size_t)0, employee_compensation.size()), data_trans);
