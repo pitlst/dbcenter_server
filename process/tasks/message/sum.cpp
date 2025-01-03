@@ -1,34 +1,12 @@
-#include <iostream>
-#include <thread>
-#include <chrono>
-#include <algorithm>
+#include "message/sum.hpp"
 
-#include "bsoncxx/builder/basic/array.hpp"
-#include "bsoncxx/builder/basic/document.hpp"
-#include "bsoncxx/builder/basic/kvp.hpp"
-#include "bsoncxx/types.hpp"
-#include "bsoncxx/json.hpp"
+using namespace dbs;
 
-#include "json.hpp"
-
-#include "fmt/core.h"
-#include "fmt/ranges.h"
-
-#include "tbb/tbb.h"
-#include "tbb/scalable_allocator.h"
-
-#include "mongo.hpp"
-#include "logger.hpp"
-#include "pipeline.hpp"
-#include "general.hpp"
-
-#define MY_NAME "短信数据处理-薪酬求和"
-
-void main_logic()
+void task_msg_sum::main_logic()
 {
     try
     {
-        LOGGER.info(MY_NAME, "读取数据");
+        LOGGER.info(this->node_name, "读取数据");
         auto client = MONGO.init_client();
         // ----------从数据库读取数据----------
         auto dwd_results = MONGO.get_coll_data(client, "dwd", "薪酬信息");
@@ -96,25 +74,25 @@ void main_logic()
         // 利用tbb加速
         if (dwd_results.empty())
         {
-            LOGGER.info(MY_NAME, "来源数据为空，不处理数据");
+            LOGGER.info(this->node_name, "来源数据为空，不处理数据");
         }
         else
         {
-            LOGGER.info(MY_NAME, "并行处理数据-获取唯一的人与年月");
+            LOGGER.info(this->node_name, "并行处理数据-获取唯一的人与年月");
             tbb::parallel_for(tbb::blocked_range<size_t>((size_t)0, dwd_results.size()), data_process);
-            LOGGER.info(MY_NAME, "并行处理数据-计算月工资之和");
+            LOGGER.info(this->node_name, "并行处理数据-计算月工资之和");
             tbb::parallel_for(tbb::blocked_range<size_t>((size_t)0, employee_compensation.size()), data_sum);
-            LOGGER.info(MY_NAME, "并行处理数据-转换格式");
+            LOGGER.info(this->node_name, "并行处理数据-转换格式");
             tbb::parallel_for(tbb::blocked_range<size_t>((size_t)0, employee_compensation.size()), data_trans);
         }
 
         if (employee_compensation_res.empty())
         {
-            LOGGER.info(MY_NAME, "无数据更新");
+            LOGGER.info(this->node_name, "无数据更新");
         }
         else
         {
-            LOGGER.info(MY_NAME, "写入处理数据");
+            LOGGER.info(this->node_name, "写入处理数据");
             auto m_coll = MONGO.get_coll(client, "dm", "employee_compensation");
             m_coll.drop();
             m_coll.insert_many(employee_compensation_res);
@@ -122,30 +100,6 @@ void main_logic()
     }
     catch (const std::exception &e)
     {
-        LOGGER.error(MY_NAME, e.what());
+        LOGGER.error(this->node_name, e.what());
     }
-}
-
-int main()
-{
-    using namespace std::chrono_literals;
-    auto temp_pipe = dbs::pipeline(MY_NAME);
-    std::thread logger_server(LOGGER.get_run_func());
-    LOGGER.debug(MY_NAME, "并发日志服务已启动");
-    while (true)
-    {
-        if (temp_pipe.recv())
-        {
-            LOGGER.debug(MY_NAME, "接到触发信号，开始执行");
-            auto before = std::chrono::steady_clock::now();
-            main_logic();
-            temp_pipe.send();
-            auto after = std::chrono::steady_clock::now();
-            double duration_second = std::chrono::duration<double, std::milli>(after - before).count() / 1000;
-            LOGGER.debug(MY_NAME, "执行完成，共计耗时" + std::to_string(duration_second) + "秒");
-        }
-        LOGGER.debug(MY_NAME, "未接到信号，等待5秒");
-        std::this_thread::sleep_for(5000ms);
-    }
-    return 0;
 }

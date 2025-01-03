@@ -1,5 +1,6 @@
 #include <chrono>
 #include <sstream>
+#include <thread>
 
 #include "mongocxx/client.hpp"
 #include "mongocxx/instance.hpp"
@@ -83,15 +84,17 @@ void logger::emit(const std::string &level, const std::string &name, const std::
     
     fmt::print(
         fmt_color,
-        fmt::runtime("[{}]: {:%Y-%m-%d %H:%M:%S}: {}\n"), 
+        fmt::runtime("[{}]: {:%Y-%m-%d %H:%M:%S} [{}]: {}\n"), 
         level, 
         fmt::localtime(std::chrono::system_clock::to_time_t(now)), 
+        name,
         msg
     );
 }
 
 std::function<void()> logger::get_run_func()
 {
+    using namespace std::chrono_literals;
     auto run = [&]()
     {
         std::array<std::string, 3> temp;
@@ -100,6 +103,11 @@ std::function<void()> logger::get_run_func()
             if (this->m_queue.try_pop(temp))
             {
                 this->emit(temp[0], temp[1], temp[2]);
+            }
+            else
+            {
+                // 适当延时防止过于吃cpu
+                std::this_thread::sleep_for(500ms);
             }
         }
     };

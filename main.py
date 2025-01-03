@@ -25,7 +25,7 @@ if __name__ == "__main__":
                                     )
                 )
     time.sleep(1)
-    # 启动各个定制的处理器
+    # 启动处理器
     # 访客系统
     process_path = os.path.join(PROJECT_PATH, "process", "build", "Release")
     results.append(subprocess.Popen(["chcp", "65001", "&&", os.path.join(process_path, "dbcenter_server_visitor.exe")], 

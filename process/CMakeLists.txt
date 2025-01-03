@@ -42,8 +42,7 @@ include_directories(
     3rd_party/nlohmann
     3rd_party/toml11
     utils
-    tasks/visitor
-    tasks/person
+    tasks
 )
 
 # mongo数据库连接
@@ -88,7 +87,18 @@ find_package(fmt REQUIRED)
 add_compile_definitions(PROJECT_PATH=\"${PROJECT_SOURCE_DIR}/\")
 # 解决msvc的C4996警告
 add_compile_definitions(_CRT_SECURE_NO_WARNINGS=1)
-# 所有通用组件文件
+
+# 粘贴必要的动态链接库
+foreach(FILE_I ${MONGO_CONCPP_DLLS})
+    file(COPY ${FILE_I} DESTINATION "${PROJECT_SOURCE_DIR}/build/Release" FOLLOW_SYMLINK_CHAIN)
+endforeach(FILE_I)
+foreach(FILE_I ${TBB_DLLS})
+    file(COPY ${FILE_I} DESTINATION "${PROJECT_SOURCE_DIR}/build/Release" FOLLOW_SYMLINK_CHAIN)
+endforeach(FILE_I)
+
+#--------------------------------------------------------------------------------------#
+#   项目编译设置
+#--------------------------------------------------------------------------------------#
 set(ALL_UTILS_FILE                 
     utils/general.hpp
     utils/general.cpp
@@ -101,59 +111,25 @@ set(ALL_UTILS_FILE
     utils/pipeline.cpp
     utils/pipeline.cpp
 )
+set(ALL_TASKS_FILE                 
+    tasks/base.hpp
+    tasks/base.cpp
+    tasks/visitor/visitor.hpp
+    tasks/visitor/visitor.cpp
+    tasks/person/person.hpp
+    tasks/person/person.cpp
+    tasks/message/format.hpp
+    tasks/message/format.cpp
+    tasks/message/sum.hpp
+    tasks/message/sum.cpp
+    tasks/business_connection/join.hpp
+    tasks/business_connection/join.cpp
+    tasks/business_connection/process.hpp
+    tasks/business_connection/process.cpp
+)
 
-# 粘贴必要的动态链接库
-foreach(FILE_I ${MONGO_CONCPP_DLLS})
-    file(COPY ${FILE_I} DESTINATION "${PROJECT_SOURCE_DIR}/build/Release" FOLLOW_SYMLINK_CHAIN)
-endforeach(FILE_I)
-foreach(FILE_I ${TBB_DLLS})
-    file(COPY ${FILE_I} DESTINATION "${PROJECT_SOURCE_DIR}/build/Release" FOLLOW_SYMLINK_CHAIN)
-endforeach(FILE_I)
-
-#--------------------------------------------------------------------------------------#
-#   测试执行测试
-#--------------------------------------------------------------------------------------#
-# mongo链接测试
-add_executable(test_mongo_connect tests/test_mongo_connect.cpp  ${ALL_UTILS_FILE})
-target_link_libraries(test_mongo_connect mongo::mongocxx_shared TBB::tbb TBB::tbbmalloc fmt::fmt)
-# logger测试
-add_executable(test_logger tests/test_logger.cpp  ${ALL_UTILS_FILE})
-target_link_libraries(test_logger mongo::mongocxx_shared TBB::tbb TBB::tbbmalloc fmt::fmt)
-# data测试
-add_executable(test_data tests/test_data.cpp  ${ALL_UTILS_FILE})
-target_link_libraries(test_data mongo::mongocxx_shared TBB::tbb TBB::tbbmalloc fmt::fmt)
-
-#--------------------------------------------------------------------------------------#
-#   项目编译设置
-#--------------------------------------------------------------------------------------#
-
-# 外网访客系统数据处理
-set(VISITOR_DIRS "tasks/visitor")
-add_executable(${PROJECT_NAME}_visitor ${VISITOR_DIRS}/visitor.cpp ${ALL_UTILS_FILE})
-target_link_libraries(${PROJECT_NAME}_visitor mongo::mongocxx_shared TBB::tbb TBB::tbbmalloc fmt::fmt)
-
-# 短信数据处理
-# 薪酬统计
-set(MESSAGE_DIRS "tasks/message")
-add_executable(${PROJECT_NAME}_message_format ${MESSAGE_DIRS}/format.cpp ${ALL_UTILS_FILE})
-target_link_libraries(${PROJECT_NAME}_message_format mongo::mongocxx_shared TBB::tbb TBB::tbbmalloc fmt::fmt)
-# 薪酬求和
-add_executable(${PROJECT_NAME}_message_sum ${MESSAGE_DIRS}/sum.cpp ${ALL_UTILS_FILE})
-target_link_libraries(${PROJECT_NAME}_message_sum mongo::mongocxx_shared TBB::tbb TBB::tbbmalloc fmt::fmt)
-
-# 人员基础数据统计
-set(PERSON_DIRS "tasks/person")
-add_executable(${PROJECT_NAME}_person ${PERSON_DIRS}/person.cpp ${ALL_UTILS_FILE})
-target_link_libraries(${PROJECT_NAME}_person mongo::mongocxx_shared TBB::tbb TBB::tbbmalloc fmt::fmt)
-
-# 业联系统数据处理
-# 拼接
-set(BC_DIRS "tasks/business_connection")
-add_executable(${PROJECT_NAME}_bc_join ${BC_DIRS}/join.cpp ${ALL_UTILS_FILE})
-target_link_libraries(${PROJECT_NAME}_bc_join mongo::mongocxx_shared TBB::tbb TBB::tbbmalloc fmt::fmt)
-# 处理
-add_executable(${PROJECT_NAME}_bc_process ${BC_DIRS}/process.cpp ${ALL_UTILS_FILE})
-target_link_libraries(${PROJECT_NAME}_bc_process mongo::mongocxx_shared TBB::tbb TBB::tbbmalloc fmt::fmt)
+add_executable(${PROJECT_NAME} main.cpp ${ALL_UTILS_FILE} ${ALL_TASKS_FILE})
+target_link_libraries(${PROJECT_NAME} mongo::mongocxx_shared TBB::tbb TBB::tbbmalloc fmt::fmt)
 
 
 
