@@ -9,13 +9,8 @@ task_base::task_base(const std::string & node_name): node_name(node_name)
 
 std::function<void()> task_base::get_run_func()
 {
-    return this->func_wrap(std::bind(&task_base::main_logic, this));
-}
-
-std::function<void()> task_base::func_wrap(const std::function<void()> & func)
-{
     using namespace std::chrono_literals;
-    return [func, this]()
+    return [&]()
     {
         while (true)
         {
@@ -23,7 +18,14 @@ std::function<void()> task_base::func_wrap(const std::function<void()> & func)
             {
                 LOGGER.debug(this->node_name, "接到触发信号，开始执行");
                 auto before = std::chrono::steady_clock::now();
-                func();
+                try
+                {
+                    this->main_logic();
+                }
+                catch(const std::exception& e)
+                {
+                    LOGGER.error(this->node_name, e.what());
+                }
                 this->m_pipe->send();
                 auto after = std::chrono::steady_clock::now();
                 double duration_second = std::chrono::duration<double, std::milli>(after - before).count() / 1000;

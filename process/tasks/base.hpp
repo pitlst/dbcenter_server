@@ -31,8 +31,6 @@ namespace dbs
         
         // 获取任务执行函数
         std::function<void()> get_run_func();
-        // 任务通用包装函数
-        std::function<void()> func_wrap(const std::function<void()> & func);
         // 主逻辑
         virtual void main_logic() = 0;
 
