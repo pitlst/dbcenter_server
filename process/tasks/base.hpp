@@ -14,8 +14,8 @@
 
 #include "json.hpp"
 
-#include "tbb/tbb.h"
-#include "tbb/scalable_allocator.h"
+#include "oneapi/tbb.h"
+#include "oneapi/tbb/tbbmalloc_proxy.h"
 
 #include "mongo.hpp"
 #include "logger.hpp"
@@ -37,8 +37,6 @@ namespace dbs
     protected:
         // 任务名称
         std::string node_name;
-        // 消息队列
-        std::unique_ptr<pipeline> m_pipe;
     };
 } 
 

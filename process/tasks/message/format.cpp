@@ -10,12 +10,12 @@ void task_msg_format::main_logic()
     auto ods_results = MONGO.get_coll_data(client, "ods", "short_message");
     auto dwd_results = MONGO.get_coll_data(client, "dwd", "薪酬信息");
     // ----------检查数据是否更新----------
-    tbb::concurrent_vector<nlohmann::json, tbb::scalable_allocator<nlohmann::json>> old_source_id;
+    tbb::concurrent_vector<nlohmann::json> old_source_id;
     for (const auto &ch : dwd_results)
     {
         old_source_id.emplace_back(ch["source_id"]);
     }
-    tbb::concurrent_vector<nlohmann::json, tbb::scalable_allocator<nlohmann::json>> form_results;
+    tbb::concurrent_vector<nlohmann::json> form_results;
     // 检查数据更新
     auto data_check = [&](const tbb::blocked_range<size_t> &range)
     {
@@ -30,7 +30,7 @@ void task_msg_format::main_logic()
         }
     };
     // 薪酬数据组织
-    tbb::concurrent_vector<bsoncxx::document::value, tbb::scalable_allocator<bsoncxx::document::value>> employee_compensation;
+    tbb::concurrent_vector<bsoncxx::document::value> employee_compensation;
     auto data_process = [&](const tbb::blocked_range<size_t> &range)
     {
         for (size_t index = range.begin(); index != range.end(); ++index)

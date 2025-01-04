@@ -64,17 +64,6 @@ namespace dbs
     private:
         void main_logic() override;
     };
-
-
-    class task_bc_join_business_connection_close: public task_base
-    {
-    public:
-        task_bc_join_business_connection_close() : task_base("业联系统数据处理-拼接业联关闭") {}
-        ~task_bc_join_business_connection_close() = default;
-
-    private:
-        void main_logic() override;
-    };
 }
 
 #endif

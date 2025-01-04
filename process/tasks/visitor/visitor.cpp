@@ -10,12 +10,12 @@ void task_visitor::main_logic()
     auto ods_results = MONGO.get_coll_data(client, "ods", "submissionmodels");
     auto dm_results = MONGO.get_coll_data(client, "dm", "visitor_submit");
     // ----------检查数据是否更新----------
-    std::vector<nlohmann::json, tbb::scalable_allocator<nlohmann::json>> old_source_id;
+    std::vector<nlohmann::json> old_source_id;
     for (const auto &ch : dm_results)
     {
         old_source_id.emplace_back(ch["source_id"]);
     }
-    tbb::concurrent_vector<nlohmann::json, tbb::scalable_allocator<nlohmann::json>> form_results;
+    tbb::concurrent_vector<nlohmann::json> form_results;
     for (const auto &ch : ods_results)
     {
         auto find_it = std::find(old_source_id.begin(), old_source_id.end(), ch["_id"]);
@@ -24,9 +24,9 @@ void task_visitor::main_logic()
             form_results.emplace_back(ch);
         }
     }
-    tbb::concurrent_vector<bsoncxx::document::value, tbb::scalable_allocator<bsoncxx::document::value>> visitor_submit;
-    tbb::concurrent_vector<bsoncxx::document::value, tbb::scalable_allocator<bsoncxx::document::value>> visitor_submit_accompany;
-    tbb::concurrent_vector<bsoncxx::document::value, tbb::scalable_allocator<bsoncxx::document::value>> visitor_submit_tutelage;
+    tbb::concurrent_vector<bsoncxx::document::value> visitor_submit;
+    tbb::concurrent_vector<bsoncxx::document::value> visitor_submit_accompany;
+    tbb::concurrent_vector<bsoncxx::document::value> visitor_submit_tutelage;
     // ----------组织成二维表格的形式----------
     // 获取单选中的值
     auto get_swich_label = [](const nlohmann::json &input_json)
@@ -61,8 +61,8 @@ void task_visitor::main_logic()
         {
             nlohmann::json input_json = form_results[index];
             nlohmann::json results_json;
-            std::vector<nlohmann::json, tbb::scalable_allocator<nlohmann::json>> accompany_json;
-            std::vector<nlohmann::json, tbb::scalable_allocator<nlohmann::json>> tutelage_json;
+            std::vector<nlohmann::json> accompany_json;
+            std::vector<nlohmann::json> tutelage_json;
             results_json["提交日期"] = input_json["updatedAt"];
             results_json["source_id"] = input_json["_id"];
             for (const auto &ch : input_json["answers"])

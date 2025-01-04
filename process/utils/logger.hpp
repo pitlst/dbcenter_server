@@ -6,7 +6,8 @@
 #include <string>
 #include <array>
 
-#include "tbb/tbb.h"
+#include "oneapi/tbb.h"
+#include "oneapi/tbb/tbbmalloc_proxy.h"
 
 #include "mongo.hpp"
 

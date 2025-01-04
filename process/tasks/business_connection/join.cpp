@@ -10,7 +10,7 @@ void task_bc_join_class_group::main_logic()
     auto ods_bc_class_group = MONGO.get_coll_data(client, "ods", "bc_class_group");
     auto ods_bc_class_group_entry = MONGO.get_coll_data(client, "ods", "bc_class_group_entry");
     // 因为金蝶云苍穹的id在内容变更后不会更改，所以无法做增量计算，每一次都只能全量复写
-    tbb::concurrent_vector<bsoncxx::document::value, tbb::scalable_allocator<bsoncxx::document::value>> form_results;
+    tbb::concurrent_vector<bsoncxx::document::value> form_results;
     auto data_process = [&](const tbb::blocked_range<size_t> &range)
     {
         for (size_t index = range.begin(); index != range.end(); ++index)
@@ -59,7 +59,7 @@ void task_bc_join_technological_process::main_logic()
     auto ods_bc_technological_process_change = MONGO.get_coll_data(client, "ods", "bc_technological_process_change");
     auto ods_bc_technological_process_flow = MONGO.get_coll_data(client, "ods", "bc_technological_process_flow");
 
-    tbb::concurrent_vector<bsoncxx::document::value, tbb::scalable_allocator<bsoncxx::document::value>> form_results;
+    tbb::concurrent_vector<bsoncxx::document::value> form_results;
     auto data_process = [&](const tbb::blocked_range<size_t> &range)
     {
         for (size_t index = range.begin(); index != range.end(); ++index)
@@ -119,7 +119,7 @@ void task_bc_join_business_connection::main_logic()
     auto ods_bc_business_connection_main_delivery_unit = MONGO.get_coll_data(client, "ods", "bc_business_connection_main_delivery_unit");
     auto ods_bc_business_connection_copy_delivery_unit = MONGO.get_coll_data(client, "ods", "bc_business_connection_copy_delivery_unit");
 
-    tbb::concurrent_vector<bsoncxx::document::value, tbb::scalable_allocator<bsoncxx::document::value>> form_results;
+    tbb::concurrent_vector<bsoncxx::document::value> form_results;
     auto data_process = [&](const tbb::blocked_range<size_t> &range)
     {
         for (size_t index = range.begin(); index != range.end(); ++index)
@@ -172,7 +172,7 @@ void task_bc_join_design_change::main_logic()
     auto ods_bc_design_change = MONGO.get_coll_data(client, "ods", "bc_design_change");
     auto ods_bc_design_change_entry = MONGO.get_coll_data(client, "ods", "bc_design_change_entry");
 
-    tbb::concurrent_vector<bsoncxx::document::value, tbb::scalable_allocator<bsoncxx::document::value>> form_results;
+    tbb::concurrent_vector<bsoncxx::document::value> form_results;
     auto data_process = [&](const tbb::blocked_range<size_t> &range)
     {
         for (size_t index = range.begin(); index != range.end(); ++index)
@@ -228,7 +228,7 @@ void task_bc_join_shop_execution::main_logic()
     auto ods_bc_shop_execution_task_item_point_unit = MONGO.get_coll_data(client, "ods", "bc_shop_execution_task_item_point_unit");
     // 城轨事业部的业联暂时不关注备料工艺
 
-    tbb::concurrent_vector<bsoncxx::document::value, tbb::scalable_allocator<bsoncxx::document::value>> form_results;
+    tbb::concurrent_vector<bsoncxx::document::value> form_results;
     auto data_process = [&](const tbb::blocked_range<size_t> &range)
     {
         for (size_t index = range.begin(); index != range.end(); ++index)
@@ -349,7 +349,7 @@ void task_bc_join_design_change_execution::main_logic()
     auto ods_bc_design_change_execution_reworked_material = MONGO.get_coll_data(client, "ods", "bc_design_change_execution_reworked_material");
     auto ods_bc_design_change_execution_reworked_material_unit = MONGO.get_coll_data(client, "ods", "bc_design_change_execution_reworked_material_unit");
 
-    tbb::concurrent_vector<bsoncxx::document::value, tbb::scalable_allocator<bsoncxx::document::value>> form_results;
+    tbb::concurrent_vector<bsoncxx::document::value> form_results;
     auto data_process = [&](const tbb::blocked_range<size_t> &range)
     {
         for (size_t index = range.begin(); index != range.end(); ++index)
@@ -473,8 +473,4 @@ void task_bc_join_design_change_execution::main_logic()
     {
         LOGGER.warn(this->node_name, "源数据为空，不更新数据");
     }
-}
-
-void task_bc_join_business_connection_close::main_logic()
-{
 }

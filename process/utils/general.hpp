@@ -9,7 +9,6 @@
 #include <any>
 #include <vector>
 
-
 #include "json.hpp"
 
 namespace dbs

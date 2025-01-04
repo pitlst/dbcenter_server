@@ -46,10 +46,10 @@ mongocxx::collection mongo_connect::get_coll(mongocxx::v_noabi::pool::entry &cli
     return client_[db_name][coll_name];
 }
 
-std::vector<nlohmann::json, tbb::scalable_allocator<nlohmann::json>> mongo_connect::get_coll_data(mongocxx::v_noabi::pool::entry &client_, const std::string &db_name, const std::string &coll_name) const
+std::vector<nlohmann::json> mongo_connect::get_coll_data(mongocxx::v_noabi::pool::entry &client_, const std::string &db_name, const std::string &coll_name) const
 {
     auto results_cursor = client_[db_name][coll_name].find({});
-    std::vector<nlohmann::json, tbb::scalable_allocator<nlohmann::json>> results;
+    std::vector<nlohmann::json> results;
     for (auto &&ch : results_cursor)
     {
         nlohmann::json m_json = nlohmann::json::parse(bsoncxx::to_json(ch));
