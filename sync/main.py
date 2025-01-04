@@ -26,6 +26,7 @@ if __name__ == "__main__":
             all_node[task["name"]] = node(task, preprocess_func=preprocess_func, postprocess_func=postprocess_func)
         
     with ThreadPoolExecutor() as tpool:
+        LOG.debug("开始运行同步服务")
         while True:
             run_list = []
             for task in all_node:
@@ -37,6 +38,6 @@ if __name__ == "__main__":
                 for ch in as_completed(run_list):
                     PPL.send(ch.result())
             else:
-                LOG.info("无任务在运行，等待5秒")
-                time.sleep(5)
+                time.sleep(1)
+            
             

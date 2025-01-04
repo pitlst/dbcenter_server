@@ -18,7 +18,7 @@ int main()
 {
     // 设置最大线程数为系统核心数的二倍
     unsigned int num_cores = std::thread::hardware_concurrency();
-    tbb::global_control global_limit(tbb::global_control::max_allowed_parallelism, num_cores * 2);
+    tbb::global_control global_limit(tbb::global_control::max_allowed_parallelism, int(num_cores * 1.5));
 
 
     tbb::task_group continue_tg;
@@ -49,8 +49,8 @@ int main()
     dbs::task_msg_sum msg_sum;
     task_list.emplace_back(msg_sum.get_run_func());
     // 人员数据处理
-    dbs::task_person person;
-    task_list.emplace_back(person.get_run_func());
+    // dbs::task_person person;
+    // task_list.emplace_back(person.get_run_func());
     // 外网访客系统数据处理
     dbs::task_visitor visitor;
     task_list.emplace_back(visitor.get_run_func());
@@ -63,10 +63,9 @@ int main()
         {
             yield_tg.run(ch);
         }
-        yield_tg.wait();
-        // 将延时
-        std::this_thread::sleep_for(500ms);
+        std::this_thread::sleep_for(1000ms);
     }
+    yield_tg.wait();
     continue_tg.wait();
     return 0;
 }

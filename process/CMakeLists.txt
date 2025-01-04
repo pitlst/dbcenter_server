@@ -102,8 +102,6 @@ endforeach(FILE_I)
 set(ALL_UTILS_FILE                 
     utils/general.hpp
     utils/general.cpp
-    utils/data.cpp
-    utils/data.cpp
     utils/mongo.hpp
     utils/mongo.cpp
     utils/logger.hpp

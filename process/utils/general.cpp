@@ -151,17 +151,3 @@ std::string dbs::remove_newline(const std::string &str)
     }
     return result;
 }
-
-bool dbs::is_english_char(char ch)
-{
-    // 使用 isalpha 函数判断字符是否为英文字母
-    return std::isalpha(static_cast<unsigned char>(ch));
-}
-
-std::string dbs::get_thread_id()
-{
-    std::stringstream ss;
-    std::thread::id id = std::this_thread::get_id();
-    ss << std::hash<std::thread::id>()(id);
-    return ss.str();
-}

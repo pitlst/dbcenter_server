@@ -68,6 +68,7 @@ std::function<void()> pipeline::get_run_func()
 {
     return [&]()
     {
+        // 因为还需要从数据库中获取触发信号，所以不能做成触发的形式，只能是事件循环
         while (true)
         {
             // 处理发送消息
@@ -96,7 +97,7 @@ std::function<void()> pipeline::get_run_func()
                 this->m_recv_set.unsafe_erase(this->m_recv_set.find(temp_name));
             }
             // 暂停一段时间，防止过于占用cpu
-            std::this_thread::sleep_for(50ms);
+            std::this_thread::sleep_for(250ms);
         }
     };
 }

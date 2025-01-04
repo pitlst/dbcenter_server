@@ -4,6 +4,7 @@
 #include <iostream>
 #include <thread>
 #include <memory>
+#include <atomic>  
 #include <chrono>
 
 #include "bsoncxx/builder/basic/array.hpp"
@@ -37,6 +38,8 @@ namespace dbs
     protected:
         // 任务名称
         std::string node_name;
+        // 是否正在运行
+        std::atomic<bool> is_running = false;
     };
 } 
 

@@ -28,27 +28,43 @@ logger &logger::instance()
 // 不同等级日志
 void logger::debug(const std::string &name, const std::string &msg)
 {
-    this->m_queue.push({"DEBUG", name, msg});
+    this->emit("DEBUG", name, msg);
 }
 
 void logger::info(const std::string &name, const std::string &msg)
 {
-    this->m_queue.push({"INFO", name, msg});
+    this->emit("INFO", name, msg);  
 }
 
 void logger::warn(const std::string &name, const std::string &msg)
 {
-    this->m_queue.push({"WARNNING", name, msg});
+    this->emit("WARNNING", name, msg);
 }
 
 void logger::error(const std::string &name, const std::string &msg)
 {
-    this->m_queue.push({"ERROR", name, msg});
+    this->emit("ERROR", name, msg);
 }
 
 void logger::emit(const std::string &level, const std::string &name, const std::string &msg)
 {
+    tbb::concurrent_map<std::string, log_data> temp_log;
     auto now = std::chrono::system_clock::now();
+    temp_log["等级"] = level;
+    temp_log["时间"] = now;
+    temp_log["名称"] = name;
+    temp_log["消息"] = msg;
+    this->m_queue.push(temp_log);
+    // 通知消费线程开始打印
+    this->m_print_cv.notify_all();
+}
+
+void logger::print(tbb::concurrent_map<std::string, log_data> & temp_log_data)
+{
+    auto level = std::get<std::string>(temp_log_data["等级"]);
+    auto now = std::get<std::chrono::system_clock::time_point>(temp_log_data["时间"]);
+    auto name = std::get<std::string>(temp_log_data["名称"]);
+    auto msg = std::get<std::string>(temp_log_data["消息"]);
     // 插入数据库
     auto collection = this->create_time_collection(name);
     using bsoncxx::builder::basic::kvp;
@@ -97,17 +113,20 @@ std::function<void()> logger::get_run_func()
     using namespace std::chrono_literals;
     auto run = [&]()
     {
-        std::array<std::string, 3> temp;
+        tbb::concurrent_map<std::string, log_data> temp;
         while (true)
         {
-            if (this->m_queue.try_pop(temp))
+            // 在没有打印需求时等待通知
+            std::unique_lock mlk(this->m_print_mtx);
+            this->m_print_cv.wait(mlk);
+            mlk.unlock();
+            // 在有打印需求时一直打印到队列为空，允许打印中途添加日志
+            while (!this->m_queue.empty())
             {
-                this->emit(temp[0], temp[1], temp[2]);
-            }
-            else
-            {
-                // 适当延时防止过于吃cpu
-                std::this_thread::sleep_for(500ms);
+                if (this->m_queue.try_pop(temp))
+                {
+                    this->print(temp);
+                }
             }
         }
     };
