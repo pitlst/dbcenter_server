@@ -13,8 +13,6 @@
 #include "bsoncxx/types.hpp"
 #include "bsoncxx/json.hpp"
 
-#include "json.hpp"
-
 #include "oneapi/tbb.h"
 #include "oneapi/tbb/tbbmalloc_proxy.h"
 

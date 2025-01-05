@@ -46,14 +46,13 @@ mongocxx::collection mongo_connect::get_coll(mongocxx::v_noabi::pool::entry &cli
     return client_[db_name][coll_name];
 }
 
-std::vector<nlohmann::json> mongo_connect::get_coll_data(mongocxx::v_noabi::pool::entry &client_, const std::string &db_name, const std::string &coll_name) const
+tbb::concurrent_vector<std::string> mongo_connect::get_coll_data(mongocxx::v_noabi::pool::entry &client_, const std::string &db_name, const std::string &coll_name) const
 {
     auto results_cursor = client_[db_name][coll_name].find({});
-    std::vector<nlohmann::json> results;
+    tbb::concurrent_vector<std::string> results;
     for (auto &&ch : results_cursor)
     {
-        nlohmann::json m_json = nlohmann::json::parse(bsoncxx::to_json(ch));
-        results.emplace_back(m_json);
+        results.emplace_back(bsoncxx::to_json(ch));
     }
     return results;
 }

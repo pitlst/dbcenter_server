@@ -11,9 +11,7 @@
 #include "mongocxx/pool.hpp"
 #include "mongocxx/uri.hpp"
 
-#include "json.hpp"
 #include "toml.hpp"
-#include "json.hpp"
 
 #include "oneapi/tbb.h"
 #include "oneapi/tbb/tbbmalloc_proxy.h"
@@ -34,7 +32,7 @@ namespace dbs
         // 获取集合
         mongocxx::collection get_coll(mongocxx::pool::entry & client_, const std::string &db_name, const std::string &coll_name) const;
         // 获取集合的值
-        std::vector<nlohmann::json> get_coll_data(mongocxx::pool::entry & client_, const std::string &db_name, const std::string &coll_name) const;
+        tbb::concurrent_vector<std::string> get_coll_data(mongocxx::pool::entry & client_, const std::string &db_name, const std::string &coll_name) const;
 
     private:
         // 禁止外部构造与析构
