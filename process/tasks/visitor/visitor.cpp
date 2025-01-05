@@ -10,6 +10,7 @@ void task_visitor::main_logic()
     auto ods_results = MONGO.get_coll_data(client, "ods", "submissionmodels");
     auto dm_results = MONGO.get_coll_data(client, "dm", "visitor_submit");
     // ----------检查数据是否更新----------
+    // 因为访客系统的填报只能新增不会变更，所以可以根据id做增量更新
     std::vector<nlohmann::json> old_source_id;
     for (const auto &ch : dm_results)
     {

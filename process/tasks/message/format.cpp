@@ -10,6 +10,7 @@ void task_msg_format::main_logic()
     auto ods_results = MONGO.get_coll_data(client, "ods", "short_message");
     auto dwd_results = MONGO.get_coll_data(client, "dwd", "薪酬信息");
     // ----------检查数据是否更新----------
+    // 短信内容不会发生变更，所以可以根据id做增量更新
     tbb::concurrent_vector<nlohmann::json> old_source_id;
     for (const auto &ch : dwd_results)
     {
