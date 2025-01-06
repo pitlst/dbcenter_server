@@ -136,10 +136,3 @@ set(ALL_TASKS_FILE
 
 add_executable(${PROJECT_NAME} main.cpp ${ALL_UTILS_FILE} ${ALL_TASKS_FILE})
 target_link_libraries(${PROJECT_NAME} mongo::mongocxx_shared TBB::tbb TBB::tbbmalloc TBB::tbbmalloc_proxy fmt::fmt)
-
-
-
-
-
-
-
