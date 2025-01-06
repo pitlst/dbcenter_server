@@ -90,10 +90,10 @@ add_compile_definitions(_CRT_SECURE_NO_WARNINGS=1)
 
 # 粘贴必要的动态链接库
 foreach(FILE_I ${MONGO_CONCPP_DLLS})
-    file(COPY ${FILE_I} DESTINATION "${PROJECT_SOURCE_DIR}/build/Release" FOLLOW_SYMLINK_CHAIN)
+    file(COPY ${FILE_I} DESTINATION "${PROJECT_SOURCE_DIR}/build" FOLLOW_SYMLINK_CHAIN)
 endforeach(FILE_I)
 foreach(FILE_I ${TBB_DLLS})
-    file(COPY ${FILE_I} DESTINATION "${PROJECT_SOURCE_DIR}/build/Release" FOLLOW_SYMLINK_CHAIN)
+    file(COPY ${FILE_I} DESTINATION "${PROJECT_SOURCE_DIR}/build" FOLLOW_SYMLINK_CHAIN)
 endforeach(FILE_I)
 
 #--------------------------------------------------------------------------------------#
@@ -124,6 +124,14 @@ set(ALL_TASKS_FILE
     tasks/business_connection/join.cpp
     tasks/business_connection/process.hpp
     tasks/business_connection/process.cpp
+    tasks/ameliorate/ameliorate.hpp
+    tasks/ameliorate/ameliorate.cpp
+    tasks/error/clean.hpp
+    tasks/error/clean.cpp
+    tasks/error/export.hpp
+    tasks/error/export.cpp
+    tasks/error/process.hpp
+    tasks/error/process.cpp
 )
 
 add_executable(${PROJECT_NAME} main.cpp ${ALL_UTILS_FILE} ${ALL_TASKS_FILE})

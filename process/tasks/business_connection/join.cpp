@@ -137,7 +137,7 @@ void task_bc_join_technological_process::main_logic()
     auto m_coll = this->get_coll("dwd", "业联-工艺流程");
     if (!technological_process_results.empty())
     {
-        m_coll.insert_many(form_results);
+        m_coll.insert_many(technological_process_results);
     }
     else
     {
@@ -199,14 +199,14 @@ void task_bc_join_business_connection::main_logic()
                 results_json["抄送单位"].emplace_back(ch["对应基础资料id"]);
             }
         }
-        form_results.emplace_back(bsoncxx::from_json(results_json.dump()));
+        business_connection_results.emplace_back(bsoncxx::from_json(results_json.dump()));
     };
     tbb::parallel_for_each(form_results.begin(), form_results.end(), data_process);
     LOGGER.info(this->node_name, "写入处理数据");
     auto m_coll = this->get_coll("dwd", "业联-业务联系书");
     if (!business_connection_results.empty())
     {
-        m_coll.insert_many(form_results);
+        m_coll.insert_many(business_connection_results);
     }
     else
     {
@@ -262,14 +262,14 @@ void task_bc_join_design_change::main_logic()
                 results_json["分录"].emplace_back(ch_copy);
             }
         }
-        form_results.emplace_back(bsoncxx::from_json(results_json.dump()));
+        design_change_results.emplace_back(bsoncxx::from_json(results_json.dump()));
     };
     tbb::parallel_for_each(form_results.begin(), form_results.end(), data_process);
     LOGGER.info(this->node_name, "写入处理数据");
     auto m_coll = this->get_coll("dwd", "业联-设计变更");
     if (!design_change_results.empty())
     {
-        m_coll.insert_many(form_results);
+        m_coll.insert_many(design_change_results);
     }
     else
     {
@@ -399,14 +399,14 @@ void task_bc_join_shop_execution::main_logic()
                 results_json["返工物料"].emplace_back(ch_copy);
             }
         }
-        form_results.emplace_back(bsoncxx::from_json(results_json.dump()));
+        shop_execution_results.emplace_back(bsoncxx::from_json(results_json.dump()));
     };
     tbb::parallel_for_each(form_results.begin(), form_results.end(), data_process);
     LOGGER.info(this->node_name, "写入处理数据");
     auto m_coll = this->get_coll("dwd", "业联-车间执行单");
     if (!shop_execution_results.empty())
     {
-        m_coll.insert_many(form_results);
+        m_coll.insert_many(shop_execution_results);
     }
     else
     {
@@ -558,14 +558,14 @@ void task_bc_join_design_change_execution::main_logic()
                 results_json["文件变更"].emplace_back(ch_copy);
             }
         }
-        form_results.emplace_back(bsoncxx::from_json(results_json.dump()));
+        design_change_execution_results.emplace_back(bsoncxx::from_json(results_json.dump()));
     };
     tbb::parallel_for_each(form_results.begin(), form_results.end(), data_process);
     LOGGER.info(this->node_name, "写入处理数据");
     auto m_coll = this->get_coll("dwd", "业联-设计变更执行");
     if (!design_change_execution_results.empty())
     {
-        m_coll.insert_many(form_results);
+        m_coll.insert_many(design_change_execution_results);
     }
     else
     {

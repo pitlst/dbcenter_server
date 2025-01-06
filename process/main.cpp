@@ -44,8 +44,8 @@ int main()
     dbs::task_msg_sum msg_sum;
     task_list.emplace_back(msg_sum.get_run_func());
     // 人员数据处理
-    dbs::task_person person;
-    task_list.emplace_back(person.get_run_func());
+    // dbs::task_person person;
+    // task_list.emplace_back(person.get_run_func());
     // 外网访客系统数据处理
     dbs::task_visitor visitor;
     task_list.emplace_back(visitor.get_run_func());
