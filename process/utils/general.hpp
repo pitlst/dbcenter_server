@@ -23,6 +23,10 @@ namespace dbs
     std::string remove_substring(const std::string &str, const std::string &toRemove);
     // 删除回车
     std::string remove_newline(const std::string &str);
+    // 删除空格
+    std::string remove_space(const std::string &str);
+    // 将不能转成浮点数的部分字符串舍弃
+    double stod(const std::string &str);
 }
 
 #endif

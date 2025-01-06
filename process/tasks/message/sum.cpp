@@ -7,10 +7,9 @@ using namespace dbs;
 void task_msg_sum::main_logic()
 {
     LOGGER.info(this->node_name, "读取数据");
-    auto client = MONGO.init_client();
     // ----------从数据库读取数据----------
-    auto dwd_results = MONGO.get_coll_data(client, "dwd", "薪酬信息");
-    // 薪酬数据组织
+    auto dwd_results = this->get_coll_data("dwd", "薪酬信息");
+    // 因为是聚合运算，所以只能全量更新，删除后重写
     using pay_data = std::variant<std::monostate, double, std::string, tbb::concurrent_queue<double>>;
     tbb::concurrent_set<tbb::concurrent_vector<std::string>> employee_compensation_set;
     tbb::concurrent_vector<tbb::concurrent_map<std::string, pay_data>> employee_compensation;
@@ -107,7 +106,7 @@ void task_msg_sum::main_logic()
     else
     {
         LOGGER.info(this->node_name, "写入处理数据");
-        auto m_coll = MONGO.get_coll(client, "dm", "employee_compensation");
+        auto m_coll = this->get_coll("dm", "employee_compensation");
         m_coll.drop();
         m_coll.insert_many(employee_compensation_res);
     }

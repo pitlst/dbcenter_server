@@ -20,6 +20,8 @@
 
 namespace dbs
 {
+    // 前向声明决解决循环依赖
+    class task_base;
 
     // 全局单例的连接类，用于组织对数据库的连接
     class mongo_connect
@@ -29,10 +31,6 @@ namespace dbs
         static mongo_connect &instance();
         // 在对应线程初始化以获取连接
         mongocxx::pool::entry init_client();
-        // 获取集合
-        mongocxx::collection get_coll(mongocxx::pool::entry & client_, const std::string &db_name, const std::string &coll_name) const;
-        // 获取集合的值
-        tbb::concurrent_vector<std::string> get_coll_data(mongocxx::pool::entry & client_, const std::string &db_name, const std::string &coll_name) const;
 
     private:
         // 禁止外部构造与析构

@@ -151,3 +151,50 @@ std::string dbs::remove_newline(const std::string &str)
     }
     return result;
 }
+
+std::string dbs::remove_space(const std::string &str)
+{
+    std::string result;
+    result.reserve(str.size()); // 预分配空间以提高效率
+    for (char ch : str)
+    {
+        if (ch != ' ')
+        {
+            result.push_back(ch); 
+        }
+    }
+    return result;
+}
+
+double dbs::stod(const std::string &str)
+{
+    std::string result;
+    for (char ch : str)
+    {
+        bool break_label = false;
+        switch (ch)
+        {
+        case '0':
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+        case '7':
+        case '8':
+        case '9':
+        case '.':
+            result.push_back(ch); 
+            break;     
+        default:
+            break_label = true;
+            break;
+        }
+        if (break_label)
+        {
+            break;
+        }
+    }
+    return std::stod(result);
+}

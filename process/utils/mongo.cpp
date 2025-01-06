@@ -41,18 +41,3 @@ mongocxx::pool::entry mongo_connect::init_client()
     return this->m_pool_ptr->acquire();
 }
 
-mongocxx::collection mongo_connect::get_coll(mongocxx::v_noabi::pool::entry &client_, const std::string &db_name, const std::string &coll_name) const
-{
-    return client_[db_name][coll_name];
-}
-
-tbb::concurrent_vector<std::string> mongo_connect::get_coll_data(mongocxx::v_noabi::pool::entry &client_, const std::string &db_name, const std::string &coll_name) const
-{
-    auto results_cursor = client_[db_name][coll_name].find({});
-    tbb::concurrent_vector<std::string> results;
-    for (auto &&ch : results_cursor)
-    {
-        results.emplace_back(bsoncxx::to_json(ch));
-    }
-    return results;
-}

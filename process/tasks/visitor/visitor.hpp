@@ -1,8 +1,6 @@
 #ifndef DBS_TASK_VISITOR_INCLUDE
 #define DBS_TASK_VISITOR_INCLUDE
 
-#include "simdjson.h"
-
 #include "base.hpp"
 
 namespace dbs
@@ -14,8 +12,6 @@ namespace dbs
         ~task_visitor() = default;
     private:
         void main_logic() override;
-
-        simdjson::dom::parser m_parser;
     };
 }
 

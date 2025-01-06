@@ -39,17 +39,10 @@ include_directories(
     ${PROJECT_SOURCE_DIR}
     ${LIBMONGOCXX_INCLUDE_DIR}
     ${LIBBSONCXX_INCLUDE_DIR}
-    3rd_party
-    3rd_party/simdjson
+    3rd_party/nlohmann
     3rd_party/toml11
     utils
     tasks
-)
-
-#simdjson的源文件集成
-set(simdjson_source 
-    ${PROJECT_SOURCE_DIR}/3rd_party/simdjson/simdjson.h
-    ${PROJECT_SOURCE_DIR}/3rd_party/simdjson/simdjson.cpp
 )
 
 # mongo数据库连接
@@ -115,27 +108,25 @@ set(ALL_UTILS_FILE
     utils/logger.cpp
     utils/pipeline.hpp
     utils/pipeline.cpp
-    utils/parser_pool.hpp
-    utils/parser_pool.cpp
 )
 set(ALL_TASKS_FILE                 
     tasks/base.hpp
     tasks/base.cpp
     tasks/visitor/visitor.hpp
     tasks/visitor/visitor.cpp
-    # tasks/person/person.hpp
-    # tasks/person/person.cpp
-    # tasks/message/format.hpp
-    # tasks/message/format.cpp
-    # tasks/message/sum.hpp
-    # tasks/message/sum.cpp
-    # tasks/business_connection/join.hpp
-    # tasks/business_connection/join.cpp
-    # tasks/business_connection/process.hpp
-    # tasks/business_connection/process.cpp
+    tasks/person/person.hpp
+    tasks/person/person.cpp
+    tasks/message/format.hpp
+    tasks/message/format.cpp
+    tasks/message/sum.hpp
+    tasks/message/sum.cpp
+    tasks/business_connection/join.hpp
+    tasks/business_connection/join.cpp
+    tasks/business_connection/process.hpp
+    tasks/business_connection/process.cpp
 )
 
-add_executable(${PROJECT_NAME} main.cpp ${ALL_UTILS_FILE} ${ALL_TASKS_FILE} ${simdjson_source})
+add_executable(${PROJECT_NAME} main.cpp ${ALL_UTILS_FILE} ${ALL_TASKS_FILE})
 target_link_libraries(${PROJECT_NAME} mongo::mongocxx_shared TBB::tbb TBB::tbbmalloc TBB::tbbmalloc_proxy fmt::fmt)
 
 
