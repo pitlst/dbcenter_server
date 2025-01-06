@@ -8,4 +8,5 @@ SELECT  fid              AS "id"
        ,fk_crrc_sendunit AS "发送单位"
        ,fk_crrc_remark   AS "备注"
        ,fk_crrc_issplit  AS "是否拆分"
+       ,fmodifytime      AS "修改时间"
 FROM crrc_secd.tk_crrc_designchgcenter

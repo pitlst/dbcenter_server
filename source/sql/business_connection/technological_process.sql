@@ -16,6 +16,7 @@ SELECT  bill.fid                                                                
        ,bill.fk_crrc_sendoutdept                                                                   AS "发出单位"
        ,bill.fk_crrc_jobdesc                                                                       AS "描述"
        ,case bill.fk_crrc_operation WHEN 'A' THEN '正常分派' WHEN 'B' THEN '驳回' end                    AS "操作"
+       ,bill.fmodifytime                                                                           AS "修改时间"
 FROM crrc_secd.tk_crrc_craftchangebill bill
 LEFT JOIN crrc_sys.t_sec_user _user
 ON bill.fk_crrc_senduser = _user.FID
