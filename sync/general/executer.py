@@ -8,9 +8,8 @@ from urllib.parse import quote_plus
 from general import CONNECT_CONFIG
 from general.logger import LOG
 
-SQL_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "source", "sql")
-TABLE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "source", "table")
-JS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "source", "mongo_js")
+SELECT_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "source", "select")
+TABLE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "source", "file")
 
 class executer:
     '''执行器抽象，用于限制对目标系统的影响'''
@@ -78,7 +77,7 @@ class executer:
         
     def read_from_json(self, __file_path: str) -> dict:
         try:
-            with open(os.path.join(JS_PATH, __file_path), mode='r', encoding='utf-8') as file:
+            with open(os.path.join(SELECT_PATH, __file_path), mode='r', encoding='utf-8') as file:
                 return json.load(file)
         except:
             LOG.error(traceback.format_exc())
@@ -133,7 +132,7 @@ class executer:
         
     def write_to_json(self, __data: dict, __file_path: str) -> None:
         try:
-            with open(os.path.join(JS_PATH, __file_path), mode='w', encoding='utf-8') as file:
+            with open(os.path.join(SELECT_PATH, __file_path), mode='w', encoding='utf-8') as file:
                 file.write(str(__data))
         except:
             LOG.error(traceback.format_exc())

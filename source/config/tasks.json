@@ -70,19 +70,6 @@
         }
     },
     {
-        "name": "唐渝用-alignment_file",
-        "type": "sql_to_table",
-        "next_name": [],
-        "source": {
-            "connect": "MES",
-            "sql": "tangyu/alignment_file.sql"
-        },
-        "target": {
-            "connect": "数据运用平台-测试库",
-            "table": "ods_alignment_file"
-        }
-    },
-    {
         "name": "业联系统增量检查-班组",
         "type": "sql_to_nosql",
         "next_name": [],
@@ -93,7 +80,7 @@
         "target": {
             "connect": "数据处理服务存储",
             "database": "ods",
-            "table": "bc_class_group"
+            "table": "increment_bc_class_group"
         }
     },
     {
@@ -107,7 +94,7 @@
         "target": {
             "connect": "数据处理服务存储",
             "database": "ods",
-            "table": "bc_business_connection"
+            "table": "increment_bc_business_connection"
         }
     },
     {
@@ -121,7 +108,7 @@
         "target": {
             "connect": "数据处理服务存储",
             "database": "ods",
-            "table": "bc_design_change"
+            "table": "increment_bc_design_change"
         }
     },
     {
@@ -135,7 +122,7 @@
         "target": {
             "connect": "数据处理服务存储",
             "database": "ods",
-            "table": "bc_technological_process"
+            "table": "increment_bc_technological_process"
         }
     },
     {
@@ -149,7 +136,7 @@
         "target": {
             "connect": "数据处理服务存储",
             "database": "ods",
-            "table": "bc_shop_execution"
+            "table": "increment_bc_shop_execution"
         }
     },
     {
@@ -163,7 +150,7 @@
         "target": {
             "connect": "数据处理服务存储",
             "database": "ods",
-            "table": "bc_design_change_execution"
+            "table": "increment_bc_design_change_execution"
         }
     },
     {
@@ -177,7 +164,7 @@
         "target": {
             "connect": "数据处理服务存储",
             "database": "ods",
-            "table": "bc_business_connection_close"
+            "table": "increment_bc_business_connection_close"
         }
     }
 ]

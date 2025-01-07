@@ -4,9 +4,8 @@ from general import log_run_time
 from general.logger import LOG
 from general.executer import EXECUTER
 
-SQL_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "..", "..", "source", "sql")
-TABLE_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "..", "..", "source", "table")
-JSON_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "..", "..", "source", "json")
+SELECT_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "source", "select")
+TABLE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "source", "file")
 
 class node:
     '''节点的执行实现'''
@@ -57,7 +56,7 @@ class node:
     def read(self):
         temp_data = None
         if self.type.split("_to_")[0] == "sql":
-            temp_sql = self.node["source"]["sql"] if self.preprocess_func is None else self.preprocess_func(os.path.join(SQL_PATH, self.node["source"]["sql"]))
+            temp_sql = self.node["source"]["sql"] if self.preprocess_func is None else self.preprocess_func(os.path.join(SELECT_PATH, self.node["source"]["sql"]))
             temp_data = EXECUTER[self.node["source"]["connect"]].read_from_sql(temp_sql)
         elif self.type.split("_to_")[0] == "table":
             if not self.preprocess_func is None:
@@ -85,9 +84,9 @@ class node:
             temp_data = EXECUTER[self.node["source"]["connect"]].read_from_nosql(temp_database, temp_table)
         elif self.type.split("_to_")[0] == "json":
             if not self.preprocess_func is None:
-                temp_path = self.preprocess_func(os.path.join(JSON_PATH, self.node["source"]["path"]))
+                temp_path = self.preprocess_func(os.path.join(SELECT_PATH, self.node["source"]["path"]))
             else:
-                temp_path = os.path.join(JSON_PATH, self.node["source"]["path"])
+                temp_path = os.path.join(SELECT_PATH, self.node["source"]["path"])
             temp_data = EXECUTER[self.node["source"]["connect"]].read_from_json(temp_path)
         return temp_data
     
@@ -105,4 +104,4 @@ class node:
             elif self.type.split("_to_")[1] == "nosql":
                 EXECUTER[self.node["target"]["connect"]].write_to_nosql(temp_data, self.node["target"]["database"], self.node["target"]["table"])
             elif self.type.split("_to_")[1] == "json":
-                EXECUTER[self.node["target"]["connect"]].write_to_json(temp_data, os.path.join(JSON_PATH, self.node["target"]["path"]))
+                EXECUTER[self.node["target"]["connect"]].write_to_json(temp_data, os.path.join(SELECT_PATH, self.node["target"]["path"]))

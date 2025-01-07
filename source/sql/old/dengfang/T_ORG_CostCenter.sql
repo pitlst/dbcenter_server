@@ -1,1 +1,0 @@
-select * from ZJEAS7.T_ORG_CostCenter

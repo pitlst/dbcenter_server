@@ -1,1 +1,0 @@
-select * from crrc_secd.tk_crrc_gxrwxf

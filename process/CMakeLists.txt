@@ -108,6 +108,8 @@ set(ALL_UTILS_FILE
     utils/logger.cpp
     utils/pipeline.hpp
     utils/pipeline.cpp
+    utils/sql_builder.hpp
+    utils/sql_builder.cpp
 )
 set(ALL_TASKS_FILE                 
     tasks/base.hpp
@@ -120,14 +122,10 @@ set(ALL_TASKS_FILE
     tasks/message/format.cpp
     tasks/message/sum.hpp
     tasks/message/sum.cpp
-    tasks/business_connection/join.hpp
-    tasks/business_connection/join.cpp
     tasks/business_connection/increment.hpp
     tasks/business_connection/increment.cpp
     tasks/business_connection/sync.hpp
     tasks/business_connection/sync.cpp
-    tasks/business_connection/process.hpp
-    tasks/business_connection/process.cpp
     tasks/ameliorate/ameliorate.hpp
     tasks/ameliorate/ameliorate.cpp
     tasks/error/clean.hpp
