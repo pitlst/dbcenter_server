@@ -1,7 +1,170 @@
 [
     {
-        "name":"短信数据处理-薪酬提取",
-        "type":"process",
-        "next_name": []
+        "name": "外网访客系统数据同步",
+        "type": "nosql_to_nosql",
+        "next_name": [],
+        "source": {
+            "connect": "外网访客系统数据库",
+            "database": "heyform",
+            "table": "submissionmodels"
+        },
+        "target": {
+            "connect": "数据处理服务存储",
+            "database": "ods",
+            "table": "submissionmodels"
+        }
+    },
+    {
+        "name": "外网访客系统数据处理",
+        "type": "process",
+        "next_name": [
+            "外网访客系统数据同步"
+        ]
+    },
+    {
+        "name": "外网访客系统结果同步_主表",
+        "type": "nosql_to_table",
+        "next_name": [
+            "外网访客系统数据处理"
+        ],
+        "source": {
+            "connect": "数据处理服务存储",
+            "database": "dm",
+            "table": "visitor_submit"
+        },
+        "target": {
+            "connect": "数据运用平台-测试库",
+            "table": "dm_visitor_submit"
+        }
+    },
+    {
+        "name": "外网访客系统结果同步_同行人",
+        "type": "nosql_to_table",
+        "next_name": [
+            "外网访客系统数据处理"
+        ],
+        "source": {
+            "connect": "数据处理服务存储",
+            "database": "dm",
+            "table": "visitor_submit_accompany"
+        },
+        "target": {
+            "connect": "数据运用平台-测试库",
+            "table": "dm_visitor_submit_accompany"
+        }
+    },
+    {
+        "name": "外网访客系统结果同步_监护人",
+        "type": "nosql_to_table",
+        "next_name": [
+            "外网访客系统数据处理"
+        ],
+        "source": {
+            "connect": "数据处理服务存储",
+            "database": "dm",
+            "table": "visitor_submit_tutelage"
+        },
+        "target": {
+            "connect": "数据运用平台-测试库",
+            "table": "dm_visitor_submit_tutelage"
+        }
+    },
+    {
+        "name": "业联系统增量检查-班组",
+        "type": "sql_to_nosql",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/class_group.sql"
+        },
+        "target": {
+            "connect": "数据处理服务存储",
+            "database": "ods",
+            "table": "increment_bc_class_group"
+        }
+    },
+    {
+        "name": "业联系统增量检查-业务联系书",
+        "type": "sql_to_nosql",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/business_connection.sql"
+        },
+        "target": {
+            "connect": "数据处理服务存储",
+            "database": "ods",
+            "table": "increment_bc_business_connection"
+        }
+    },
+    {
+        "name": "业联系统增量检查-设计变更",
+        "type": "sql_to_nosql",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/design_change.sql"
+        },
+        "target": {
+            "connect": "数据处理服务存储",
+            "database": "ods",
+            "table": "increment_bc_design_change"
+        }
+    },
+    {
+        "name": "业联系统增量检查-工艺流程",
+        "type": "sql_to_nosql",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/technological_process.sql"
+        },
+        "target": {
+            "connect": "数据处理服务存储",
+            "database": "ods",
+            "table": "increment_bc_technological_process"
+        }
+    },
+    {
+        "name": "业联系统增量检查-车间执行单",
+        "type": "sql_to_nosql",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/shop_execution.sql"
+        },
+        "target": {
+            "connect": "数据处理服务存储",
+            "database": "ods",
+            "table": "increment_bc_shop_execution"
+        }
+    },
+    {
+        "name": "业联系统增量检查-设计变更执行",
+        "type": "sql_to_nosql",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/design_change_execution.sql"
+        },
+        "target": {
+            "connect": "数据处理服务存储",
+            "database": "ods",
+            "table": "increment_bc_design_change_execution"
+        }
+    },
+    {
+        "name": "业联系统同步-业联执行关闭",
+        "type": "sql_to_nosql",
+        "next_name": [],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "business_connection/business_connection_close.sql"
+        },
+        "target": {
+            "connect": "数据处理服务存储",
+            "database": "ods",
+            "table": "increment_bc_business_connection_close"
+        }
     }
 ]

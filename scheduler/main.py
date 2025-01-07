@@ -35,7 +35,7 @@ def clean_mq():
     LOG.info("清除了" + str(deleted_count) + "条接收记录")
     
 if __name__ == "__main__":
-    schedule.every().hours.do(main)
+    schedule.every(5).minutes.do(main)
     schedule.every().days.do(clean_mq)
     
     LOG.debug("调度器开始执行......首次启动立即运行所有作业")
