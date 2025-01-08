@@ -70,12 +70,12 @@
         }
     },
     {
-        "name": "业联系统增量检查-班组",
+        "name": "业联系统增量查询-班组",
         "type": "sql_to_nosql",
         "next_name": [],
         "source": {
             "connect": "金蝶云苍穹-正式库",
-            "sql": "business_connection/class_group.sql"
+            "sql": "business_connection/increment/class_group.sql"
         },
         "target": {
             "connect": "数据处理服务存储",
@@ -84,12 +84,12 @@
         }
     },
     {
-        "name": "业联系统增量检查-业务联系书",
+        "name": "业联系统增量查询-业务联系书",
         "type": "sql_to_nosql",
         "next_name": [],
         "source": {
             "connect": "金蝶云苍穹-正式库",
-            "sql": "business_connection/business_connection.sql"
+            "sql": "business_connection/increment/business_connection.sql"
         },
         "target": {
             "connect": "数据处理服务存储",
@@ -98,12 +98,12 @@
         }
     },
     {
-        "name": "业联系统增量检查-设计变更",
+        "name": "业联系统增量查询-设计变更",
         "type": "sql_to_nosql",
         "next_name": [],
         "source": {
             "connect": "金蝶云苍穹-正式库",
-            "sql": "business_connection/design_change.sql"
+            "sql": "business_connection/increment/design_change.sql"
         },
         "target": {
             "connect": "数据处理服务存储",
@@ -112,12 +112,12 @@
         }
     },
     {
-        "name": "业联系统增量检查-工艺流程",
+        "name": "业联系统增量查询-工艺流程",
         "type": "sql_to_nosql",
         "next_name": [],
         "source": {
             "connect": "金蝶云苍穹-正式库",
-            "sql": "business_connection/technological_process.sql"
+            "sql": "business_connection/increment/technological_process.sql"
         },
         "target": {
             "connect": "数据处理服务存储",
@@ -126,12 +126,12 @@
         }
     },
     {
-        "name": "业联系统增量检查-车间执行单",
+        "name": "业联系统增量查询-车间执行单",
         "type": "sql_to_nosql",
         "next_name": [],
         "source": {
             "connect": "金蝶云苍穹-正式库",
-            "sql": "business_connection/shop_execution.sql"
+            "sql": "business_connection/increment/shop_execution.sql"
         },
         "target": {
             "connect": "数据处理服务存储",
@@ -140,12 +140,12 @@
         }
     },
     {
-        "name": "业联系统增量检查-设计变更执行",
+        "name": "业联系统增量查询-设计变更执行",
         "type": "sql_to_nosql",
         "next_name": [],
         "source": {
             "connect": "金蝶云苍穹-正式库",
-            "sql": "business_connection/design_change_execution.sql"
+            "sql": "business_connection/increment/design_change_execution.sql"
         },
         "target": {
             "connect": "数据处理服务存储",
@@ -154,17 +154,66 @@
         }
     },
     {
-        "name": "业联系统同步-业联执行关闭",
+        "name": "业联系统增量查询-业联执行关闭",
         "type": "sql_to_nosql",
         "next_name": [],
         "source": {
             "connect": "金蝶云苍穹-正式库",
-            "sql": "business_connection/business_connection_close.sql"
+            "sql": "business_connection/increment/business_connection_close.sql"
         },
         "target": {
             "connect": "数据处理服务存储",
             "database": "ods",
             "table": "increment_bc_business_connection_close"
         }
+    },
+    {
+        "name": "业联系统增量检查-班组",
+        "type": "process",
+        "next_name": [
+            "业联系统增量查询-班组"
+        ]
+    },
+    {
+        "name": "业联系统增量检查-业务联系书",
+        "type": "process",
+        "next_name": [
+            "业联系统增量查询-业务联系书"
+        ]
+    },
+    {
+        "name": "业联系统增量检查-设计变更",
+        "type": "process",
+        "next_name": [
+            "业联系统增量查询-设计变更"
+        ]
+    },
+    {
+        "name": "业联系统增量检查-工艺流程",
+        "type": "process",
+        "next_name": [
+            "业联系统增量查询-工艺流程"
+        ]
+    },
+    {
+        "name": "业联系统增量检查-车间执行单",
+        "type": "process",
+        "next_name": [
+            "业联系统增量查询-车间执行单"
+        ]
+    },
+    {
+        "name": "业联系统增量检查-设计变更执行",
+        "type": "process",
+        "next_name": [
+            "业联系统增量查询-设计变更执行"
+        ]
+    },
+    {
+        "name": "业联系统增量检查-业联执行关闭",
+        "type": "process",
+        "next_name": [
+            "业联系统增量查询-业联执行关闭"
+        ]
     }
 ]

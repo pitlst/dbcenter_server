@@ -1,5 +1,6 @@
 #include <fstream>
 
+#include "sql_builder.hpp"
 #include "increment.hpp"
 
 using namespace dbs;
@@ -31,7 +32,19 @@ void increment_class_group::main_logic()
 
 
     LOGGER.info(this->node_name, "生成SQL");
-    std::ifstream template_sql_file(PROJECT_PATH + std::string("source/select/business_connection/sync_template/class_group.sql"));
-    std::ofstream temp_sql_file(PROJECT_PATH + std::string("source/select/business_connection/temp/class_group.sql"));
-    
+    auto sql_make = [request_id](const std::string & file_name)
+    {
+        std::string sql_str = dbs::read_file(PROJECT_PATH + std::string("source/select/business_connection/sync_template/") + file_name + ".sql");
+        dbs::sql_builder temp_sql;
+        temp_sql.init(sql_str);
+        for (const auto & ch : request_id)
+        {
+            temp_sql.add("bill.fid = " + ch , "OR");
+        }
+        sql_str = temp_sql.build();
+        dbs::write_file(PROJECT_PATH + std::string("source/select/business_connection/temp/class_group.sql"), sql_str);
+    };
+    // 单据头查询
+    sql_make("class_group");
+    sql_make("class_group_entry");
 }

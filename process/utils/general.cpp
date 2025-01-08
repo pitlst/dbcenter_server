@@ -56,6 +56,21 @@ std::string dbs::read_file(const std::string &input_path)
     return temps.str();
 }
 
+void dbs::write_file(const std::string &filename, const std::string &content)
+{
+    std::ofstream file(filename); // 打开文件
+    if (file.is_open())
+    {
+        file << content; // 将内容写入文件
+        file.close();    // 关闭文件
+        std::cout << "内容已成功写入文件：" << filename << std::endl;
+    }
+    else
+    {
+        std::cout << "无法打开文件：" << filename << std::endl;
+    }
+}
+
 std::string dbs::gbk_to_utf8(const std::string &input_str)
 {
     std::string GBK = "";
@@ -160,7 +175,7 @@ std::string dbs::remove_space(const std::string &str)
     {
         if (ch != ' ')
         {
-            result.push_back(ch); 
+            result.push_back(ch);
         }
     }
     return result;
@@ -185,8 +200,8 @@ double dbs::stod(const std::string &str)
         case '8':
         case '9':
         case '.':
-            result.push_back(ch); 
-            break;     
+            result.push_back(ch);
+            break;
         default:
             break_label = true;
             break;

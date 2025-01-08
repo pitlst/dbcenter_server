@@ -1,4 +1,4 @@
-SELECT  bill.FId                                                                                                 AS "id"
+SELECT  bill.fid                                                                                                 AS "id"
        ,bill.fbillno                                                                                             AS "单据编号"
        ,project.fnumber                                                                                          AS "项目编码"
        ,project.fname                                                                                            AS "项目名称"

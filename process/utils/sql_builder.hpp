@@ -17,6 +17,8 @@ namespace dbs
         sql_builder &add(const std::string &condition, const std::string &logic = "AND");
         // 构建最终的 SQL 查询字符串
         std::string build();
+        // 清空当前查询器
+        void clear();
 
     private:
         std::string m_sql;                // 存储基础 SQL 查询

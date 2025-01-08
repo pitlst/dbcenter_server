@@ -64,6 +64,16 @@ namespace dbs
     private:
         void main_logic() override;
     };
+
+    class increment_business_connection_close: public task_base
+    {
+    public:
+        increment_business_connection_close() : task_base("业联系统增量检查-业联执行关闭") {}
+        ~increment_business_connection_close() = default;
+
+    private:
+        void main_logic() override;
+    };
 }
 
 #endif

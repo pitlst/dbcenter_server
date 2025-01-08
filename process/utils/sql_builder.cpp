@@ -40,5 +40,11 @@ std::string sql_builder::build()
         }
         this->m_sql = oss.str();
     }
-    return this->m_sql + ";";
+    return this->m_sql;
+}
+
+void sql_builder::clear()
+{
+    this->m_sql.clear();
+    this->conditions.clear();
 }
