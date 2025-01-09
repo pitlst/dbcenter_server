@@ -91,7 +91,7 @@ class node:
         return temp_data
     
     def write(self, temp_data):
-        if not temp_data is None:
+        if not temp_data is None and len(temp_data) != 0:
             if self.type.split("_to_")[1] == "table":
                 if "schema" in self.node["target"].keys():
                     EXECUTER[self.node["target"]["connect"]].write_to_table(temp_data, self.node["target"]["table"], self.node["target"]["schema"])

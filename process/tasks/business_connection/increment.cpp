@@ -7,7 +7,7 @@ using namespace dbs;
 
 void task_bc_increment::sql_make(const std::string &file_name, const tbb::concurrent_vector<std::string> &request_id) const
 {
-    std::string sql_str = dbs::read_file(PROJECT_PATH + std::string("source/select/business_connection/sync_template/") + file_name + ".sql");
+    std::string sql_str = dbs::read_file(PROJECT_PATH + std::string("../source/select/business_connection/sync_template/") + file_name + ".sql");
     dbs::sql_builder temp_sql;
     temp_sql.init(sql_str);
     if (request_id.empty())
@@ -22,7 +22,7 @@ void task_bc_increment::sql_make(const std::string &file_name, const tbb::concur
         }
     }
     sql_str = temp_sql.build();
-    dbs::write_file(PROJECT_PATH + std::string("source/select/business_connection/temp/") + file_name + ".sql", sql_str);
+    dbs::write_file(PROJECT_PATH + std::string("../source/select/business_connection/temp/") + file_name + ".sql", sql_str);
 }
 
 void increment_class_group::main_logic()
@@ -32,20 +32,17 @@ void increment_class_group::main_logic()
     auto dwd_table = this->get_coll_data("dwd", "业联-班组基础数据");
 
     LOGGER.info(this->node_name, "检查数据是否更新");
-    tbb::concurrent_vector<std::string> dwd_id;
-    auto extract_id = [&](const nlohmann::json &value)
-    {
-        dwd_id.emplace_back(value["id"]["$oid"].get<std::string>() + value["修改时间"]["$date"].get<std::string>());
-    };
-    tbb::parallel_for_each(dwd_table.begin(), dwd_table.end(), extract_id);
     tbb::concurrent_vector<std::string> request_id;
     auto comparison_id = [&](const nlohmann::json &value)
     {
-        auto find_it = std::find(dwd_id.begin(), dwd_id.end(), value["id"]["$oid"].get<std::string>() + value["修改时间"]["$date"].get<std::string>());
-        if (find_it == dwd_id.end())
+        for (const auto & ch : dwd_table)
         {
-            request_id.emplace_back(value["id"]["$oid"].get<std::string>());
+            if (value["id"] == ch["id"] && value["修改时间"] == ch["修改时间"])
+            {
+                break;
+            }
         }
+        request_id.emplace_back(std::to_string(value["id"].get<long long>()));
     };
     tbb::parallel_for_each(ods_table.begin(), ods_table.end(), comparison_id);
 
@@ -61,28 +58,17 @@ void increment_business_connection::main_logic()
     auto dwd_table = this->get_coll_data("dwd", "业联-业务联系书");
 
     LOGGER.info(this->node_name, "检查数据是否更新");
-    tbb::concurrent_vector<std::string> dwd_id;
-    auto extract_id = [&](const nlohmann::json &value)
-    {
-        dwd_id.emplace_back(
-            value["id"]["$oid"].get<std::string>() +
-            value["修改时间"]["$date"].get<std::string>() +
-            value["审核时间"]["$date"].get<std::string>() +
-            value["签发时间"]["$date"].get<std::string>());
-    };
-    tbb::parallel_for_each(dwd_table.begin(), dwd_table.end(), extract_id);
     tbb::concurrent_vector<std::string> request_id;
     auto comparison_id = [&](const nlohmann::json &value)
     {
-        auto find_it = std::find(dwd_id.begin(), dwd_id.end(),
-                                 value["id"]["$oid"].get<std::string>() +
-                                     value["修改时间"]["$date"].get<std::string>() +
-                                     value["审核时间"]["$date"].get<std::string>() +
-                                     value["签发时间"]["$date"].get<std::string>());
-        if (find_it == dwd_id.end())
+        for (const auto & ch : dwd_table)
         {
-            request_id.emplace_back(value["id"]["$oid"].get<std::string>());
+            if (value["id"] == ch["id"] && value["修改时间"] == ch["修改时间"] && value["审核时间"] == ch["审核时间"] && value["签发时间"] == ch["签发时间"])
+            {
+                break;
+            }
         }
+        request_id.emplace_back(std::to_string(value["id"].get<long long>()));
     };
     tbb::parallel_for_each(ods_table.begin(), ods_table.end(), comparison_id);
 
@@ -99,26 +85,17 @@ void increment_design_change::main_logic()
     auto dwd_table = this->get_coll_data("dwd", "业联-设计变更");
 
     LOGGER.info(this->node_name, "检查数据是否更新");
-    tbb::concurrent_vector<std::string> dwd_id;
-    auto extract_id = [&](const nlohmann::json &value)
-    {
-        dwd_id.emplace_back(
-            value["id"]["$oid"].get<std::string>() +
-            value["发放日期"]["$date"].get<std::string>() +
-            value["修改时间"]["$date"].get<std::string>());
-    };
-    tbb::parallel_for_each(dwd_table.begin(), dwd_table.end(), extract_id);
     tbb::concurrent_vector<std::string> request_id;
     auto comparison_id = [&](const nlohmann::json &value)
     {
-        auto find_it = std::find(dwd_id.begin(), dwd_id.end(),
-                                 value["id"]["$oid"].get<std::string>() +
-                                     value["发放日期"]["$date"].get<std::string>() +
-                                     value["修改时间"]["$date"].get<std::string>());
-        if (find_it == dwd_id.end())
+        for (const auto & ch : dwd_table)
         {
-            request_id.emplace_back(value["id"]["$oid"].get<std::string>());
+            if (value["id"] == ch["id"] && value["发放日期"] == ch["发放日期"] && value["修改时间"] == ch["修改时间"])
+            {
+                break;
+            }
         }
+        request_id.emplace_back(std::to_string(value["id"].get<long long>()));
     };
     tbb::parallel_for_each(ods_table.begin(), ods_table.end(), comparison_id);
 
@@ -134,24 +111,17 @@ void increment_technological_process::main_logic()
     auto dwd_table = this->get_coll_data("dwd", "业联-工艺流程");
 
     LOGGER.info(this->node_name, "检查数据是否更新");
-    tbb::concurrent_vector<std::string> dwd_id;
-    auto extract_id = [&](const nlohmann::json &value)
-    {
-        dwd_id.emplace_back(
-            value["id"]["$oid"].get<std::string>() +
-            value["修改时间"]["$date"].get<std::string>());
-    };
-    tbb::parallel_for_each(dwd_table.begin(), dwd_table.end(), extract_id);
     tbb::concurrent_vector<std::string> request_id;
     auto comparison_id = [&](const nlohmann::json &value)
     {
-        auto find_it = std::find(dwd_id.begin(), dwd_id.end(),
-                                 value["id"]["$oid"].get<std::string>() +
-                                     value["修改时间"]["$date"].get<std::string>());
-        if (find_it == dwd_id.end())
+        for (const auto & ch : dwd_table)
         {
-            request_id.emplace_back(value["id"]["$oid"].get<std::string>());
+            if (value["id"] == ch["id"] && value["修改时间"] == ch["修改时间"])
+            {
+                break;
+            }
         }
+        request_id.emplace_back(std::to_string(value["id"].get<long long>()));
     };
     tbb::parallel_for_each(ods_table.begin(), ods_table.end(), comparison_id);
 
@@ -161,33 +131,24 @@ void increment_technological_process::main_logic()
     this->sql_make("technological_process_change", request_id);
 }
 
-void increment_technological_process::main_logic()
+void increment_shop_execution::main_logic()
 {
     LOGGER.info(this->node_name, "读取车间执行单数据");
     auto ods_table = this->get_coll_data("ods", "increment_bc_shop_execution");
     auto dwd_table = this->get_coll_data("dwd", "业联-车间执行单");
 
     LOGGER.info(this->node_name, "检查数据是否更新");
-    tbb::concurrent_vector<std::string> dwd_id;
-    auto extract_id = [&](const nlohmann::json &value)
-    {
-        dwd_id.emplace_back(
-            value["id"]["$oid"].get<std::string>() +
-            value["批准日期"]["$date"].get<std::string>() +
-            value["修改时间"]["$date"].get<std::string>());
-    };
-    tbb::parallel_for_each(dwd_table.begin(), dwd_table.end(), extract_id);
     tbb::concurrent_vector<std::string> request_id;
     auto comparison_id = [&](const nlohmann::json &value)
     {
-        auto find_it = std::find(dwd_id.begin(), dwd_id.end(),
-                                 value["id"]["$oid"].get<std::string>() +
-                                     value["批准日期"]["$date"].get<std::string>() +
-                                     value["修改时间"]["$date"].get<std::string>());
-        if (find_it == dwd_id.end())
+        for (const auto & ch : dwd_table)
         {
-            request_id.emplace_back(value["id"]["$oid"].get<std::string>());
+            if (value["id"] == ch["id"] && value["批准日期"] == ch["批准日期"] && value["修改时间"] == ch["修改时间"])
+            {
+                break;
+            }
         }
+        request_id.emplace_back(std::to_string(value["id"].get<long long>()));
     };
     tbb::parallel_for_each(ods_table.begin(), ods_table.end(), comparison_id);
 
@@ -213,26 +174,17 @@ void increment_design_change_execution::main_logic()
     auto dwd_table = this->get_coll_data("dwd", "业联-设计变更执行");
 
     LOGGER.info(this->node_name, "检查数据是否更新");
-    tbb::concurrent_vector<std::string> dwd_id;
-    auto extract_id = [&](const nlohmann::json &value)
-    {
-        dwd_id.emplace_back(
-            value["id"]["$oid"].get<std::string>() +
-            value["批准日期"]["$date"].get<std::string>() +
-            value["修改时间"]["$date"].get<std::string>());
-    };
-    tbb::parallel_for_each(dwd_table.begin(), dwd_table.end(), extract_id);
     tbb::concurrent_vector<std::string> request_id;
     auto comparison_id = [&](const nlohmann::json &value)
     {
-        auto find_it = std::find(dwd_id.begin(), dwd_id.end(),
-                                 value["id"]["$oid"].get<std::string>() +
-                                     value["批准日期"]["$date"].get<std::string>() +
-                                     value["修改时间"]["$date"].get<std::string>());
-        if (find_it == dwd_id.end())
+        for (const auto & ch : dwd_table)
         {
-            request_id.emplace_back(value["id"]["$oid"].get<std::string>());
+            if (value["id"] == ch["id"] && value["批准日期"] == ch["批准日期"] && value["修改时间"] == ch["修改时间"])
+            {
+                break;
+            }
         }
+        request_id.emplace_back(std::to_string(value["id"].get<long long>()));
     };
     tbb::parallel_for_each(ods_table.begin(), ods_table.end(), comparison_id);
 
@@ -259,20 +211,17 @@ void increment_business_connection_close::main_logic()
     auto dwd_table = this->get_coll_data("dwd", "业联-业联执行关闭");
 
     LOGGER.info(this->node_name, "检查数据是否更新");
-    tbb::concurrent_vector<std::string> dwd_id;
-    auto extract_id = [&](const nlohmann::json &value)
-    {
-        dwd_id.emplace_back(value["id"]["$oid"].get<std::string>() + value["任务状态"].get<std::string>());
-    };
-    tbb::parallel_for_each(dwd_table.begin(), dwd_table.end(), extract_id);
     tbb::concurrent_vector<std::string> request_id;
     auto comparison_id = [&](const nlohmann::json &value)
     {
-        auto find_it = std::find(dwd_id.begin(), dwd_id.end(), value["id"]["$oid"].get<std::string>() + value["任务状态"].get<std::string>());
-        if (find_it == dwd_id.end())
+        for (const auto & ch : dwd_table)
         {
-            request_id.emplace_back(value["id"]["$oid"].get<std::string>());
+            if (value["id"] == ch["id"] && value["任务状态"] == ch["任务状态"])
+            {
+                break;
+            }
         }
+        request_id.emplace_back(std::to_string(value["id"].get<long long>()));
     };
     tbb::parallel_for_each(ods_table.begin(), ods_table.end(), comparison_id);
 

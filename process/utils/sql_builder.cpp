@@ -8,7 +8,7 @@ sql_builder &sql_builder::init(const std::string &query)
     return *this;
 }
 
-sql_builder &sql_builder::add(const std::string &condition, const std::string &logic = "AND")
+sql_builder &sql_builder::add(const std::string &condition, const std::string &logic)
 {
     if (!condition.empty())
     {
@@ -29,7 +29,7 @@ std::string sql_builder::build()
     if (!conditions.empty())
     {
         std::ostringstream oss;
-        oss << this->m_sql << " WHERE ";
+        oss << this->m_sql << std::endl << "WHERE ";
         for (size_t i = 0; i < conditions.size(); ++i)
         {
             oss << conditions[i];

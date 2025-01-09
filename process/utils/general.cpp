@@ -49,7 +49,7 @@ std::string dbs::read_file(const std::string &input_path)
     else
     {
         // 如果文件无法打开，输出错误信息
-        std::cout << "Failed to open the file." << std::endl;
+        throw std::logic_error("无法打开文件" + input_path);
     }
     // 关闭文件流
     file.close();
@@ -63,11 +63,10 @@ void dbs::write_file(const std::string &filename, const std::string &content)
     {
         file << content; // 将内容写入文件
         file.close();    // 关闭文件
-        std::cout << "内容已成功写入文件：" << filename << std::endl;
     }
     else
     {
-        std::cout << "无法打开文件：" << filename << std::endl;
+        throw std::logic_error("无法打开文件" + filename);
     }
 }
 

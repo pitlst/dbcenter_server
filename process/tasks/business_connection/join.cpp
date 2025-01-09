@@ -421,12 +421,17 @@ void task_bc_join_business_connection_close::main_logic()
     LOGGER.info(this->node_name, "读取班组数据");
     // ----------从数据库读取数据----------
     auto ods_bc_business_connection_close = this->get_coll_data("ods", "bc_business_connection_close");
-
+    tbb::concurrent_vector<bsoncxx::document::value> business_connection_close_results;
+    auto data_process = [&](nlohmann::json results_json)
+    {
+        business_connection_close_results.emplace_back(bsoncxx::from_json(results_json.dump()));
+    };
+    tbb::parallel_for_each(ods_bc_business_connection_close.begin(), ods_bc_business_connection_close.end(), data_process);
     LOGGER.info(this->node_name, "写入处理数据");
     auto m_coll = this->get_coll("dwd", "业联-业联执行关闭");
-    if (!ods_bc_business_connection_close.empty())
+    if (!business_connection_close_results.empty())
     {
-        m_coll.insert_many(ods_bc_business_connection_close);
+        m_coll.insert_many(business_connection_close_results);
     }
     else
     {

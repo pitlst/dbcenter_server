@@ -27,7 +27,7 @@ for ch in TASKS_CONFIG:
 # 日志
 from general.logger import LOG 
 # 执行器的全局单例
-from general.executer import EXECUTER, SQL_PATH, TABLE_PATH, JS_PATH
+from general.executer import EXECUTER, SELECT_PATH, TABLE_PATH
 # ------------------------------------------时间计算装饰器------------------------------------------
 def log_run_time(func):
     def _log_run_time(*args, **kwargs):
