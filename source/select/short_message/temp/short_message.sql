@@ -10,4 +10,3 @@ SELECT  msg.fid          AS "id"
        ,msg.FSENDFAIL    AS "是否发送失败"
        ,msg.FISDELETED   AS "删除标志位"
 FROM zjeas7.T_MO_SENDMOMSG msg
-WHERE to_number( to_char( SYSDATE, 'yyyy' ) ) - to_number( to_char( msg.FSENTTIME, 'yyyy' ) ) < 2

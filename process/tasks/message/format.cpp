@@ -1,38 +1,62 @@
+#include <fstream>
+
+#include "sql_builder.hpp"
 #include "message/format.hpp"
 
 using namespace dbs;
+
+void task_msg_increment::main_logic()
+{
+    // ----------从数据库读取数据----------
+    LOGGER.info(this->node_name, "读取数据");
+    auto ods_results = this->get_coll_data("ods", "increment_short_message");
+    auto dwd_results = this->get_coll_data("dwd", "薪酬信息");
+
+    LOGGER.info(this->node_name, "检查数据是否更新");
+    tbb::concurrent_vector<std::string> request_id;
+    auto comparison_id = [&](const nlohmann::json &value)
+    {
+        bool is_change = true;
+        for (const auto &ch : dwd_results)
+        {
+            if (value["id"] == ch["id"])
+            {
+                is_change = false;
+                break;
+            }
+        }
+        if (is_change)
+        {
+            request_id.emplace_back(std::to_string(value["id"].get<long long>()));
+        }
+    };
+    tbb::parallel_for_each(ods_results.begin(), ods_results.end(), comparison_id);
+
+    LOGGER.info(this->node_name, "生成SQL");
+    std::string sql_str = dbs::read_file(PROJECT_PATH + std::string("../source/select/short_message/sync_template/short_message.sql"));
+    dbs::sql_builder temp_sql;
+    temp_sql.init(sql_str);
+    dbs::sql_builder temp_sql_2;
+    if (request_id.empty())
+    {
+        temp_sql_2.add("msg.fid IS NULL");
+    }
+    else
+    {
+        for (const auto &ch : request_id)
+        {
+            temp_sql_2.add("msg.fid = " + ch, "OR");
+        }
+    }
+    temp_sql.add(std::vector<std::string>{"to_number( to_char( SYSDATE, 'yyyy' ) ) - to_number( to_char( msg.FSENTTIME, 'yyyy' ) ) < 2 ", temp_sql_2.build()}, std::vector<std::string>{"AND"});
+    dbs::write_file(PROJECT_PATH + std::string("../source/select/business_connection/temp/short_message.sql"), temp_sql.build());
+}
 
 void task_msg_format::main_logic()
 {
     // ----------从数据库读取数据----------
     LOGGER.info(this->node_name, "读取数据");
     auto ods_results = this->get_coll_data("ods", "short_message");
-    auto dwd_results = this->get_coll_data("dwd", "薪酬信息");
-
-    // ----------检查数据是否更新----------
-    LOGGER.info(this->node_name, "检查数据是否更新");
-    // 短信内容不会发生变更，所以可以根据id做增量更新
-    tbb::concurrent_vector<std::string> old_source_id;
-    auto extract_id = [&](const nlohmann::json &value)
-    {
-        old_source_id.emplace_back(value["source_id"]["$oid"].get<std::string>());
-    };
-    tbb::parallel_for_each(dwd_results.begin(), dwd_results.end(), extract_id);
-    tbb::concurrent_vector<nlohmann::json> form_results;
-    auto data_check = [&](const nlohmann::json &value)
-    {
-        auto find_it = std::find(old_source_id.begin(), old_source_id.end(), value["_id"]["$oid"].get<std::string>());
-        if (find_it == old_source_id.end())
-        {
-            form_results.emplace_back(value);
-        }
-    };
-    tbb::parallel_for_each(ods_results.begin(), ods_results.end(), data_check);
-    if (form_results.empty())
-    {
-        LOGGER.info(this->node_name, "无数据更新");
-        return;
-    }
 
     // ----------并行处理数据----------
     LOGGER.info(this->node_name, "并行处理数据");
@@ -103,17 +127,15 @@ void task_msg_format::main_logic()
             employee_compensation.emplace_back(bsoncxx::from_json(results_json.dump()));
         }
     };
-    tbb::parallel_for_each(form_results.begin(), form_results.end(), data_process);
+    tbb::parallel_for_each(ods_results.begin(), ods_results.end(), data_process);
 
     // ----------写入数据库----------
     if (employee_compensation.empty())
     {
         LOGGER.info(this->node_name, "无数据更新");
+        return;
     }
-    else
-    {
-        LOGGER.info(this->node_name, "写入处理数据");
-        auto m_coll = this->get_coll("dwd", "薪酬信息");
-        m_coll.insert_many(employee_compensation);
-    }
+    LOGGER.info(this->node_name, "写入处理数据");
+    auto m_coll = this->get_coll("dwd", "薪酬信息");
+    m_coll.insert_many(employee_compensation);
 }

@@ -5,6 +5,16 @@
 
 namespace dbs
 {
+    class task_msg_increment : public task_base
+    {
+    public:
+        task_msg_increment(): task_base("短信增量检查-薪酬提取") {}
+        ~task_msg_increment() = default;
+    private:
+        void main_logic() override;
+    };
+
+
     class task_msg_format : public task_base
     {
     public:

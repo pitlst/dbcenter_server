@@ -784,5 +784,56 @@
         "next_name": [
             "业联系统同步-业联执行关闭"
         ]
+    },
+    {
+        "name": "短信增量查询",
+        "type": "sql_to_nosql",
+        "next_name": [],
+        "source": {
+            "connect": "EAS",
+            "sql": "short_message/increment/short_message.sql"
+        },
+        "target": {
+            "connect": "数据处理服务存储",
+            "database": "ods",
+            "table": "increment_short_message"
+        }
+    },
+    {
+        "name": "短信增量检查-薪酬提取",
+        "type": "process",
+        "next_name": [
+            "短信增量查询"
+        ]
+    },
+    {
+        "name": "短信信息同步",
+        "type": "sql_to_nosql",
+        "next_name": [
+            "短信增量检查-薪酬提取"
+        ],
+        "source": {
+            "connect": "EAS",
+            "sql": "short_message/temp/short_message.sql"
+        },
+        "target": {
+            "connect": "数据处理服务存储",
+            "database": "ods",
+            "table": "short_message"
+        }
+    },
+    {
+        "name": "短信数据处理-薪酬提取",
+        "type": "process",
+        "next_name": [
+            "短信信息同步"
+        ]
+    },
+    {
+        "name": "短信数据处理-薪酬求和",
+        "type": "process",
+        "next_name": [
+            "短信数据处理-薪酬提取"
+        ]
     }
 ]
