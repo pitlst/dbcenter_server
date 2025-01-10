@@ -5,7 +5,6 @@
 
 namespace dbs
 {
-
     class task_bc_increment: public task_base
     {
     public:

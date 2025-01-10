@@ -502,6 +502,7 @@ void task_bc_join_business_connection_close::main_logic()
     tbb::concurrent_vector<std::pair<bsoncxx::document::value, bsoncxx::document::value>> business_connection_close_results;
     auto data_process = [&](nlohmann::json results_json)
     {
+        results_json.erase("_id");
         nlohmann::json m_filter;
         m_filter["id"] = results_json["id"];
         auto res_input = std::make_pair(bsoncxx::from_json(m_filter.dump()), bsoncxx::from_json(results_json.dump()));

@@ -27,7 +27,7 @@ void task_msg_increment::main_logic()
         }
         if (is_change)
         {
-            request_id.emplace_back(std::to_string(value["id"].get<long long>()));
+            request_id.emplace_back(value["id"].get<std::string>());
         }
     };
     tbb::parallel_for_each(ods_results.begin(), ods_results.end(), comparison_id);
@@ -49,7 +49,7 @@ void task_msg_increment::main_logic()
         }
     }
     temp_sql.add(std::vector<std::string>{"to_number( to_char( SYSDATE, 'yyyy' ) ) - to_number( to_char( msg.FSENTTIME, 'yyyy' ) ) < 2 ", temp_sql_2.build()}, std::vector<std::string>{"AND"});
-    dbs::write_file(PROJECT_PATH + std::string("../source/select/business_connection/temp/short_message.sql"), temp_sql.build());
+    dbs::write_file(PROJECT_PATH + std::string("../source/select/short_message/temp/short_message.sql"), temp_sql.build());
 }
 
 void task_msg_format::main_logic()
@@ -61,7 +61,7 @@ void task_msg_format::main_logic()
     // ----------并行处理数据----------
     LOGGER.info(this->node_name, "并行处理数据");
     // 薪酬数据组织
-    tbb::concurrent_vector<bsoncxx::document::value> employee_compensation;
+    tbb::concurrent_vector<std::pair<bsoncxx::document::value, bsoncxx::document::value>> employee_compensation;
     auto check_size = [this](size_t input_size, size_t request_size, const std::string &temp_str)
     {
         if (input_size < request_size)
@@ -77,7 +77,7 @@ void task_msg_format::main_logic()
         {
             // 提取数据
             nlohmann::json results_json;
-            results_json["source_id"] = input_json["id"];
+            results_json["id"] = input_json["id"];
             std::vector<std::string> msg_vector_3 = dbs::split_string(msg_, "   ");
             if (msg_vector_3.size() < 2)
             {
@@ -124,7 +124,10 @@ void task_msg_format::main_logic()
                 }
             }
             // 插入数据
-            employee_compensation.emplace_back(bsoncxx::from_json(results_json.dump()));
+            nlohmann::json m_filter;
+            m_filter["id"] = results_json["id"];
+            auto res_input = std::make_pair(bsoncxx::from_json(m_filter.dump()), bsoncxx::from_json(results_json.dump()));
+            employee_compensation.emplace_back(res_input);
         }
     };
     tbb::parallel_for_each(ods_results.begin(), ods_results.end(), data_process);
@@ -137,5 +140,11 @@ void task_msg_format::main_logic()
     }
     LOGGER.info(this->node_name, "写入处理数据");
     auto m_coll = this->get_coll("dwd", "薪酬信息");
-    m_coll.insert_many(employee_compensation);
+    // 指定参数为更新或插入文档
+    mongocxx::options::replace opts{}; 
+    opts.upsert(true);
+    for (const auto & input_ch : employee_compensation)
+    {
+        m_coll.replace_one(input_ch.first.view(), input_ch.second.view(), opts);
+    }
 }

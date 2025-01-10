@@ -126,6 +126,8 @@ set(ALL_TASKS_FILE
     tasks/business_connection/increment.cpp
     tasks/business_connection/join.hpp
     tasks/business_connection/join.cpp
+    tasks/business_connection/process.hpp
+    tasks/business_connection/process.cpp
     tasks/ameliorate/ameliorate.hpp
     tasks/ameliorate/ameliorate.cpp
     tasks/error/clean.hpp
