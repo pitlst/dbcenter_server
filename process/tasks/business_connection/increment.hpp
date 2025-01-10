@@ -13,7 +13,7 @@ namespace dbs
         ~task_bc_increment() = default;
 
     protected:
-        void sql_make(const std::string &file_name, const tbb::concurrent_vector<std::string> & request_id) const;
+        void sql_make(const std::string &file_name, const tbb::concurrent_vector<std::string> & request_id, const tbb::concurrent_vector<std::string> &other_if = tbb::concurrent_vector<std::string>{}) const;
     };
 
     class increment_class_group: public task_bc_increment

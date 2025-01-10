@@ -8,10 +8,15 @@ void task_bc_join_class_group::main_logic()
     // ----------从数据库读取数据----------
     auto ods_bc_class_group = this->get_coll_data("ods", "bc_class_group");
     auto ods_bc_class_group_entry = this->get_coll_data("ods", "bc_class_group_entry");
-
+    if (ods_bc_class_group.empty())
+    {
+        LOGGER.warn(this->node_name, "更新数据为空，不更新数据");
+        return;
+    }
     // ----------并行处理数据----------
     LOGGER.info(this->node_name, "并行处理数据");
-    tbb::concurrent_vector<bsoncxx::document::value> class_group_results;
+
+    tbb::concurrent_vector<std::pair<bsoncxx::document::value, bsoncxx::document::value>> class_group_results;
     auto data_process = [&](nlohmann::json results_json)
     {
         results_json.erase("_id");
@@ -26,19 +31,27 @@ void task_bc_join_class_group::main_logic()
                 results_json["分录"].emplace_back(ch_copy);
             }
         }
-        class_group_results.emplace_back(bsoncxx::from_json(results_json.dump()));
+        nlohmann::json m_filter;
+        m_filter["id"] = results_json["id"];
+        auto res_input = std::make_pair(bsoncxx::from_json(m_filter.dump()), bsoncxx::from_json(results_json.dump()));
+        class_group_results.emplace_back(res_input);
     };
     tbb::parallel_for_each(ods_bc_class_group.begin(), ods_bc_class_group.end(), data_process);
 
-    LOGGER.info(this->node_name, "写入处理数据");
-    auto m_coll = this->get_coll("dwd", "业联-班组基础数据");
-    if (!class_group_results.empty())
-    {
-        m_coll.insert_many(class_group_results);
-    }
-    else
+    
+    if (class_group_results.empty())
     {
         LOGGER.warn(this->node_name, "结果数据为空，不更新数据");
+        return;
+    }
+    LOGGER.info(this->node_name, "更新或写入处理数据");
+    auto m_coll = this->get_coll("dwd", "业联-班组基础数据");
+    // 指定参数为更新或插入文档
+    mongocxx::options::replace opts{}; 
+    opts.upsert(true);
+    for (const auto & input_ch : class_group_results)
+    {
+        m_coll.replace_one(input_ch.first.view(), input_ch.second.view(), opts);
     }
 }
 
@@ -49,10 +62,14 @@ void task_bc_join_technological_process::main_logic()
     auto ods_bc_technological_process = this->get_coll_data("ods", "bc_technological_process");
     auto ods_bc_technological_process_change = this->get_coll_data("ods", "bc_technological_process_change");
     auto ods_bc_technological_process_flow = this->get_coll_data("ods", "bc_technological_process_flow");
-
+    if (ods_bc_technological_process.empty())
+    {
+        LOGGER.warn(this->node_name, "更新数据为空，不更新数据");
+        return;
+    }
     // ----------并行处理数据----------
     LOGGER.info(this->node_name, "并行处理数据");
-    tbb::concurrent_vector<bsoncxx::document::value> technological_process_results;
+    tbb::concurrent_vector<std::pair<bsoncxx::document::value, bsoncxx::document::value>> technological_process_results;
     auto data_process = [&](nlohmann::json results_json)
     {
         results_json.erase("_id");
@@ -78,18 +95,26 @@ void task_bc_join_technological_process::main_logic()
                 results_json["任务流程分录"].emplace_back(ch_copy);
             }
         }
-        technological_process_results.emplace_back(bsoncxx::from_json(results_json.dump()));
+        nlohmann::json m_filter;
+        m_filter["id"] = results_json["id"];
+        auto res_input = std::make_pair(bsoncxx::from_json(m_filter.dump()), bsoncxx::from_json(results_json.dump()));
+        technological_process_results.emplace_back(res_input);
     };
     tbb::parallel_for_each(ods_bc_technological_process.begin(), ods_bc_technological_process.end(), data_process);
-    LOGGER.info(this->node_name, "写入处理数据");
-    auto m_coll = this->get_coll("dwd", "业联-工艺流程");
-    if (!technological_process_results.empty())
-    {
-        m_coll.insert_many(technological_process_results);
-    }
-    else
+
+    if (technological_process_results.empty())
     {
         LOGGER.warn(this->node_name, "结果数据为空，不更新数据");
+        return;
+    }
+    LOGGER.info(this->node_name, "写入处理数据");
+    auto m_coll = this->get_coll("dwd", "业联-工艺流程");
+    // 指定参数为更新或插入文档
+    mongocxx::options::replace opts{}; 
+    opts.upsert(true);
+    for (const auto & input_ch : technological_process_results)
+    {
+        m_coll.replace_one(input_ch.first.view(), input_ch.second.view(), opts);
     }
 }
 
@@ -100,8 +125,12 @@ void task_bc_join_business_connection::main_logic()
     auto ods_bc_business_connection = this->get_coll_data("ods", "bc_business_connection");
     auto ods_bc_business_connection_main_delivery_unit = this->get_coll_data("ods", "bc_business_connection_main_delivery_unit");
     auto ods_bc_business_connection_copy_delivery_unit = this->get_coll_data("ods", "bc_business_connection_copy_delivery_unit");
-
-    tbb::concurrent_vector<bsoncxx::document::value> business_connection_results;
+    if (ods_bc_business_connection.empty())
+    {
+        LOGGER.warn(this->node_name, "更新数据为空，不更新数据");
+        return;
+    }
+    tbb::concurrent_vector<std::pair<bsoncxx::document::value, bsoncxx::document::value>> business_connection_results;
     auto data_process = [&](nlohmann::json results_json)
     {
         results_json.erase("_id");
@@ -121,18 +150,26 @@ void task_bc_join_business_connection::main_logic()
                 results_json["抄送单位"].emplace_back(ch["对应基础资料id"]);
             }
         }
-        business_connection_results.emplace_back(bsoncxx::from_json(results_json.dump()));
+        nlohmann::json m_filter;
+        m_filter["id"] = results_json["id"];
+        auto res_input = std::make_pair(bsoncxx::from_json(m_filter.dump()), bsoncxx::from_json(results_json.dump()));
+        business_connection_results.emplace_back(res_input);
     };
     tbb::parallel_for_each(ods_bc_business_connection.begin(), ods_bc_business_connection.end(), data_process);
-    LOGGER.info(this->node_name, "写入处理数据");
-    auto m_coll = this->get_coll("dwd", "业联-业务联系书");
-    if (!business_connection_results.empty())
-    {
-        m_coll.insert_many(business_connection_results);
-    }
-    else
+
+    if (business_connection_results.empty())
     {
         LOGGER.warn(this->node_name, "结果数据为空，不更新数据");
+        return;
+    }
+    LOGGER.info(this->node_name, "写入处理数据");
+    auto m_coll = this->get_coll("dwd", "业联-业务联系书");
+    // 指定参数为更新或插入文档
+    mongocxx::options::replace opts{}; 
+    opts.upsert(true);
+    for (const auto & input_ch : business_connection_results)
+    {
+        m_coll.replace_one(input_ch.first.view(), input_ch.second.view(), opts);
     }
 }
 
@@ -142,8 +179,12 @@ void task_bc_join_design_change::main_logic()
     LOGGER.info(this->node_name, "读取设计变更数据");
     auto ods_bc_design_change = this->get_coll_data("ods", "bc_design_change");
     auto ods_bc_design_change_entry = this->get_coll_data("ods", "bc_design_change_entry");
-
-    tbb::concurrent_vector<bsoncxx::document::value> design_change_results;
+    if (ods_bc_design_change.empty())
+    {
+        LOGGER.warn(this->node_name, "更新数据为空，不更新数据");
+        return;
+    }
+    tbb::concurrent_vector<std::pair<bsoncxx::document::value, bsoncxx::document::value>> design_change_results;
     auto data_process = [&](nlohmann::json results_json)
     {
         results_json.erase("_id");
@@ -158,18 +199,26 @@ void task_bc_join_design_change::main_logic()
                 results_json["分录"].emplace_back(ch_copy);
             }
         }
-        design_change_results.emplace_back(bsoncxx::from_json(results_json.dump()));
+        nlohmann::json m_filter;
+        m_filter["id"] = results_json["id"];
+        auto res_input = std::make_pair(bsoncxx::from_json(m_filter.dump()), bsoncxx::from_json(results_json.dump()));
+        design_change_results.emplace_back(res_input);
     };
     tbb::parallel_for_each(ods_bc_design_change.begin(), ods_bc_design_change.end(), data_process);
-    LOGGER.info(this->node_name, "写入处理数据");
-    auto m_coll = this->get_coll("dwd", "业联-设计变更");
-    if (!design_change_results.empty())
-    {
-        m_coll.insert_many(design_change_results);
-    }
-    else
+
+    if (design_change_results.empty())
     {
         LOGGER.warn(this->node_name, "结果数据为空，不更新数据");
+        return;
+    }
+    LOGGER.info(this->node_name, "写入处理数据");
+    auto m_coll = this->get_coll("dwd", "业联-设计变更");
+    // 指定参数为更新或插入文档
+    mongocxx::options::replace opts{}; 
+    opts.upsert(true);
+    for (const auto & input_ch : design_change_results)
+    {
+        m_coll.replace_one(input_ch.first.view(), input_ch.second.view(), opts);
     }
 }
 
@@ -186,9 +235,13 @@ void task_bc_join_shop_execution::main_logic()
     auto ods_bc_shop_execution_reworked_material_unit = this->get_coll_data("ods", "bc_shop_execution_reworked_material_unit");
     auto ods_bc_shop_execution_task_item_point = this->get_coll_data("ods", "bc_shop_execution_task_item_point");
     auto ods_bc_shop_execution_task_item_point_unit = this->get_coll_data("ods", "bc_shop_execution_task_item_point_unit");
-
+    if (ods_bc_shop_execution.empty())
+    {
+        LOGGER.warn(this->node_name, "更新数据为空，不更新数据");
+        return;
+    }
     // 城轨事业部的业联暂时不关注备料工艺
-    tbb::concurrent_vector<bsoncxx::document::value> shop_execution_results;
+    tbb::concurrent_vector<std::pair<bsoncxx::document::value, bsoncxx::document::value>> shop_execution_results;
     auto data_process = [&](nlohmann::json results_json)
     {
         results_json.erase("_id");
@@ -268,18 +321,26 @@ void task_bc_join_shop_execution::main_logic()
                 results_json["返工物料"].emplace_back(ch_copy);
             }
         }
-        shop_execution_results.emplace_back(bsoncxx::from_json(results_json.dump()));
+        nlohmann::json m_filter;
+        m_filter["id"] = results_json["id"];
+        auto res_input = std::make_pair(bsoncxx::from_json(m_filter.dump()), bsoncxx::from_json(results_json.dump()));
+        shop_execution_results.emplace_back(res_input);
     };
     tbb::parallel_for_each(ods_bc_shop_execution.begin(), ods_bc_shop_execution.end(), data_process);
-    LOGGER.info(this->node_name, "写入处理数据");
-    auto m_coll = this->get_coll("dwd", "业联-车间执行单");
-    if (!shop_execution_results.empty())
-    {
-        m_coll.insert_many(shop_execution_results);
-    }
-    else
+
+    if (shop_execution_results.empty())
     {
         LOGGER.warn(this->node_name, "结果数据为空，不更新数据");
+        return;
+    }
+    LOGGER.info(this->node_name, "写入处理数据");
+    auto m_coll = this->get_coll("dwd", "业联-车间执行单");
+    // 指定参数为更新或插入文档
+    mongocxx::options::replace opts{}; 
+    opts.upsert(true);
+    for (const auto & input_ch : shop_execution_results)
+    {
+        m_coll.replace_one(input_ch.first.view(), input_ch.second.view(), opts);
     }
 }
 
@@ -298,8 +359,12 @@ void task_bc_join_design_change_execution::main_logic()
     auto ods_bc_design_change_execution_material_change = this->get_coll_data("ods", "bc_design_change_execution_material_change");
     auto ods_bc_design_change_execution_reworked_material = this->get_coll_data("ods", "bc_design_change_execution_reworked_material");
     auto ods_bc_design_change_execution_reworked_material_unit = this->get_coll_data("ods", "bc_design_change_execution_reworked_material_unit");
-
-    tbb::concurrent_vector<bsoncxx::document::value> design_change_execution_results;
+    if (ods_bc_design_change_execution.empty())
+    {
+        LOGGER.warn(this->node_name, "更新数据为空，不更新数据");
+        return;
+    }
+    tbb::concurrent_vector<std::pair<bsoncxx::document::value, bsoncxx::document::value>> design_change_execution_results;
     auto data_process = [&](nlohmann::json results_json)
     {
         results_json.erase("_id");
@@ -401,18 +466,26 @@ void task_bc_join_design_change_execution::main_logic()
                 results_json["文件变更"].emplace_back(ch_copy);
             }
         }
-        design_change_execution_results.emplace_back(bsoncxx::from_json(results_json.dump()));
+        nlohmann::json m_filter;
+        m_filter["id"] = results_json["id"];
+        auto res_input = std::make_pair(bsoncxx::from_json(m_filter.dump()), bsoncxx::from_json(results_json.dump()));
+        design_change_execution_results.emplace_back(res_input);
     };
     tbb::parallel_for_each(ods_bc_design_change_execution.begin(), ods_bc_design_change_execution.end(), data_process);
-    LOGGER.info(this->node_name, "写入处理数据");
-    auto m_coll = this->get_coll("dwd", "业联-设计变更执行");
-    if (!design_change_execution_results.empty())
-    {
-        m_coll.insert_many(design_change_execution_results);
-    }
-    else
+
+    if (design_change_execution_results.empty())
     {
         LOGGER.warn(this->node_name, "结果数据为空，不更新数据");
+        return;
+    }
+    LOGGER.info(this->node_name, "写入处理数据");
+    auto m_coll = this->get_coll("dwd", "业联-设计变更执行");
+    // 指定参数为更新或插入文档
+    mongocxx::options::replace opts{}; 
+    opts.upsert(true);
+    for (const auto & input_ch : design_change_execution_results)
+    {
+        m_coll.replace_one(input_ch.first.view(), input_ch.second.view(), opts);
     }
 }
 
@@ -421,20 +494,33 @@ void task_bc_join_business_connection_close::main_logic()
     LOGGER.info(this->node_name, "读取班组数据");
     // ----------从数据库读取数据----------
     auto ods_bc_business_connection_close = this->get_coll_data("ods", "bc_business_connection_close");
-    tbb::concurrent_vector<bsoncxx::document::value> business_connection_close_results;
+    if (ods_bc_business_connection_close.empty())
+    {
+        LOGGER.warn(this->node_name, "更新数据为空，不更新数据");
+        return;
+    }
+    tbb::concurrent_vector<std::pair<bsoncxx::document::value, bsoncxx::document::value>> business_connection_close_results;
     auto data_process = [&](nlohmann::json results_json)
     {
-        business_connection_close_results.emplace_back(bsoncxx::from_json(results_json.dump()));
+        nlohmann::json m_filter;
+        m_filter["id"] = results_json["id"];
+        auto res_input = std::make_pair(bsoncxx::from_json(m_filter.dump()), bsoncxx::from_json(results_json.dump()));
+        business_connection_close_results.emplace_back(res_input);
     };
     tbb::parallel_for_each(ods_bc_business_connection_close.begin(), ods_bc_business_connection_close.end(), data_process);
-    LOGGER.info(this->node_name, "写入处理数据");
-    auto m_coll = this->get_coll("dwd", "业联-业联执行关闭");
-    if (!business_connection_close_results.empty())
-    {
-        m_coll.insert_many(business_connection_close_results);
-    }
-    else
+
+    if (business_connection_close_results.empty())
     {
         LOGGER.warn(this->node_name, "结果数据为空，不更新数据");
+        return;
+    }
+    LOGGER.info(this->node_name, "写入处理数据");
+    auto m_coll = this->get_coll("dwd", "业联-业联执行关闭");
+    // 指定参数为更新或插入文档
+    mongocxx::options::replace opts{}; 
+    opts.upsert(true);
+    for (const auto & input_ch : business_connection_close_results)
+    {
+        m_coll.replace_one(input_ch.first.view(), input_ch.second.view(), opts);
     }
 }
