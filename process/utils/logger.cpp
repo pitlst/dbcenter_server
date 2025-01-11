@@ -55,8 +55,6 @@ void logger::emit(const std::string &level, const std::string &name, const std::
     temp_log["名称"] = name;
     temp_log["消息"] = msg;
     this->m_queue.push(temp_log);
-    // 通知消费线程开始打印
-    this->m_print_cv.notify_all();
 }
 
 void logger::print(tbb::concurrent_map<std::string, log_data> & temp_log_data)
@@ -111,15 +109,17 @@ void logger::print(tbb::concurrent_map<std::string, log_data> & temp_log_data)
 std::function<void()> logger::get_run_func()
 {
     using namespace std::chrono_literals;
-    auto run = [&]()
+    return [&]()
     {
         tbb::concurrent_map<std::string, log_data> temp;
         while (true)
         {
-            // 在没有打印需求时等待通知
-            std::unique_lock mlk(this->m_print_mtx);
-            this->m_print_cv.wait(mlk);
-            mlk.unlock();
+            // 在没有打印需求时暂停一段时间，防止过于占用cpu
+            if (this->m_queue.empty())
+            {
+                std::this_thread::sleep_for(250ms);
+                continue;
+            }
             // 在有打印需求时一直打印到队列为空，允许打印中途添加日志
             while (!this->m_queue.empty())
             {
@@ -130,7 +130,6 @@ std::function<void()> logger::get_run_func()
             }
         }
     };
-    return run;
 }
 
 logger::logger()

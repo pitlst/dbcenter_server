@@ -45,14 +45,13 @@ void task_bc_join_class_group::main_logic()
         return;
     }
     LOGGER.info(this->node_name, "更新或写入处理数据");
-    auto m_coll = this->get_coll("dwd", "业联-班组基础数据");
-    // 指定参数为更新或插入文档
-    mongocxx::options::replace opts{}; 
-    opts.upsert(true);
+    auto m_bulk = this->get_coll("dwd", "业联-班组基础数据").create_bulk_write();
     for (const auto & input_ch : class_group_results)
     {
-        m_coll.replace_one(input_ch.first.view(), input_ch.second.view(), opts);
+        m_bulk.append(mongocxx::model::replace_one{input_ch.first.view(),input_ch.second.view()}.upsert(true));
     }
+    auto result = m_bulk.execute();
+    LOGGER.info(this->node_name, "更新了" + std::to_string(result->upserted_count()) + "条数据，写入了" + std::to_string(result->inserted_count()) + "条数据");
 }
 
 void task_bc_join_technological_process::main_logic()
@@ -108,14 +107,13 @@ void task_bc_join_technological_process::main_logic()
         return;
     }
     LOGGER.info(this->node_name, "写入处理数据");
-    auto m_coll = this->get_coll("dwd", "业联-工艺流程");
-    // 指定参数为更新或插入文档
-    mongocxx::options::replace opts{}; 
-    opts.upsert(true);
+    auto m_bulk = this->get_coll("dwd", "业联-工艺流程").create_bulk_write();
     for (const auto & input_ch : technological_process_results)
     {
-        m_coll.replace_one(input_ch.first.view(), input_ch.second.view(), opts);
+        m_bulk.append(mongocxx::model::replace_one{input_ch.first.view(),input_ch.second.view()}.upsert(true));
     }
+    auto result = m_bulk.execute();
+    LOGGER.info(this->node_name, "更新了" + std::to_string(result->upserted_count()) + "条数据，写入了" + std::to_string(result->inserted_count()) + "条数据");
 }
 
 void task_bc_join_business_connection::main_logic()
@@ -163,14 +161,13 @@ void task_bc_join_business_connection::main_logic()
         return;
     }
     LOGGER.info(this->node_name, "写入处理数据");
-    auto m_coll = this->get_coll("dwd", "业联-业务联系书");
-    // 指定参数为更新或插入文档
-    mongocxx::options::replace opts{}; 
-    opts.upsert(true);
+    auto m_bulk = this->get_coll("dwd", "业联-业务联系书").create_bulk_write();
     for (const auto & input_ch : business_connection_results)
     {
-        m_coll.replace_one(input_ch.first.view(), input_ch.second.view(), opts);
+        m_bulk.append(mongocxx::model::replace_one{input_ch.first.view(),input_ch.second.view()}.upsert(true));
     }
+    auto result = m_bulk.execute();
+    LOGGER.info(this->node_name, "更新了" + std::to_string(result->upserted_count()) + "条数据，写入了" + std::to_string(result->inserted_count()) + "条数据");
 }
 
 void task_bc_join_design_change::main_logic()
@@ -212,14 +209,13 @@ void task_bc_join_design_change::main_logic()
         return;
     }
     LOGGER.info(this->node_name, "写入处理数据");
-    auto m_coll = this->get_coll("dwd", "业联-设计变更");
-    // 指定参数为更新或插入文档
-    mongocxx::options::replace opts{}; 
-    opts.upsert(true);
+    auto m_bulk = this->get_coll("dwd", "业联-设计变更").create_bulk_write();
     for (const auto & input_ch : design_change_results)
     {
-        m_coll.replace_one(input_ch.first.view(), input_ch.second.view(), opts);
+        m_bulk.append(mongocxx::model::replace_one{input_ch.first.view(),input_ch.second.view()}.upsert(true));
     }
+    auto result = m_bulk.execute();
+    LOGGER.info(this->node_name, "更新了" + std::to_string(result->upserted_count()) + "条数据，写入了" + std::to_string(result->inserted_count()) + "条数据");
 }
 
 void task_bc_join_shop_execution::main_logic()
@@ -334,14 +330,13 @@ void task_bc_join_shop_execution::main_logic()
         return;
     }
     LOGGER.info(this->node_name, "写入处理数据");
-    auto m_coll = this->get_coll("dwd", "业联-车间执行单");
-    // 指定参数为更新或插入文档
-    mongocxx::options::replace opts{}; 
-    opts.upsert(true);
+    auto m_bulk = this->get_coll("dwd", "业联-车间执行单").create_bulk_write();
     for (const auto & input_ch : shop_execution_results)
     {
-        m_coll.replace_one(input_ch.first.view(), input_ch.second.view(), opts);
+        m_bulk.append(mongocxx::model::replace_one{input_ch.first.view(),input_ch.second.view()}.upsert(true));
     }
+    auto result = m_bulk.execute();
+    LOGGER.info(this->node_name, "更新了" + std::to_string(result->upserted_count()) + "条数据，写入了" + std::to_string(result->inserted_count()) + "条数据");
 }
 
 void task_bc_join_design_change_execution::main_logic()
@@ -479,14 +474,13 @@ void task_bc_join_design_change_execution::main_logic()
         return;
     }
     LOGGER.info(this->node_name, "写入处理数据");
-    auto m_coll = this->get_coll("dwd", "业联-设计变更执行");
-    // 指定参数为更新或插入文档
-    mongocxx::options::replace opts{}; 
-    opts.upsert(true);
+    auto m_bulk = this->get_coll("dwd", "业联-设计变更执行").create_bulk_write();
     for (const auto & input_ch : design_change_execution_results)
     {
-        m_coll.replace_one(input_ch.first.view(), input_ch.second.view(), opts);
+        m_bulk.append(mongocxx::model::replace_one{input_ch.first.view(),input_ch.second.view()}.upsert(true));
     }
+    auto result = m_bulk.execute();
+    LOGGER.info(this->node_name, "更新了" + std::to_string(result->upserted_count()) + "条数据，写入了" + std::to_string(result->inserted_count()) + "条数据");
 }
 
 void task_bc_join_business_connection_close::main_logic()
@@ -516,12 +510,11 @@ void task_bc_join_business_connection_close::main_logic()
         return;
     }
     LOGGER.info(this->node_name, "写入处理数据");
-    auto m_coll = this->get_coll("dwd", "业联-业联执行关闭");
-    // 指定参数为更新或插入文档
-    mongocxx::options::replace opts{}; 
-    opts.upsert(true);
+    auto m_bulk = this->get_coll("dwd", "业联-业联执行关闭").create_bulk_write();
     for (const auto & input_ch : business_connection_close_results)
     {
-        m_coll.replace_one(input_ch.first.view(), input_ch.second.view(), opts);
+        m_bulk.append(mongocxx::model::replace_one{input_ch.first.view(),input_ch.second.view()}.upsert(true));
     }
+    auto result = m_bulk.execute();
+    LOGGER.info(this->node_name, "更新了" + std::to_string(result->upserted_count()) + "条数据，写入了" + std::to_string(result->inserted_count()) + "条数据");
 }

@@ -144,12 +144,11 @@ void task_msg_format::main_logic()
         return;
     }
     LOGGER.info(this->node_name, "写入处理数据");
-    auto m_coll = this->get_coll("dwd", "薪酬信息");
-    // 指定参数为更新或插入文档
-    mongocxx::options::replace opts{}; 
-    opts.upsert(true);
+    auto m_bulk = this->get_coll("dwd", "薪酬信息").create_bulk_write();
     for (const auto & input_ch : employee_compensation)
     {
-        m_coll.replace_one(input_ch.first.view(), input_ch.second.view(), opts);
+        m_bulk.append(mongocxx::model::replace_one{input_ch.first.view(),input_ch.second.view()}.upsert(true));
     }
+    auto result = m_bulk.execute();
+    LOGGER.info(this->node_name, "更新了" + std::to_string(result->upserted_count()) + "条数据，写入了" + std::to_string(result->inserted_count()) + "条数据");
 }

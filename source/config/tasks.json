@@ -841,14 +841,44 @@
         "type": "sql_to_nosql",
         "next_name": [],
         "source": {
-            "connect": "EAS",
-            "sql": "short_message/temp/short_message.sql"
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "ameliorate/increment/ameliorate.sql"
         },
         "target": {
             "connect": "数据处理服务存储",
             "database": "ods",
-            "table": "short_message"
+            "table": "increment_ameliorate"
         } 
+    },
+    {
+        "name": "改善增量检查",
+        "type": "process",
+        "next_name": [
+            "改善数据增量查询"
+        ] 
+    },
+    {
+        "name": "改善数据增量同步",
+        "type": "sql_to_nosql",
+        "next_name": [
+            "改善增量检查"
+        ],
+        "source": {
+            "connect": "金蝶云苍穹-正式库",
+            "sql": "ameliorate/temp/ameliorate.sql"
+        },
+        "target": {
+            "connect": "数据处理服务存储",
+            "database": "ods",
+            "table": "ameliorate"
+        } 
+    },
+    {
+        "name": "改善数据清洗",
+        "type": "process",
+        "next_name": [
+            "改善数据增量同步"
+        ] 
     },
     {
         "name": "改善指标查询-各部门指标",
@@ -893,17 +923,45 @@
         } 
     },
     {
-        "name": "改善指标查询-交车车间班组指标",
+        "name": "改善指标查询-综合管理部组室指标",
         "type": "excel_to_nosql",
         "next_name": [],
         "source": {
             "path": "城轨各部门改善指标.xlsx",
-            "sheet": "交车车间班组指标"
+            "sheet": "综合管理部组室指标"
         },
         "target": {
             "connect": "数据处理服务存储",
             "database": "ods",
-            "table": "ameliorate_delivery_group_index"
+            "table": "ameliorate_synthesis_group_index"
+        } 
+    },
+    {
+        "name": "改善指标查询-项目工程部组室指标",
+        "type": "excel_to_nosql",
+        "next_name": [],
+        "source": {
+            "path": "城轨各部门改善指标.xlsx",
+            "sheet": "项目工程部组室指标"
+        },
+        "target": {
+            "connect": "数据处理服务存储",
+            "database": "ods",
+            "table": "ods_ameliorate_item_group_index"
+        } 
+    },
+    {
+        "name": "改善指标查询-总成车间班组指标",
+        "type": "excel_to_nosql",
+        "next_name": [],
+        "source": {
+            "path": "城轨各部门改善指标.xlsx",
+            "sheet": "总成车间班组指标"
+        },
+        "target": {
+            "connect": "数据处理服务存储",
+            "database": "ods",
+            "table": "ods_ameliorate_assembly_group_index"
         } 
     }
 ]

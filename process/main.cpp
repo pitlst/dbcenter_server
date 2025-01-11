@@ -27,8 +27,8 @@ int main()
         // 外网访客系统数据处理
         dbs::task_visitor visitor;
         task_list.emplace_back(visitor.get_run_func());
-
         // 苍穹业联数据处理
+        // 增量检查
         dbs::increment_class_group increment_class_group;
         task_list.emplace_back(increment_class_group.get_run_func());
         dbs::increment_business_connection increment_business_connection;
@@ -43,7 +43,7 @@ int main()
         task_list.emplace_back(increment_design_change_execution.get_run_func());
         dbs::increment_business_connection_close increment_business_connection_close;
         task_list.emplace_back(increment_business_connection_close.get_run_func());
-
+        // 拼接分录
         dbs::task_bc_join_class_group task_bc_join_class_group;
         task_list.emplace_back(task_bc_join_class_group.get_run_func());
         dbs::task_bc_join_technological_process task_bc_join_technological_process;
@@ -58,15 +58,15 @@ int main()
         task_list.emplace_back(task_bc_join_design_change_execution.get_run_func());
         dbs::task_bc_join_business_connection_close task_bc_join_business_connection_close;
         task_list.emplace_back(task_bc_join_business_connection_close.get_run_func());
-
         // 短信信息处理
         dbs::task_msg_increment task_msg_increment;
         task_list.emplace_back(task_msg_increment.get_run_func());
         dbs::task_msg_format task_msg_format;
         task_list.emplace_back(task_msg_format.get_run_func());
-
         dbs::task_msg_sum task_msg_sum;
         task_list.emplace_back(task_msg_sum.get_run_func());
+        // 改善数据处理
+        
 
         tbb::task_group yield_tg;
         LOGGER.debug("root", "初始化完成，开始运行任务");

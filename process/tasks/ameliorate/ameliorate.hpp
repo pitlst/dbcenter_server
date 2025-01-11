@@ -18,8 +18,18 @@ namespace dbs
     class task_ameliorate: public task_base
     {
     public:
-        task_ameliorate() : task_base("改善数据处理") {}
+        task_ameliorate() : task_base("改善数据清洗") {}
         ~task_ameliorate() = default;
+
+    private:
+        void main_logic() override;
+    };
+
+    class task_ameliorate_process: public task_base
+    {
+    public:
+        task_ameliorate_process() : task_base("改善数据处理") {}
+        ~task_ameliorate_process() = default;
 
     private:
         void main_logic() override;

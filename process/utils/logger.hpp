@@ -40,9 +40,6 @@ namespace dbs
         logger();
         ~logger() = default;
 
-        // 通知变量
-        std::mutex m_print_mtx;
-        std::condition_variable m_print_cv;
         // 消息队列
         tbb::concurrent_queue<tbb::concurrent_map<std::string, log_data>> m_queue;
         // 数据库客户端
