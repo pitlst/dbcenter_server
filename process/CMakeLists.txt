@@ -108,8 +108,6 @@ set(ALL_UTILS_FILE
     utils/logger.cpp
     utils/pipeline.hpp
     utils/pipeline.cpp
-    utils/sql_builder.hpp
-    utils/sql_builder.cpp
 )
 set(ALL_TASKS_FILE                 
     tasks/base.hpp

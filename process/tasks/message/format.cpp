@@ -1,6 +1,5 @@
 #include <fstream>
 
-#include "sql_builder.hpp"
 #include "message/format.hpp"
 
 using namespace dbs;
@@ -33,23 +32,29 @@ void task_msg_increment::main_logic()
     tbb::parallel_for_each(ods_results.begin(), ods_results.end(), comparison_id);
 
     LOGGER.info(this->node_name, "生成SQL");
-    std::string sql_str = dbs::read_file(PROJECT_PATH + std::string("../source/select/short_message/sync_template/short_message.sql"));
-    dbs::sql_builder temp_sql;
-    temp_sql.init(sql_str);
-    dbs::sql_builder temp_sql_2;
+    std::stringstream ss;
+    ss << dbs::read_file(PROJECT_PATH + std::string("../source/select/short_message/sync_template/short_message.sql"));
     if (request_id.empty())
     {
-        temp_sql_2.add("msg.fid IS NULL");
+        ss << " " << "msg.fid IS NULL";
     }
     else
     {
-        for (const auto &ch : request_id)
+        ss << "(";
+        for (auto it = request_id.begin(); it!= request_id.end(); it++)
         {
-            temp_sql_2.add("msg.fid = " + ch, "OR");
+            if (it == request_id.end() - 1)
+            {
+                ss << " " << "msg.fid = " + *it << " " << "OR";
+            }
+            else
+            {
+                ss << " " << "msg.fid = " + *it;
+            }
         }
+        ss << ")";
     }
-    temp_sql.add(std::vector<std::string>{"to_number( to_char( SYSDATE, 'yyyy' ) ) - to_number( to_char( msg.FSENTTIME, 'yyyy' ) ) < 2 ", temp_sql_2.build()}, std::vector<std::string>{"AND"});
-    dbs::write_file(PROJECT_PATH + std::string("../source/select/short_message/temp/short_message.sql"), temp_sql.build());
+    dbs::write_file(PROJECT_PATH + std::string("../source/select/short_message/temp/short_message.sql"), ss.str());
 }
 
 void task_msg_format::main_logic()

@@ -1,6 +1,6 @@
+#include <sstream>
 #include <fstream>
 
-#include "sql_builder.hpp"
 #include "ameliorate.hpp"
 
 using namespace dbs;
@@ -32,21 +32,29 @@ void increment_ameliorate::main_logic()
     tbb::parallel_for_each(ods_table.begin(), ods_table.end(), comparison_id);
 
     LOGGER.info(this->node_name, "生成SQL");
-    std::string sql_str = dbs::read_file(PROJECT_PATH + std::string("../source/select/ameliorate/sync_template/ameliorate.sql"));
-    dbs::sql_builder temp_sql;
-    temp_sql.init(sql_str);
+    std::stringstream ss;
+    ss << dbs::read_file(PROJECT_PATH + std::string("../source/select/ameliorate/sync_template/ameliorate.sql"));
     if (request_id.empty())
     {
-        temp_sql.add("f.fk_crrc_proposal_no IS NULL");
+        ss << " " << "f.fk_crrc_proposal_no IS NULL";
     }
     else
     {
-        for (const auto &ch : request_id)
+        ss << "(";
+        for (auto it = request_id.begin(); it!= request_id.end(); it++)
         {
-            temp_sql.add("f.fk_crrc_proposal_no = " + ch, "OR");
+            if (it == request_id.end() - 1)
+            {
+                ss << " " << "f.fk_crrc_proposal_no = " + *it << " " << "OR";
+            }
+            else
+            {
+                ss << " " << "f.fk_crrc_proposal_no = " + *it;
+            }
         }
+        ss << ")";
     }
-    dbs::write_file(PROJECT_PATH + std::string("../source/select/ameliorate/temp/ameliorate.sql"), temp_sql.build());
+    dbs::write_file(PROJECT_PATH + std::string("../source/select/ameliorate/temp/ameliorate.sql"), ss.str());
 };
 
 void task_ameliorate::main_logic()

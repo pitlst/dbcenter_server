@@ -1,35 +1,34 @@
 #include <fstream>
 
-#include "sql_builder.hpp"
 #include "increment.hpp"
 
 using namespace dbs;
 
 void task_bc_increment::sql_make(const std::string &file_name, const tbb::concurrent_vector<std::string> &request_id, const tbb::concurrent_vector<std::string> &other_if) const
 {
-    std::string sql_str = dbs::read_file(PROJECT_PATH + std::string("../source/select/business_connection/sync_template/") + file_name + ".sql");
-    dbs::sql_builder temp_sql;
-    temp_sql.init(sql_str);
+    std::stringstream ss;
+    ss <<  dbs::read_file(PROJECT_PATH + std::string("../source/select/business_connection/sync_template/") + file_name + ".sql");
     if (request_id.empty())
     {
-        temp_sql.add("bill.fid IS NULL");
+        ss << " " << "bill.fid IS NULL";
     }
     else
     {
-        if (!other_if.empty())
+        ss << "(";
+        for (auto it = request_id.begin(); it!= request_id.end(); it++)
         {
-            for (const auto &ch : other_if)
+            if (it == request_id.end() - 1)
             {
-                temp_sql.add(ch);
+                ss << " " << "bill.fid = " + *it << " " << "OR";
+            }
+            else
+            {
+                ss << " " << "bill.fid = " + *it;
             }
         }
-        for (const auto &ch : request_id)
-        {
-            temp_sql.add("bill.fid = " + ch, "OR");
-        }
+        ss << ")";
     }
-    sql_str = temp_sql.build();
-    dbs::write_file(PROJECT_PATH + std::string("../source/select/business_connection/temp/") + file_name + ".sql", sql_str);
+    dbs::write_file(PROJECT_PATH + std::string("../source/select/business_connection/temp/") + file_name + ".sql", ss.str());
 }
 
 void increment_class_group::main_logic()
