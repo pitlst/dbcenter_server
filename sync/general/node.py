@@ -69,13 +69,13 @@ class node:
                 temp_path, temp_sheet = self.preprocess_func(os.path.join(TABLE_PATH, self.node["source"]["path"]), self.node["source"]["sheet"])
             else:
                 temp_path, temp_sheet = os.path.join(TABLE_PATH, self.node["source"]["path"]), self.node["source"]["sheet"]
-            temp_data = EXECUTER[self.node["source"]["connect"]].read_from_excel(temp_path, temp_sheet)
+            temp_data = EXECUTER["文件io"].read_from_excel(temp_path, temp_sheet)
         elif self.type.split("_to_")[0] == "csv":
             if not self.preprocess_func is None:
                 temp_path = self.preprocess_func(os.path.join(TABLE_PATH, self.node["source"]["path"]))
             else:
                 temp_path = os.path.join(TABLE_PATH, self.node["source"]["path"])
-            temp_data = EXECUTER[self.node["source"]["connect"]].read_from_csv(temp_path)
+            temp_data = EXECUTER["文件io"].read_from_csv(temp_path)
         elif self.type.split("_to_")[0] == "nosql":
             if not self.preprocess_func is None:
                 temp_database, temp_table = self.preprocess_func(self.node["source"]["database"], self.node["source"]["table"])
@@ -87,7 +87,7 @@ class node:
                 temp_path = self.preprocess_func(os.path.join(SELECT_PATH, self.node["source"]["path"]))
             else:
                 temp_path = os.path.join(SELECT_PATH, self.node["source"]["path"])
-            temp_data = EXECUTER[self.node["source"]["connect"]].read_from_json(temp_path)
+            temp_data = EXECUTER["文件io"].read_from_json(temp_path)
         return temp_data
     
     def write(self, temp_data):
@@ -98,10 +98,10 @@ class node:
                 else:
                     EXECUTER[self.node["target"]["connect"]].write_to_table(temp_data, self.node["target"]["table"])
             elif self.type.split("_to_")[1] == "excel":
-                EXECUTER[self.node["target"]["connect"]].write_to_excel(temp_data, os.path.join(TABLE_PATH, self.node["target"]["path"]), self.node["target"]["sheet"])
+                EXECUTER["文件io"].write_to_excel(temp_data, os.path.join(TABLE_PATH, self.node["target"]["path"]), self.node["target"]["sheet"])
             elif self.type.split("_to_")[1] == "csv":
-                EXECUTER[self.node["target"]["connect"]].write_to_csv(temp_data, os.path.join(TABLE_PATH, self.node["target"]["path"]))
+                EXECUTER["文件io"].write_to_csv(temp_data, os.path.join(TABLE_PATH, self.node["target"]["path"]))
             elif self.type.split("_to_")[1] == "nosql":
                 EXECUTER[self.node["target"]["connect"]].write_to_nosql(temp_data, self.node["target"]["database"], self.node["target"]["table"])
             elif self.type.split("_to_")[1] == "json":
-                EXECUTER[self.node["target"]["connect"]].write_to_json(temp_data, os.path.join(SELECT_PATH, self.node["target"]["path"]))
+                EXECUTER["文件io"].write_to_json(temp_data, os.path.join(SELECT_PATH, self.node["target"]["path"]))
