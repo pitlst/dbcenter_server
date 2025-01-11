@@ -1,12 +1,14 @@
 #include <iostream>
 #include <chrono>
 
-#include <tbb/scalable_allocator.h> // TBB 的可扩展内存分配器
-#include <tbb/tbb_allocator.h>      // TBB 的默认内存分配器
+#include "tbb/global_control.h"
+#include "tbb/scalable_allocator.h" // TBB 的可扩展内存分配器
+#include "tbb/tbb_allocator.h"      // TBB 的默认内存分配器
 // 替换全局默认的内存分配器为 TBB 的 scalable_allocator
 #define __TBB_ALLOCATOR_CONSTRUCTOR tbb::scalable_allocator
 
 #include "visitor/visitor.hpp"
+#include "ameliorate/ameliorate.hpp"
 #include "business_connection/increment.hpp"
 #include "business_connection/join.hpp"
 #include "message/format.hpp"
@@ -16,6 +18,9 @@ using namespace std::chrono_literals;
 
 int main()
 {
+    // 设置默认线程数为cpu逻辑线程数的2倍
+    tbb::global_control gc(tbb::global_control::max_allowed_parallelism, std::thread::hardware_concurrency() * 2);
+
     tbb::task_group continue_tg;
     continue_tg.run(LOGGER.get_run_func());
     continue_tg.run(PIPELINE.get_run_func());
@@ -66,7 +71,10 @@ int main()
         dbs::task_msg_sum task_msg_sum;
         task_list.emplace_back(task_msg_sum.get_run_func());
         // 改善数据处理
-        
+        dbs::increment_ameliorate increment_ameliorate;
+        task_list.emplace_back(increment_ameliorate.get_run_func());
+        dbs::task_ameliorate task_ameliorate;
+        task_list.emplace_back(task_ameliorate.get_run_func());
 
         tbb::task_group yield_tg;
         LOGGER.debug("root", "初始化完成，开始运行任务");

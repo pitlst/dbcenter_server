@@ -45,11 +45,12 @@ void increment_ameliorate::main_logic()
         {
             if (it == request_id.end() - 1)
             {
-                ss << " " << "f.fk_crrc_proposal_no = " + *it;
+                ss << " " << "f.fk_crrc_proposal_no = " << "\"" << *it << "\"";
             }
             else
             {
-                ss << " " << "f.fk_crrc_proposal_no = " + *it << " " << "OR";
+                // 改善的提案编号是文字
+                ss << " " << "f.fk_crrc_proposal_no = " << "\"" << *it << "\"" <<" " << "OR";
             }
         }
         ss << ")";
@@ -71,6 +72,7 @@ void task_ameliorate::main_logic()
     auto data_process = [&](nlohmann::json results_json)
     {
         results_json.erase("_id");
+        // 这里添加改善数据的详细处理
         nlohmann::json m_filter;
         m_filter["提案编号"] = results_json["提案编号"];
         auto res_input = std::make_pair(bsoncxx::from_json(m_filter.dump()), bsoncxx::from_json(results_json.dump()));
@@ -91,3 +93,4 @@ void task_ameliorate::main_logic()
     auto result = m_bulk.execute();
     LOGGER.info(this->node_name, "更新了" + std::to_string(result->upserted_count()) + "条数据，写入了" + std::to_string(result->inserted_count()) + "条数据");
 };
+
