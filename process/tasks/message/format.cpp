@@ -45,11 +45,11 @@ void task_msg_increment::main_logic()
         {
             if (it == request_id.end() - 1)
             {
-                ss << " " << "msg.fid = " + *it;
+                ss << " " << "msg.fid = " << "\'" << *it << "\'";
             }
             else
             {
-                ss << " " << "msg.fid = " + *it << " " << "OR";
+                ss << " " << "msg.fid = " << "\'" << *it << "\'" << " " << "OR";
             }
         }
         ss << ")";

@@ -45,12 +45,12 @@ void increment_ameliorate::main_logic()
         {
             if (it == request_id.end() - 1)
             {
-                ss << " " << "f.fk_crrc_proposal_no = " << "\"" << *it << "\"";
+                ss << " " << "f.fk_crrc_proposal_no = " << "\'" << *it << "\'";
             }
             else
             {
                 // 改善的提案编号是文字
-                ss << " " << "f.fk_crrc_proposal_no = " << "\"" << *it << "\"" <<" " << "OR";
+                ss << " " << "f.fk_crrc_proposal_no = " << "\'" << *it << "\'" <<" " << "OR";
             }
         }
         ss << ")";

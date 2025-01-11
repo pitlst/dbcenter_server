@@ -19,11 +19,11 @@ void task_bc_increment::sql_make(const std::string &file_name, const tbb::concur
         {
             if (it == request_id.end() - 1)
             {
-                ss << " " << "bill.fid = " + *it;
+                ss << " " << "bill.fid = " << *it;
             }
             else
             {
-                ss << " " << "bill.fid = " + *it << " " << "OR";
+                ss << " " << "bill.fid = " << *it << " " << "OR";
             }
         }
         ss << ")";
